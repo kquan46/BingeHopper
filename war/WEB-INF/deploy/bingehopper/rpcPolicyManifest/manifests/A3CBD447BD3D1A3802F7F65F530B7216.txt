@@ -1,0 +1,2 @@
+serviceClass: com.bingehopper.client.LoginService
+path: 83E6106726CF1F9D37BCC9BF44B380BE.gwt.rpc

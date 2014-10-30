@@ -8,6 +8,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -27,8 +28,54 @@ private VenueDetailsServiceAsync venueDetailsSvc = GWT.create(VenueDetailsServic
 
 private Label errorMsgLabel = new Label();
 
+private LoginInfo loginInfo = null;
+private VerticalPanel loginPanel = new VerticalPanel();
+private Label loginLabel = new Label(
+    "Please sign in to your Google Account to access the BingeHopper application.");
+private Anchor signInLink = new Anchor("Sign In");
+private Anchor signOutLink = new Anchor("Sign Out");
+
 /**  * Entry point method.  */  public void onModuleLoad() 
 {
+	// Check login status using login service.
+    LoginServiceAsync loginService = GWT.create(LoginService.class);
+    loginService.login(GWT.getHostPageBaseURL(), new AsyncCallback<LoginInfo>() 
+    {
+      public void onFailure(Throwable error) 
+      {
+    	  
+    	  
+      }
+
+      public void onSuccess(LoginInfo result) 
+      {
+        loginInfo = result;
+        if(loginInfo.isLoggedIn()) 
+        {	
+        	loadBingeHopper();
+        }
+        
+        else 
+        {
+            loadLogin();
+        }
+      }
+     });
+}
+
+private void loadLogin() 
+{
+    // Assemble login panel.
+    signInLink.setHref(loginInfo.getLoginUrl());
+    loginPanel.add(loginLabel);
+    loginPanel.add(signInLink);
+    RootPanel.get("venueList").add(loginPanel);
+}
+
+private void loadBingeHopper() 
+{
+	// Set up sign out hyperlink.
+    signOutLink.setHref(loginInfo.getLogoutUrl());
 	
 	// Create table for venue data
 	
@@ -57,7 +104,8 @@ private Label errorMsgLabel = new Label();
 	
 	errorMsgLabel.setStyleName("errorMessage");
     errorMsgLabel.setVisible(false);
-
+    
+    mainPanel.add(signOutLink);
     mainPanel.add(errorMsgLabel);
     mainPanel.add(updatePanel);
 	mainPanel.add(venuesFlexTable);
@@ -73,18 +121,19 @@ private Label errorMsgLabel = new Label();
         refreshVenueList();
       }
     });
-
 }
 
 private void refreshVenueList()
 {
 	
-	if (venueDetailsSvc == null) {
+	if (venueDetailsSvc == null) 
+	{
 	      venueDetailsSvc = GWT.create(VenueDetailsService.class);
-	    }
+	}
 
 	    // Set up the callback object.
-	    AsyncCallback<VenueDetails[]> callback = new AsyncCallback<VenueDetails[]>() {
+	    AsyncCallback<VenueDetails[]> callback = new AsyncCallback<VenueDetails[]>() 
+	    {
 	      public void onFailure(Throwable caught) 
 	      {
 	    	  errorMsgLabel.setText("Error while making call to server");
@@ -95,6 +144,7 @@ private void refreshVenueList()
 	      {
 	    	  addVenues(result);
 	      }
+	      
 	    };
 
 	    // Make the call to the venue price service.

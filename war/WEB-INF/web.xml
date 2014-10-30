@@ -6,6 +6,17 @@
          xmlns="http://java.sun.com/xml/ns/javaee">
 
   <!-- Servlets -->
+  
+  <servlet>
+    <servlet-name>loginService</servlet-name>
+    <servlet-class>com.bingehopper.server.LoginServiceImpl</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>loginService</servlet-name>
+    <url-pattern>/bingehopper/login</url-pattern>
+  </servlet-mapping>
+  
   <servlet>
     <servlet-name>venueDetailsServiceImpl</servlet-name>
     <servlet-class>com.bingehopper.server.VenueDetailsServiceImpl</servlet-class>
