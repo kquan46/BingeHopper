@@ -1,0 +1,3 @@
+# Module bingehopper
+# RPC service class, partial path of RPC policy file
+com.bingehopper.client.VenueDetailsService, BCA37564EF25F71B6B9188784DFD4EED.gwt.rpc

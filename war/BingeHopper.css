@@ -1,0 +1,28 @@
+/* Formatting specific to the StockWatcher application */
+
+body {
+  padding: 10px;
+}
+
+/* venue list header row */
+.venueListHeader {
+  background-color: #2062B8;
+  color: white;
+  font-style: italic;
+}
+
+/* venue list flex table */
+.venueList {
+  border: 1px solid silver;
+  padding: 2px;
+  margin-bottom:6px;
+}
+
+/* Update Venues panel */
+.updatePanel {
+  margin: 10px 0px 15px 0px;
+}
+
+.errorMessage {
+  color: red;
+}
