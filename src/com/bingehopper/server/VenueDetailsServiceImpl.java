@@ -14,6 +14,11 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 		VenueDetailsService {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public VenueDetails[] getPrices() {
 		
@@ -41,7 +46,7 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 	         
 	         // initiates input stream
 	         rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-	         int count = 0;
+	         
 	         // for every iteration of this while loop, line is a String which represents a single line in our csv file (each line is a location)
 	         while ((line = rd.readLine()) != null) 
 	         {
