@@ -26,3 +26,30 @@ body {
 .errorMessage {
   color: red;
 }
+
+/* login page */
+/* welcome text */
+.welcomeText {
+	font-size: 68px;
+	text-align: center;
+	position: relative;
+	left: 30%;
+}
+
+/* app description */
+.appDescription {
+	font-size: 18px;
+	max-width: 550px;
+	float:left;
+	padding-left: 200px;
+	
+}
+
+/* sign in link */
+.signInLink {
+	font-size: 78px;
+	text-decoration: none;
+	position: absolute;
+	top: 300px;
+	padding-left: 950px;
+}
