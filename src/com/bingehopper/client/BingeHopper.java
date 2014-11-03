@@ -14,6 +14,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -45,7 +46,18 @@ private Label errorMsgLabel = new Label();
 
 private LoginInfo loginInfo = null;
 private VerticalPanel loginPanel = new VerticalPanel();
-private Label loginLabel = new Label("Please sign in to your Google Account to access the BingeHopper application.");
+//private Label loginLabel = new Label("Please sign in to your Google Account to access the BingeHopper application.");
+private Label welcomeText = new Label("Welcome to BingeHopper!");
+private HTML appDescription = new HTML("<p>This app aims to provide people with the capacity to search for"
+		+ " and navigate to multiple local Venues that have liquor licenses in British Columbia. "
+		+ "This is done through the extension of Google, meaning that users of this app will be asked "
+		+ "to login via their Google Accounts before they are provided this service.</p>"
+		+ "<p>Once logged in, users will be able to see a list of venues with liquor licenses. "
+		+ "Provided a set of search parameters, users can further fine tune their search for their "
+		+ "desired destinations. Users can then add venues to their bookmarks list and view those "
+		+ "locations on a map. Users can then select each location for a brief description of the Venue.</p>"
+		+ "<p>Enjoying the night with friends is encouraged. Users are able to share locations with their "
+		+ "friends via Google+ integration.</p>");
 private Anchor signInLink = new Anchor("Sign In");
 private Anchor signOutLink = new Anchor("Sign Out");
 
@@ -82,9 +94,16 @@ private void loadLogin()
 {
     // Assemble login panel.
     signInLink.setHref(loginInfo.getLoginUrl());
-    loginPanel.add(loginLabel);
+    loginPanel.add(welcomeText);
+    loginPanel.add(appDescription);
+//    loginPanel.add(loginLabel);
     loginPanel.add(signInLink);
     RootPanel.get("venueList").add(loginPanel);
+    
+    // Add styles to elements in the login page.
+    welcomeText.addStyleName("welcomeText");
+    appDescription.addStyleName("appDescription");
+    signInLink.addStyleName("signInLink");
 }
 
 private void loadBingeHopper() 
