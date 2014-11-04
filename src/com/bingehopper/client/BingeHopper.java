@@ -30,6 +30,7 @@ private VerticalPanel mainPanel = new VerticalPanel();
 private FlexTable venuesFlexTable = new FlexTable();  
 private HorizontalPanel updatePanel = new HorizontalPanel();
 private HorizontalPanel searchPanel = new HorizontalPanel();
+private HorizontalPanel likePanel = new HorizontalPanel();
 private Button updateVenuesButton = new Button("Update");
 private Label lastUpdatedLabel = new Label();
 private Button searchVenuesButton = new Button("Search by name");
@@ -38,6 +39,8 @@ private Button searchAddressButton = new Button("Search by address");
 private TextBox addressBox = new TextBox();
 private Label typeLabel = new Label("Type");
 private ListBox typeListBox = new ListBox();
+private String fbHtml = "<div class='fb-like' data-href='http://teamfantastic310.appspot.com/' data-layout='button_count' data-action='like' data-show-faces='true' data-share='true'></div>";
+private HTML likeHtml = new HTML(fbHtml);
 
 
 private VenueDetailsServiceAsync venueDetailsSvc = GWT.create(VenueDetailsService.class);
@@ -46,7 +49,7 @@ private Label errorMsgLabel = new Label();
 
 private LoginInfo loginInfo = null;
 private VerticalPanel loginPanel = new VerticalPanel();
-//private Label loginLabel = new Label("Please sign in to your Google Account to access the BingeHopper application.");
+private Label loginLabel = new Label("Please sign in to your Google Account to access the BingeHopper application.");
 private Label welcomeText = new Label("Welcome to BingeHopper!");
 private HTML appDescription = new HTML("<p>This app aims to provide people with the capacity to search for"
 		+ " and navigate to multiple local Venues that have liquor licenses in British Columbia. "
@@ -96,7 +99,7 @@ private void loadLogin()
     signInLink.setHref(loginInfo.getLoginUrl());
     loginPanel.add(welcomeText);
     loginPanel.add(appDescription);
-//    loginPanel.add(loginLabel);
+    loginPanel.add(loginLabel);
     loginPanel.add(signInLink);
     RootPanel.get("venueList").add(loginPanel);
     
@@ -120,6 +123,10 @@ private void loadBingeHopper()
 	updatePanel.add(updateVenuesButton);
 	updatePanel.add(lastUpdatedLabel);
 	updatePanel.addStyleName("updatePanel");
+	
+	// Assemble Facebook like panel
+	likePanel.add(likeHtml);
+	likePanel.addStyleName("fbLikePanel");
 	
 	// Assemble Search Venues panel
 	
@@ -147,9 +154,9 @@ private void loadBingeHopper()
     mainPanel.add(signOutLink);
     mainPanel.add(errorMsgLabel);
     mainPanel.add(updatePanel);
+    mainPanel.add(likePanel);
     mainPanel.add(searchPanel);
 	mainPanel.add(venuesFlexTable);
-	
 	
 	// Associate the Main panel with the HTML host page.
 	RootPanel.get("venueList").add(mainPanel);
@@ -189,6 +196,7 @@ private void setUpFirstRow() {
 	venuesFlexTable.setText(0, 5, "Telephone");
 	venuesFlexTable.setText(0, 6, "Type");
 	venuesFlexTable.setText(0, 7, "Capacity");
+	venuesFlexTable.setText(0, 8, "Share");
 	
 	// Add styles to elements in the venue list table.
     venuesFlexTable.getRowFormatter().addStyleName(0, "venueListHeader");

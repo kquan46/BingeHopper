@@ -4,6 +4,12 @@ body {
   padding: 10px;
 }
 
+
+/* Facebook like panel */
+.fbLikePanel{ 
+   border:1px solid green;
+}
+
 /* venue list header row */
 .venueListHeader {
   background-color: #2062B8;
