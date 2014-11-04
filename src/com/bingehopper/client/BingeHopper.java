@@ -16,9 +16,11 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -42,6 +44,12 @@ private ListBox typeListBox = new ListBox();
 private String fbHtml = "<div class='fb-like' data-href='http://teamfantastic310.appspot.com/' data-layout='button_count' data-action='like' data-show-faces='true' data-share='true'></div>";
 private HTML likeHtml = new HTML(fbHtml);
 
+private TabPanel tabs = new TabPanel();
+private VerticalPanel searchTab = new VerticalPanel();
+private VerticalPanel bookmarksTab = new VerticalPanel();
+private VerticalPanel visitedTab = new VerticalPanel();
+private VerticalPanel mapTab = new VerticalPanel();
+private VerticalPanel socialTab = new VerticalPanel();
 
 private VenueDetailsServiceAsync venueDetailsSvc = GWT.create(VenueDetailsService.class);
 
@@ -111,6 +119,7 @@ private void loadLogin()
 
 private void loadBingeHopper() 
 {
+	
 	// Set up sign out hyperlink.
     signOutLink.setHref(loginInfo.getLogoutUrl());
 	
@@ -153,10 +162,10 @@ private void loadBingeHopper()
     
     mainPanel.add(signOutLink);
     mainPanel.add(errorMsgLabel);
-    mainPanel.add(updatePanel);
-    mainPanel.add(likePanel);
-    mainPanel.add(searchPanel);
-	mainPanel.add(venuesFlexTable);
+    //mainPanel.add(updatePanel);
+    //mainPanel.add(likePanel);
+    //mainPanel.add(searchPanel);
+	//mainPanel.add(venuesFlexTable);
 	
 	// Associate the Main panel with the HTML host page.
 	RootPanel.get("venueList").add(mainPanel);
@@ -184,6 +193,50 @@ private void loadBingeHopper()
    	  
      }
     });
+    
+    
+    // ----------- TABS --------------
+    //
+    // Organize Search Tab
+    searchTab.add(updatePanel);
+    searchTab.add(searchPanel);
+    searchTab.add(venuesFlexTable);
+    
+    // Organize Bookmarks Tab
+    Label bookmarksTest = new Label("I am a bookmark. Fear me.");
+    bookmarksTab.add(bookmarksTest);
+    
+    // Organize Visited Tab
+    Label visitedTest = new Label("You have visited me. Fear me as well.");
+    visitedTab.add(visitedTest);
+    
+    // Organize Map Tab
+    Label mapTest = new Label("I solemnly swear I'm up to no good.");
+    mapTab.add(mapTest);
+    
+    // Organize Social Tab
+    socialTab.add(likePanel);
+ 
+    // configure tabs
+	Image cha = new Image();
+	cha.setUrl("sprouting-cha.gif");
+	tabs.add(new HTML("I am Cha"), cha);
+    
+	tabs.add(searchTab, "Search");
+	tabs.add(bookmarksTab, "Bookmarks");
+	tabs.add(visitedTab, "Visited");
+	tabs.add(mapTab, "Map");
+	tabs.add(socialTab, "Social");
+
+	
+	// show the 'map' tab initially
+	tabs.selectTab(4);
+	
+	// add to mainPanel
+	mainPanel.add(tabs);
+	
+	// set stylename for tabs
+	tabs.setStyleName("tabs");
 
 }
 

@@ -59,3 +59,10 @@ body {
 	top: 300px;
 	padding-left: 950px;
 }
+
+/* tabs */
+.tabs {
+	width:1700px;
+	height: 800px;
+	padding-left: 15%;
+}
