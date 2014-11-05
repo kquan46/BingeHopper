@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TabBar;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -221,8 +222,14 @@ private void loadBingeHopper()
 	Image cha = new Image();
 	cha.setUrl("sprouting-cha.gif");
 	tabs.add(new HTML("I am Cha"), cha);
+	
+	//Image link = new Image();
+	//link.setUrl("1.jpg");
     
-	tabs.add(searchTab, "Search");
+    cha.setStyleName("tabIcon");
+    //link.setStyleName("tabIcon");
+    
+    tabs.add(searchTab, "Search");
 	tabs.add(bookmarksTab, "Bookmarks");
 	tabs.add(visitedTab, "Visited");
 	tabs.add(mapTab, "Map");
