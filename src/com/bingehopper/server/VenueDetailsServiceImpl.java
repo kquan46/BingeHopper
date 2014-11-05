@@ -56,10 +56,11 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 	        	// venue is an array of strings such that venue[i] is the i'th item in the current line, so venue[0] is the name of establishment, venue[1] is the address line 1 (refer to csv)
 	            String[] venue = line.split(splitBy);
 	            
-	            VenueDetails location = new VenueDetails ();
+	            VenueDetails location = new VenueDetails (venue[0], venue[1], venue[2], venue[3], 
+	            		venue[4], venue[10], venue[11], venue[12]);
 	            
 	            // helper method to assign the fields of VenueDetails object
-	            setValues (location,venue);
+	            //setValues (location,venue);
 	            
 	            listOfVenues.add(location);
 	            
@@ -89,7 +90,7 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 		
 	}
 	
-	public static void setValues (VenueDetails location, String[] venue)
+/*	public static void setValues (VenueDetails location, String[] venue)
 	   {
 		   
 		   location.setVenueName(venue[0]);
@@ -103,4 +104,4 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 		   
 	   }
 
-}
+}*/
