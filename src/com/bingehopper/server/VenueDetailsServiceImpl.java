@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.bingehopper.client.VenueDetails;
 import com.bingehopper.client.VenueDetailsService;
@@ -20,7 +21,7 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public VenueDetails[] getPrices() {
+	public List<VenueDetails> getPrices() {
 		
 		  URL url;
 	      
@@ -83,9 +84,9 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 	         
 	      }
 	      
-		VenueDetails[] arrayOfVenues = new VenueDetails[listOfVenues.size()];
-		arrayOfVenues = listOfVenues.toArray(arrayOfVenues);
-		return arrayOfVenues;
+//		VenueDetails[] arrayOfVenues = new VenueDetails[listOfVenues.size()];
+//		arrayOfVenues = listOfVenues.toArray(arrayOfVenues);
+		return listOfVenues;
 		
 	}
 	

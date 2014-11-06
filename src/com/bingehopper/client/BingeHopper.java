@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -30,6 +31,9 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.view.client.AsyncDataProvider;
+import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
@@ -42,7 +46,7 @@ public class BingeHopper implements EntryPoint {
 	private HorizontalPanel searchPanel = new HorizontalPanel();
 	private HorizontalPanel likePanel = new HorizontalPanel();
 	private Button updateVenuesButton = new Button("Update");
-	private Label lastUpdatedLabel = new Label();
+	private static Label lastUpdatedLabel = new Label();
 	private Button searchButton = new Button("Search");
 	private Label nameLabel = new Label("Name");
 	private TextBox nameBox = new TextBox();
@@ -55,10 +59,10 @@ public class BingeHopper implements EntryPoint {
 	private String fbHtml = "<div class='fb-like' data-href='http://teamfantastic310.appspot.com/' data-layout='button_count' data-action='like' data-show-faces='true' data-share='true'></div>";
 	private HTML likeHtml = new HTML(fbHtml);
 
-	private VenueDetailsServiceAsync venueDetailsSvc = GWT
+	private static VenueDetailsServiceAsync venueDetailsSvc = GWT
 			.create(VenueDetailsService.class);
 
-	private Label errorMsgLabel = new Label();
+	private static Label errorMsgLabel = new Label();
 
 	private LoginInfo loginInfo = null;
 	private VerticalPanel loginPanel = new VerticalPanel();
@@ -274,7 +278,7 @@ public class BingeHopper implements EntryPoint {
 		venuesFlexTable.addStyleName("venueList");
 	}
 
-	private void setUpCellTable() {
+	/*private void setUpCellTable() {
 		// Create a CellTable
 		CellTable<VenueDetails> table = new CellTable<VenueDetails>();
 		// table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
@@ -364,8 +368,55 @@ public class BingeHopper implements EntryPoint {
 		RootPanel.get().add(table);
 	
 
-	}
+	}*/
+	/**
+	   * A custom {@link AsyncDataProvider}.
+	   */
+	  private static class MyDataProvider extends AsyncDataProvider<String> {
+	    /**
+	     * {@link #onRangeChanged(HasData)} is called when the table requests a new
+	     * range of data. You can push data back to the displays using
+	     * {@link #updateRowData(int, List)}.
+	     */
+	    @Override
+	    protected void onRangeChanged(HasData<String> display) {
+	      // Get the new range.
+	      final Range range = display.getVisibleRange();
 
+	      /*
+	       * Query the data asynchronously. If you are using a database, you can
+	       * make an RPC call here. We'll use a Timer to simulate a delay.
+	       */
+	      if (venueDetailsSvc == null) {
+				venueDetailsSvc = GWT.create(VenueDetailsService.class);
+			}
+			// Set up the callback object.
+			AsyncCallback<List<VenueDetails>> callback = new AsyncCallback<List<VenueDetails>>() {
+				public void onFailure(Throwable caught) {
+					errorMsgLabel.setText("Error while making call to server");
+					errorMsgLabel.setVisible(true);
+				}
+
+				public void onSuccess(List<VenueDetails> result) { 
+					// Push the data to the displays. AsyncDataProvider will only update
+			          // displays that are within range of the data.
+					//VenueDetails[] venues = cleanVenueArray(result);
+					List<VenueDetails> VENUES = Arrays.asList();
+					updateRowData(1, VENUES);
+				}
+			};
+	    
+			lastUpdatedLabel.setText("Last update : "
+					+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
+			// Make the call to the venue price service.
+			venueDetailsSvc.getPrices(callback);
+		
+
+	         
+	        
+	      
+	    
+	  }
 	private void searchVenues(final String name, final String address,
 			final String city, final String type) {
 		if (venueDetailsSvc == null) {
@@ -488,7 +539,7 @@ public class BingeHopper implements EntryPoint {
 	 * Takes list of venues minues the first row, removes empty venue names, and
 	 * sorts it alphabetically;
 	 */
-	private VenueDetails[] cleanVenueArray(VenueDetails[] venues) {
+	private static VenueDetails[] cleanVenueArray(VenueDetails[] venues) {
 		VenueDetails[] results = new VenueDetails[(venues.length) - 1];
 		for (int i = 0; i < results.length; i++) {
 			results[i] = venues[i + 1]; // first row is field parameters

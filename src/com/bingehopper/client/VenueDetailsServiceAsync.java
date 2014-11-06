@@ -1,9 +1,11 @@
 package com.bingehopper.client;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface VenueDetailsServiceAsync {
 
-	void getPrices(AsyncCallback<VenueDetails[]> callback);
+	void getPrices(AsyncCallback<List<VenueDetails>> callback);
 
 }
