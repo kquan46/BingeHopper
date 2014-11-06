@@ -333,14 +333,13 @@ private void loadBingeHopper()
 
 private void setUpFirstRow() {
 	venuesFlexTable.setText(0, 0, "Name");  
-	venuesFlexTable.setText(0, 1, "Address Line 1");  
-	venuesFlexTable.setText(0, 2, "Address Line 2");  
-	venuesFlexTable.setText(0, 3, "City");
-	venuesFlexTable.setText(0, 4, "Postal Code");
-	venuesFlexTable.setText(0, 5, "Telephone");
-	venuesFlexTable.setText(0, 6, "Type");
-	venuesFlexTable.setText(0, 7, "Capacity");
-	venuesFlexTable.setText(0, 8, "Share");
+	venuesFlexTable.setText(0, 1, "Address"); 
+	venuesFlexTable.setText(0, 2, "City");
+	venuesFlexTable.setText(0, 3, "Postal Code");
+	venuesFlexTable.setText(0, 4, "Telephone");
+	venuesFlexTable.setText(0, 5, "Type");
+	venuesFlexTable.setText(0, 6, "Capacity");
+	venuesFlexTable.setText(0, 7, "Share");
 	
 	// Add styles to elements in the venue list table.
     venuesFlexTable.getRowFormatter().addStyleName(0, "venueListHeader");
