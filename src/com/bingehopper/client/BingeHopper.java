@@ -4,6 +4,8 @@ package com.bingehopper.client;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Set;
+import java.util.TreeSet;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -38,7 +40,9 @@ private TextBox searchBox = new TextBox();
 private Button searchAddressButton = new Button("Search by address");
 private TextBox addressBox = new TextBox();
 private Label typeLabel = new Label("Type");
+private Label cityLabel = new Label("City");
 private ListBox typeListBox = new ListBox();
+private ListBox cityListBox = new ListBox();
 private String fbHtml = "<div class='fb-like' data-href='http://teamfantastic310.appspot.com/' data-layout='button_count' data-action='like' data-show-faces='true' data-share='true'></div>";
 private HTML likeHtml = new HTML(fbHtml);
 
@@ -130,20 +134,61 @@ private void loadBingeHopper()
 	
 	// Assemble Search Venues panel
 	
-	searchPanel.add (searchVenuesButton);
-	searchPanel.add (searchBox);
-	searchPanel.add (searchAddressButton);
-	searchPanel.add (addressBox);
-	searchPanel.add (typeLabel);
+	searchPanel.add(searchVenuesButton);
+	searchPanel.add(searchBox);
+	searchPanel.add(searchAddressButton);
+	searchPanel.add(addressBox);
+	
+	searchPanel.add(cityLabel);	
+	cityListBox.addItem("All");
+	cityListBox.addItem("Abbotsford");
+	cityListBox.addItem("Aldergrove");
+	cityListBox.addItem("Bamfield");
+	cityListBox.addItem("Barkerville");
+	cityListBox.addItem("Bowen Island");
+	cityListBox.addItem("Burnaby");
+	cityListBox.addItem("Chilliwack");
+	cityListBox.addItem("Cloverdale");
+	cityListBox.addItem("Coquitlam");
+	cityListBox.addItem("Delta");
+	cityListBox.addItem("Fort Langley");
+	cityListBox.addItem("Hoarrison Hot Springs");
+	cityListBox.addItem("Kelowna");
+	cityListBox.addItem("Lake Cowichan");
+	cityListBox.addItem("Langley");
+	cityListBox.addItem("Mission");
+	cityListBox.addItem("Nanaimo");
+	cityListBox.addItem("New Westminster");
+	cityListBox.addItem("North Vancouver");
+	cityListBox.addItem("Parksville");
+	cityListBox.addItem("Pemberton");
+	cityListBox.addItem("Pitt Meadows");
+	cityListBox.addItem("Port Coquitlam");
+	cityListBox.addItem("Port Moody");
+	cityListBox.addItem("Prince George");
+	cityListBox.addItem("Prince Rupert");
+	cityListBox.addItem("Richmond");
+	cityListBox.addItem("Squamish");
+	cityListBox.addItem("Surrey");
+	cityListBox.addItem("Terrace");
+	cityListBox.addItem("Tsawwassen");
+	cityListBox.addItem("Vancouver");
+	cityListBox.addItem("Victoria");
+	cityListBox.addItem("West Vancouver");
+	cityListBox.addItem("Whistler");
+	cityListBox.addItem("White Rock");
+	searchPanel.add(cityListBox);
+	
+	searchPanel.add(typeLabel);
 	typeListBox.addItem("All");
-	typeListBox.addItem("Ubrew/Uvin");
 	typeListBox.addItem("Food Primary");
+	typeListBox.addItem("Independant Agent");
+	typeListBox.addItem("Licensee Retail Store");
 	typeListBox.addItem("Liquor Primary");
 	typeListBox.addItem("Manufacturer Agent");
+	typeListBox.addItem("Ubrew/Uvin");
+	typeListBox.addItem("Wine Store");
 	typeListBox.addItem("Winery");
-	typeListBox.addItem("Licensee Retail Store");
-	typeListBox.addItem("Independant Agent");
-	searchPanel.add(typeLabel);
 	searchPanel.add(typeListBox);
 	
 	// Assemble Main panel.
@@ -189,8 +234,7 @@ private void loadBingeHopper()
 
 private void setUpFirstRow() {
 	venuesFlexTable.setText(0, 0, "Name");  
-	venuesFlexTable.setText(0, 1, "Address Line 1");  
-	venuesFlexTable.setText(0, 2, "Address Line 2");  
+	venuesFlexTable.setText(0, 1, "Address");   
 	venuesFlexTable.setText(0, 3, "City");
 	venuesFlexTable.setText(0, 4, "Postal Code");
 	venuesFlexTable.setText(0, 5, "Telephone");
@@ -242,8 +286,8 @@ private void refreshVenueList()
 	      public void onSuccess(VenueDetails[] result) 
 	      {
 	    	  
-	    	  VenueDetails[] resultsAppended = new VenueDetails[(result.length)-1];
-	    	  for (int i=0;i<resultsAppended.length;i++)
+	    	  VenueDetails[] resultsAppended = new VenueDetails[200];  //VenueDetails[(result.length)-1];
+	    	  for (int i=0;i<200;i++)  //(int i=0;i<resultsAppended.length;i++)
 	    	  {
 	    		  
 	    		  resultsAppended[i] = result[i+1];
@@ -293,7 +337,7 @@ private void refreshVenueList(final String searchName)
 
 	      public void onSuccess(VenueDetails[] result) 
 	      {
-	    	  
+	    	  findCity(result);
 	    	  searchAndAppend (result,searchName);
 	    	  
 
@@ -307,6 +351,14 @@ private void refreshVenueList(final String searchName)
 	    // Make the call to the venue price service.
 	    venueDetailsSvc.getPrices(callback);
 	
+}
+private void findCity(VenueDetails[] result){
+	Set<String> cities = new TreeSet<String>();
+	for (VenueDetails venue : result){
+		cities.add(venue.getVenueType());
+	}
+	System.out.println(cities);
+	System.out.println(cities.toString());
 }
 
 private void searchAndAppend (VenueDetails[] result,String searchName)
@@ -358,12 +410,11 @@ private void addVenues(VenueDetails[] venues)
 		
 	    venuesFlexTable.setText(i+1, 0, venues[i].getVenueName());
 	    venuesFlexTable.setText(i+1, 1, venues[i].getVenueAdd1());
-	    venuesFlexTable.setText(i+1, 2, venues[i].getVenueAdd2());
-	    venuesFlexTable.setText(i+1, 3, venues[i].getVenueCity());
-	    venuesFlexTable.setText(i+1, 4, venues[i].getVenuePostal());
-	    venuesFlexTable.setText(i+1, 5, venues[i].getVenuePhone());
-	    venuesFlexTable.setText(i+1, 6, venues[i].getVenueType());
-	    venuesFlexTable.setText(i+1, 7, venues[i].getVenueCapacity());
+	    venuesFlexTable.setText(i+1, 2, venues[i].getVenueCity());
+	    venuesFlexTable.setText(i+1, 3, venues[i].getVenuePostal());
+	    venuesFlexTable.setText(i+1, 4, venues[i].getVenuePhone());
+	    venuesFlexTable.setText(i+1, 5, venues[i].getVenueType());
+	    venuesFlexTable.setText(i+1, 6, venues[i].getVenueCapacity());
 	    
 	  }
 	  
