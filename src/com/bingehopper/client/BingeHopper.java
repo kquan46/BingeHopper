@@ -160,11 +160,11 @@ private void loadBingeHopper()
 	errorMsgLabel.setStyleName("errorMessage");
     errorMsgLabel.setVisible(false);
     
-    mainPanel.add(likePanel);
-    mainPanel.add(tweetPanel);
     mainPanel.add(signOutLink);
     mainPanel.add(errorMsgLabel);
     mainPanel.add(updatePanel);
+    mainPanel.add(likePanel);
+    mainPanel.add(tweetPanel);
     mainPanel.add(searchPanel);
 	mainPanel.add(venuesFlexTable);
 	
