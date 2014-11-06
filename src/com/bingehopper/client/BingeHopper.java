@@ -16,9 +16,12 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TabBar;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -46,6 +49,12 @@ private String twtrHtml = "<a href='https://twitter.com/share' class='twitter-sh
 private HTML twitterHtml = new HTML(twtrHtml);
 private HTML twtfcn = new HTML("<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>");
 
+private TabPanel tabs = new TabPanel();
+private VerticalPanel searchTab = new VerticalPanel();
+private VerticalPanel bookmarksTab = new VerticalPanel();
+private VerticalPanel visitedTab = new VerticalPanel();
+private VerticalPanel mapTab = new VerticalPanel();
+private VerticalPanel socialTab = new VerticalPanel();
 
 private VenueDetailsServiceAsync venueDetailsSvc = GWT.create(VenueDetailsService.class);
 
@@ -115,8 +124,10 @@ private void loadLogin()
 
 private void loadBingeHopper() 
 {
+	
 	// Set up sign out hyperlink.
     signOutLink.setHref(loginInfo.getLogoutUrl());
+    signOutLink.addStyleName("signOutLink");
 	
 	// Create table for venue data
 	
@@ -162,11 +173,6 @@ private void loadBingeHopper()
     
     mainPanel.add(signOutLink);
     mainPanel.add(errorMsgLabel);
-    mainPanel.add(updatePanel);
-    mainPanel.add(likePanel);
-    mainPanel.add(tweetPanel);
-    mainPanel.add(searchPanel);
-	mainPanel.add(venuesFlexTable);
 	
 	// Associate the Main panel with the HTML host page.
 	RootPanel.get("venueList").add(mainPanel);
@@ -194,6 +200,53 @@ private void loadBingeHopper()
    	  
      }
     });
+    
+    
+    // ----------- TABS --------------
+    //
+    // Organize Search Tab
+    searchTab.add(updatePanel);
+    searchTab.add(searchPanel);
+    searchTab.add(venuesFlexTable);
+    
+    // Organize Bookmarks Tab
+    Label bookmarksTest = new Label("I am a bookmark. Fear me.");
+    bookmarksTab.add(bookmarksTest);
+    
+    // Organize Visited Tab
+    Label visitedTest = new Label("You have visited me. Fear me as well.");
+    visitedTab.add(visitedTest);
+    
+    // Organize Map Tab
+    Label mapTest = new Label("I solemnly swear I'm up to no good.");
+    mapTab.add(mapTest);
+    
+    // Organize Social Tab
+    socialTab.add(likePanel);
+ 
+    // configure tabs
+	//Image cha = new Image();
+	//cha.setUrl("sprouting-cha.gif");
+	//tabs.add(new HTML("I am Cha"), cha);
+    
+    //cha.addStyleName("tabIcon");
+    //link.addStyleName("tabIcon");
+    
+    tabs.add(searchTab, "Search");
+	tabs.add(bookmarksTab, "Bookmarks");
+	tabs.add(visitedTab, "Visited");
+	tabs.add(mapTab, "Map");
+	tabs.add(socialTab, "Social");
+
+	
+	// show the 'map' tab initially
+	tabs.selectTab(3);
+	
+	// add to mainPanel
+	mainPanel.add(tabs);
+	
+	// set stylename for tabs
+	tabs.setStyleName("tabs");
 
 }
 
