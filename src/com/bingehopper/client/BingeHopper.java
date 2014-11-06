@@ -15,6 +15,10 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -26,6 +30,8 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 public class BingeHopper implements EntryPoint {
 
@@ -268,6 +274,98 @@ public class BingeHopper implements EntryPoint {
 		venuesFlexTable.addStyleName("venueList");
 	}
 
+	private void setUpCellTable() {
+		// Create a CellTable
+		CellTable<VenueDetails> table = new CellTable<VenueDetails>();
+		// table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
+
+		// Add a text column to show the name.
+		TextColumn<VenueDetails> nameColumn = new TextColumn<VenueDetails>() {
+			@Override
+			public String getValue(VenueDetails venue) {
+				return venue.getVenueName();
+			}
+		};
+		table.addColumn(nameColumn, "Name");
+
+		// Add a text column to show the address.
+		TextColumn<VenueDetails> addressColumn = new TextColumn<VenueDetails>() {
+			@Override
+			public String getValue(VenueDetails venue) {
+				return venue.getVenueAdd1();
+			}
+		};
+		table.addColumn(addressColumn, "Address");
+
+		// Add a text column to show the city.
+		TextColumn<VenueDetails> cityColumn = new TextColumn<VenueDetails>() {
+			@Override
+			public String getValue(VenueDetails venue) {
+				return venue.getVenueCity();
+			}
+		};
+		table.addColumn(cityColumn, "City");
+
+		// Add a text column to show the postal code.
+		TextColumn<VenueDetails> postalCodeColumn = new TextColumn<VenueDetails>() {
+			@Override
+			public String getValue(VenueDetails venue) {
+				return venue.getVenuePostal();
+			}
+		};
+		table.addColumn(postalCodeColumn, "Postal Code");
+
+		// Add a text column to show the telephone number.
+		TextColumn<VenueDetails> telephoneColumn = new TextColumn<VenueDetails>() {
+			@Override
+			public String getValue(VenueDetails venue) {
+				return venue.getVenuePhone();
+			}
+		};
+		table.addColumn(telephoneColumn, "Telephone");
+
+		// Add a text column to show the establishment type.
+		TextColumn<VenueDetails> typeColumn = new TextColumn<VenueDetails>() {
+			@Override
+			public String getValue(VenueDetails venue) {
+				return venue.getVenueType();
+			}
+		};
+		table.addColumn(typeColumn, "Type");
+
+		// Add a text column to show the capacity.
+		TextColumn<VenueDetails> capacityColumn = new TextColumn<VenueDetails>() {
+			@Override
+			public String getValue(VenueDetails venue) {
+				return venue.getVenueCapacity();
+			}
+		};
+		table.addColumn(capacityColumn, "Capacity");
+		
+		// Add a selection model to handle user selection
+		final SingleSelectionModel<VenueDetails> selectionModel = new SingleSelectionModel<VenueDetails>();
+		table.setSelectionModel(selectionModel);;
+		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			public void onSelectionChange(SelectionChangeEvent event) {
+				VenueDetails selected = selectionModel.getSelectedObject();
+				if (selected != null) {
+					Window.alert("You selected: " +selected.getVenueName());
+				}
+			}
+		});
+		
+		// Set the total row count to keep the row count up to date for paging calculations
+		table.setRowCount(VenueDetails[].size(), true);
+		
+		// Push the data into the widget
+		table.setRowData(0, VenueDetails[]);
+		
+		// Add it to the root panel
+		RootPanel.get().add(table);
+	
+
+	}
+
 	private void searchVenues(final String name, final String address,
 			final String city, final String type) {
 		if (venueDetailsSvc == null) {
@@ -423,9 +521,7 @@ public class BingeHopper implements EntryPoint {
 			venuesFlexTable.setText(i + 1, 4, venues[i].getVenuePhone());
 			venuesFlexTable.setText(i + 1, 5, venues[i].getVenueType());
 			venuesFlexTable.setText(i + 1, 6, venues[i].getVenueCapacity());
-
 		}
-
 	}
 
 }
