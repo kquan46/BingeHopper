@@ -104,11 +104,13 @@ public void onModuleLoad()
         loginInfo = result;
         if(loginInfo.isLoggedIn()) 
         {	
+        	System.out.println("loadBingeHopper");
         	loadBingeHopper();
         }
         
         else 
         {
+        	System.out.println("loadLogin");
             loadLogin();
         }
       }
