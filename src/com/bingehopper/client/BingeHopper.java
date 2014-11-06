@@ -249,7 +249,7 @@ private void refreshVenueList()
 	    		  resultsAppended[i] = result[i+1];
 	    		  
 	    	  }
-	    	  
+	    	  Arrays.sort(resultsAppended);
 	    	  addVenues(resultsAppended);
 	    	  
 	      }
@@ -263,6 +263,17 @@ private void refreshVenueList()
 	
 }
 
+/**
+ * Takes list of venues minues the first row and sorts it alphabetically;
+ */
+private VenueDetails[] cleanVenueList(VenueDetails[] venues) {
+	VenueDetails[] results = new VenueDetails[(venues.length)-1];  //don't want first row of field paramters
+	for (int i=0; i<results.length; i++) {
+		results[i] = venues[i+1];  //first row is field paramters
+	}
+	Arrays.sort(results);
+	return results;
+}
 private void refreshVenueList(final String searchName)
 {
 	
@@ -309,6 +320,7 @@ private void searchAndAppend (VenueDetails[] result,String searchName)
 	VenueDetails[] appendedAsArray = new VenueDetails[appended.size()];
 	appendedAsArray = appended.toArray(new VenueDetails[appended.size()]);
 	System.out.println("reached");
+	Arrays.sort(appendedAsArray);
 	addVenues(appendedAsArray);
 	
 }
