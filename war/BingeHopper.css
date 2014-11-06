@@ -2,7 +2,7 @@
 
 body {
   padding: 10px;
-  background: #b7f4e4;
+  background-color: #c9f2ec !important;
 }
 
 
@@ -57,19 +57,31 @@ body {
 	font-size: 78px;
 	text-decoration: none;
 	position: absolute;
+	padding-right: 300px;
 	top: 300px;
 	left: 875px;
+}
+
+/* sign out link */
+.signOutLink {
+	position: absolute;
+	top: 20px;
+	right: 150px;
+	padding: 10px;
 }
 
 /* tabs */
 .gwt-TabPanelBottom {
 	border: none !important;
+	background-color: white;
+	min-width: 1550px !important;
+	min-height: 800px !important;
+	margin-bottom: 50px;
 }
 
 .tabs {
-	min-width:1700px;
-	min-height: 800px;
-	padding-left: 15%;
+	padding-left: 175px;
+	padding-right: 125px;
 }
 
 /* tabBar */
@@ -77,11 +89,18 @@ body {
 	position: absolute;
 	transform: rotate(90deg);
 	bottom: -450px;
-	right: 750px;
+	right: 850px;
 }
 
 .gwt-TabBarItem {
+	background-color: white !important;
 	transform: rotate(-90deg);
+	width: 65px;
+	height: 65px;
+}
+
+.gwt-TabBarItem-selected {
+	background-color: #b3dbd6 !important;
 }
 
 /* tabIcon */

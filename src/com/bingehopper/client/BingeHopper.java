@@ -33,6 +33,7 @@ private VerticalPanel mainPanel = new VerticalPanel();
 private FlexTable venuesFlexTable = new FlexTable();  
 private HorizontalPanel updatePanel = new HorizontalPanel();
 private HorizontalPanel searchPanel = new HorizontalPanel();
+private FlexTable bookmarksFlexTable = new FlexTable();
 private HorizontalPanel likePanel = new HorizontalPanel();
 private Button updateVenuesButton = new Button("Update");
 private Label lastUpdatedLabel = new Label();
@@ -123,6 +124,7 @@ private void loadBingeHopper()
 	
 	// Set up sign out hyperlink.
     signOutLink.setHref(loginInfo.getLogoutUrl());
+    signOutLink.addStyleName("signOutLink");
 	
 	// Create table for venue data
 	
@@ -156,6 +158,8 @@ private void loadBingeHopper()
 	searchPanel.add(typeLabel);
 	searchPanel.add(typeListBox);
 	
+	// Assemble Bookmarks Panel
+	
 	// Assemble Main panel.
 	
 	errorMsgLabel.setStyleName("errorMessage");
@@ -163,10 +167,6 @@ private void loadBingeHopper()
     
     mainPanel.add(signOutLink);
     mainPanel.add(errorMsgLabel);
-    //mainPanel.add(updatePanel);
-    //mainPanel.add(likePanel);
-    //mainPanel.add(searchPanel);
-	//mainPanel.add(venuesFlexTable);
 	
 	// Associate the Main panel with the HTML host page.
 	RootPanel.get("venueList").add(mainPanel);
@@ -219,15 +219,12 @@ private void loadBingeHopper()
     socialTab.add(likePanel);
  
     // configure tabs
-	Image cha = new Image();
-	cha.setUrl("sprouting-cha.gif");
-	tabs.add(new HTML("I am Cha"), cha);
-	
-	//Image link = new Image();
-	//link.setUrl("1.jpg");
+	//Image cha = new Image();
+	//cha.setUrl("sprouting-cha.gif");
+	//tabs.add(new HTML("I am Cha"), cha);
     
-    cha.setStyleName("tabIcon");
-    //link.setStyleName("tabIcon");
+    //cha.addStyleName("tabIcon");
+    //link.addStyleName("tabIcon");
     
     tabs.add(searchTab, "Search");
 	tabs.add(bookmarksTab, "Bookmarks");
@@ -237,7 +234,7 @@ private void loadBingeHopper()
 
 	
 	// show the 'map' tab initially
-	tabs.selectTab(4);
+	tabs.selectTab(3);
 	
 	// add to mainPanel
 	mainPanel.add(tabs);
