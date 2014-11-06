@@ -218,7 +218,8 @@ public class BingeHopper implements EntryPoint {
 
 		searchButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				search(nameBox.getText(),
+				searchVenues(
+						nameBox.getText(),
 						addressBox.getText(),
 						cityListBox.getItemText(cityListBox.getSelectedIndex()),
 						typeListBox.getItemText(typeListBox.getSelectedIndex()));
@@ -230,8 +231,9 @@ public class BingeHopper implements EntryPoint {
 		nameBox.addKeyDownHandler(new KeyDownHandler() {
 			public void onKeyDown(KeyDownEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-					search(nameBox.getText(), addressBox.getText(), cityListBox
-							.getItemText(cityListBox.getSelectedIndex()),
+					searchVenues(nameBox.getText(), addressBox.getText(),
+							cityListBox.getItemText(cityListBox
+									.getSelectedIndex()),
 							typeListBox.getItemText(typeListBox
 									.getSelectedIndex()));
 				}
@@ -242,8 +244,9 @@ public class BingeHopper implements EntryPoint {
 		addressBox.addKeyDownHandler(new KeyDownHandler() {
 			public void onKeyDown(KeyDownEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-					search(nameBox.getText(), addressBox.getText(), cityListBox
-							.getItemText(cityListBox.getSelectedIndex()),
+					searchVenues(nameBox.getText(), addressBox.getText(),
+							cityListBox.getItemText(cityListBox
+									.getSelectedIndex()),
 							typeListBox.getItemText(typeListBox
 									.getSelectedIndex()));
 				}
@@ -267,12 +270,11 @@ public class BingeHopper implements EntryPoint {
 		venuesFlexTable.addStyleName("venueList");
 	}
 
-	private void search(final String name, final String address,
+	private void searchVenues(final String name, final String address,
 			final String city, final String type) {
-		/*
-		 * if (venueDetailsSvc == null) { venueDetailsSvc =
-		 * GWT.create(VenueDetailsService.class); }
-		 */
+		if (venueDetailsSvc == null) {
+			venueDetailsSvc = GWT.create(VenueDetailsService.class);
+		}
 		// Set up the callback object.
 		AsyncCallback<VenueDetails[]> callback = new AsyncCallback<VenueDetails[]>() {
 			public void onFailure(Throwable caught) {
@@ -283,11 +285,13 @@ public class BingeHopper implements EntryPoint {
 			public void onSuccess(VenueDetails[] result) {
 				VenueDetails[] venues = cleanVenueArray(result);
 				Arrays.sort(venues);
+				findCity(result); // used to get all cities
 				if (name.isEmpty() && address.isEmpty() && city == "All"
 						&& type == "All") {
 					displayVenues(venues);
 				} else {
-					VenueDetails[] filteredVenueArray = filter(venues, name, address, city, type);
+					VenueDetails[] filteredVenueArray = filter(venues, name,
+							address, city, type);
 					displayVenues(filteredVenueArray);
 				}
 			}
@@ -300,25 +304,61 @@ public class BingeHopper implements EntryPoint {
 
 	private VenueDetails[] filter(VenueDetails[] venues, String name,
 			String address, String city, String type) {
-		if (name.isEmpty() && address.isEmpty() && city == "All"
-				&& type == "All")
-			return venues;
+		if (name.isEmpty() && address.isEmpty() && city.equals("All")
+				&& type.equals("All"))
+			return venues; // empty search returns all venues
 		else {
 			ArrayList<VenueDetails> filteredVenueList = new ArrayList<VenueDetails>();
-			for (int i = 0; i < venues.length; i++) {
-				VenueDetails curr = venues[i];
-				if (curr.getVenueName().trim().toLowerCase().
-						contains(name.trim().toLowerCase())
-						&& curr.getVenueAdd1().trim().toLowerCase()
-								.contains(address.trim().toLowerCase())
-						&& curr.getVenueCity().trim().toLowerCase()
-								.equals(city.trim().toLowerCase())
-						&& curr.getVenueType().trim().toLowerCase()
-								.contains(type.trim().toLowerCase())) {
-
-					filteredVenueList.add(curr);
+			if (city.equals("All")) {
+				if (type.equals("All")) {
+					for (int i = 0; i < venues.length; i++) {
+						VenueDetails curr = venues[i];
+						if (curr.getVenueName().trim().toLowerCase()
+								.contains(name.trim().toLowerCase())
+								&& curr.getVenueAdd1().trim().toLowerCase()
+										.contains(address.trim().toLowerCase()))
+							filteredVenueList.add(curr);
+					}
+				} else {
+					for (int i = 0; i < venues.length; i++) {
+						VenueDetails curr = venues[i];
+						if (curr.getVenueName().trim().toLowerCase()
+								.contains(name.trim().toLowerCase())
+								&& curr.getVenueAdd1().trim().toLowerCase()
+										.contains(address.trim().toLowerCase())
+								&& curr.getVenueCity().trim().toLowerCase()
+										.contains(city.trim().toLowerCase()))
+							filteredVenueList.add(curr);
+					}
+				}
+			} else {
+				if (type.equals("All")) {
+					for (int i = 0; i < venues.length; i++) {
+						VenueDetails curr = venues[i];
+						if (curr.getVenueName().trim().toLowerCase()
+								.contains(name.trim().toLowerCase())
+								&& curr.getVenueAdd1().trim().toLowerCase()
+										.contains(address.trim().toLowerCase())
+								&& curr.getVenueCity().trim().toLowerCase()
+										.contains(type.trim().toLowerCase()))
+							filteredVenueList.add(curr);
+					}
+				} else {
+					for (int i = 0; i < venues.length; i++) {
+						VenueDetails curr = venues[i];
+						if (curr.getVenueName().trim().toLowerCase()
+								.contains(name.trim().toLowerCase())
+								&& curr.getVenueAdd1().trim().toLowerCase()
+										.contains(address.trim().toLowerCase())
+								&& curr.getVenueCity().trim().toLowerCase()
+										.contains(city.trim().toLowerCase())
+								&& curr.getVenueType().trim().toLowerCase()
+										.contains(type.trim().toLowerCase()))
+							filteredVenueList.add(curr);
+					}
 				}
 			}
+
 			VenueDetails[] filteredVenueArray = new VenueDetails[filteredVenueList
 					.size()];
 			filteredVenueArray = filteredVenueList
@@ -354,41 +394,12 @@ public class BingeHopper implements EntryPoint {
 	 * sorts it alphabetically;
 	 */
 	private VenueDetails[] cleanVenueArray(VenueDetails[] venues) {
-		VenueDetails[] results = new  VenueDetails[(venues.length)-1]; //VenueDetails[200]; 
-														// //don't want first
-														// row of field
-														// paramters
-		for  (int i=0; i<results.length; i++) {  //(int i = 0; i < 200; i++) {
-			results[i] = venues[i + 1]; // first row is field paramters
+		VenueDetails[] results = new VenueDetails[(venues.length) - 1];
+		for (int i = 0; i < results.length; i++) {
+			results[i] = venues[i + 1]; // first row is field parameters
 		}
 		Arrays.sort(results);
 		return results;
-	}
-
-	private void searchVenueList(final String searchName) {
-
-		if (venueDetailsSvc == null) {
-			venueDetailsSvc = GWT.create(VenueDetailsService.class);
-		}
-
-		// Set up the callback object.
-		AsyncCallback<VenueDetails[]> callback = new AsyncCallback<VenueDetails[]>() {
-			public void onFailure(Throwable caught) {
-				errorMsgLabel.setText("Error while making call to server");
-				errorMsgLabel.setVisible(true);
-			}
-
-			public void onSuccess(VenueDetails[] result) {
-				findCity(result);
-				searchAndAppend(result, searchName);
-
-			}
-
-		};
-
-		// Make the call to the venue price service.
-		venueDetailsSvc.getPrices(callback);
-
 	}
 
 	private void findCity(VenueDetails[] result) {
@@ -397,37 +408,6 @@ public class BingeHopper implements EntryPoint {
 			cities.add(venue.getVenueCity());
 		}
 		System.out.println(cities);
-	}
-
-	private void searchAndAppend(VenueDetails[] result, String searchName) {
-
-		ArrayList<VenueDetails> appended = new ArrayList<VenueDetails>();
-
-		appended = filterByName(result, searchName);
-
-		VenueDetails[] appendedAsArray = new VenueDetails[appended.size()];
-		appendedAsArray = appended.toArray(new VenueDetails[appended.size()]);
-		System.out.println("reached");
-		Arrays.sort(appendedAsArray);
-		displayVenues(appendedAsArray);
-
-	}
-
-	private ArrayList<VenueDetails> filterByName(VenueDetails[] result,
-			String searchName) {
-		ArrayList<VenueDetails> filteredByName = new ArrayList<VenueDetails>();
-		for (int i = 0; i < result.length; i++) {
-			VenueDetails curr = result[i];
-			if (curr.getVenueName().toLowerCase()
-					.contains(searchName.toLowerCase())) {
-
-				filteredByName.add(curr);
-
-			}
-
-		}
-
-		return filteredByName;
 	}
 
 	/**
