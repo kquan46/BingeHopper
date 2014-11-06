@@ -1,14 +1,19 @@
 package com.bingehopper.client;
 
-
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Set;
+import java.util.TreeSet;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -25,7 +30,6 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-
 public class BingeHopper implements EntryPoint {
 
 private static final VenueDetails[][] VenueDetails = null;
@@ -37,12 +41,17 @@ private HorizontalPanel likePanel = new HorizontalPanel();
 private HorizontalPanel tweetPanel = new HorizontalPanel();
 private Button updateVenuesButton = new Button("Update");
 private Label lastUpdatedLabel = new Label();
-private Button searchVenuesButton = new Button("Search by name");
-private TextBox searchBox = new TextBox();
-private Button searchAddressButton = new Button("Search by address");
+
+private Button searchButton = new Button("Search");
+private Label nameLabel = new Label("Name");
+private TextBox nameBox = new TextBox();
+private Label addressLabel = new Label("Address");
+
 private TextBox addressBox = new TextBox();
 private Label typeLabel = new Label("Type");
+private Label cityLabel = new Label("City");
 private ListBox typeListBox = new ListBox();
+private ListBox cityListBox = new ListBox();
 private String fbHtml = "<div class='fb-like' data-href='http://teamfantastic310.appspot.com/' data-layout='button_count' data-action='like' data-show-faces='true' data-share='true'></div>";
 private HTML likeHtml = new HTML(fbHtml);
 private String twtrHtml = "<a href='https://twitter.com/share' class='twitter-share-button' data-url='http://teamfantastic310.appspot.com/' data-hashtags='TeamFantastic'>Tweet</a>";
@@ -150,21 +159,67 @@ private void loadBingeHopper()
 	
 	// Assemble Search Venues panel
 	
-	searchPanel.add (searchVenuesButton);
-	searchPanel.add (searchBox);
-	searchPanel.add (searchAddressButton);
+	searchPanel.add(nameLabel);
+	searchPanel.add(nameBox);
+	searchPanel.add(addressLabel);
 	searchPanel.add (addressBox);
-	searchPanel.add (typeLabel);
+	
+	searchPanel.add(cityLabel);
+	cityListBox.addItem("All");
+	cityListBox.addItem("Abbotsford");
+	cityListBox.addItem("Aldergrove");
+	cityListBox.addItem("Bamfield");
+	cityListBox.addItem("Barkerville");
+	cityListBox.addItem("Bowen Island");
+	cityListBox.addItem("Burnaby");
+	cityListBox.addItem("Chilliwack");
+	cityListBox.addItem("Cloverdale");
+	cityListBox.addItem("Coquitlam");
+	cityListBox.addItem("Delta");
+	cityListBox.addItem("Fort Langley");
+	cityListBox.addItem("Hoarrison Hot Springs");
+	cityListBox.addItem("Kamloops");
+	cityListBox.addItem("Kelowna");
+	cityListBox.addItem("Lake Cowichan");
+	cityListBox.addItem("Langley");
+	cityListBox.addItem("Maple Ridge");
+	cityListBox.addItem("Mission");
+	cityListBox.addItem("Nanaimo");
+	cityListBox.addItem("New Westminster");
+	cityListBox.addItem("North Vancouver");
+	cityListBox.addItem("Parksville");
+	cityListBox.addItem("Pemberton");
+	cityListBox.addItem("Pitt Meadows");
+	cityListBox.addItem("Port Coquitlam");
+	cityListBox.addItem("Port Moody");
+	cityListBox.addItem("Prince George");
+	cityListBox.addItem("Prince Rupert");
+	cityListBox.addItem("Richmond");
+	cityListBox.addItem("Squamish");
+	cityListBox.addItem("Surrey");
+	cityListBox.addItem("Terrace");
+	cityListBox.addItem("Tsawwassen");
+	cityListBox.addItem("Vancouver");
+	cityListBox.addItem("Victoria");
+	cityListBox.addItem("West Vancouver");
+	cityListBox.addItem("Whistler");
+	cityListBox.addItem("White Rock");
+	searchPanel.add(cityListBox);
+	
+	searchPanel.add(typeLabel);
 	typeListBox.addItem("All");
-	typeListBox.addItem("Ubrew/Uvin");
 	typeListBox.addItem("Food Primary");
+	typeListBox.addItem("Independant Agent");
+	typeListBox.addItem("Licensee Retail Store");
 	typeListBox.addItem("Liquor Primary");
 	typeListBox.addItem("Manufacturer Agent");
+	typeListBox.addItem("Ubrew/Uvin");
+	typeListBox.addItem("Wine Store");
 	typeListBox.addItem("Winery");
-	typeListBox.addItem("Licensee Retail Store");
-	typeListBox.addItem("Independant Agent");
-	searchPanel.add(typeLabel);
 	searchPanel.add(typeListBox);
+
+	searchPanel.add(searchButton);
+	
 	
 	// Assemble Main panel.
 	
@@ -188,19 +243,45 @@ private void loadBingeHopper()
       }
     });
     
-// Listen for mouse events on the Venue Name Search button.
-   
-    searchVenuesButton.addClickHandler(new ClickHandler()   
-    {
-     public void onClick(ClickEvent event) 
-     {
-    	 
-    	 searchByName(searchBox.getText());
-    	 
-   	  
-     }
-    });
-    
+	// Listen for mouse events on the venue Search button.
+
+	searchButton.addClickHandler(new ClickHandler() {
+		public void onClick(ClickEvent event) {
+			searchVenues(
+					nameBox.getText(),
+					addressBox.getText(),
+					cityListBox.getItemText(cityListBox.getSelectedIndex()),
+					typeListBox.getItemText(typeListBox.getSelectedIndex()));
+		}
+	});
+
+	// Listen for keyboard events in the Name input box.
+	nameBox.addKeyDownHandler(new KeyDownHandler() {
+		public void onKeyDown(KeyDownEvent event) {
+			if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+				searchVenues(nameBox.getText(), addressBox.getText(),
+						cityListBox.getItemText(cityListBox
+								.getSelectedIndex()),
+						typeListBox.getItemText(typeListBox
+								.getSelectedIndex()));
+			}
+		}
+	});
+
+	// Listen for keyboard events in the Address input box.
+	addressBox.addKeyDownHandler(new KeyDownHandler() {
+		public void onKeyDown(KeyDownEvent event) {
+			if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+				searchVenues(nameBox.getText(), addressBox.getText(),
+						cityListBox.getItemText(cityListBox
+								.getSelectedIndex()),
+						typeListBox.getItemText(typeListBox
+								.getSelectedIndex()));
+			}
+		}
+	});
+
+
     
     // ----------- TABS --------------
     //
@@ -267,161 +348,164 @@ private void setUpFirstRow() {
 }
 
 
-private void searchByName (String searchPar)
-{
-	
-	if(!searchPar.isEmpty())
-	{
-	refreshVenueList(searchPar);
-	}
-	else
-	{
-		
-		errorMsgLabel.setText("Please input text");
-        errorMsgLabel.setVisible(true);
-		
-	}
-	
-}
-
-
-private void refreshVenueList()
-{
-	
-	if (venueDetailsSvc == null) 
-	{
-	      venueDetailsSvc = GWT.create(VenueDetailsService.class);
-	}
-
-	    // Set up the callback object.
-	    AsyncCallback<VenueDetails[]> callback = new AsyncCallback<VenueDetails[]>() 
-	    {
-	      public void onFailure(Throwable caught) 
-	      {
-	    	  errorMsgLabel.setText("Error while making call to server");
-	          errorMsgLabel.setVisible(true);	      
-	      }
-
-	      public void onSuccess(VenueDetails[] result) 
-	      {
-	    	  
-	    	  VenueDetails[] resultsAppended = new VenueDetails[(result.length)-1];
-	    	  for (int i=0;i<resultsAppended.length;i++)
-	    	  {
-	    		  
-	    		  resultsAppended[i] = result[i+1];
-	    		  
-	    	  }
-	    	  
-	    	  addVenues(resultsAppended);
-	    	  
-	      }
-	      
-	    };
-	    
-	    lastUpdatedLabel.setText("Last update : "  + DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
-	    
-	    // Make the call to the venue price service.
-	    venueDetailsSvc.getPrices(callback);
-	
-}
-
-private void refreshVenueList(final String searchName)
-{
-	
-	if (venueDetailsSvc == null) 
-	{
-	      venueDetailsSvc = GWT.create(VenueDetailsService.class);
-	}
-
-	    // Set up the callback object.
-	    AsyncCallback<VenueDetails[]> callback = new AsyncCallback<VenueDetails[]>() 
-	    {
-	      public void onFailure(Throwable caught) 
-	      {
-	    	  errorMsgLabel.setText("Error while making call to server");
-	          errorMsgLabel.setVisible(true);	      
-	      }
-
-	      public void onSuccess(VenueDetails[] result) 
-	      {
-	    	  
-	    	  searchAndAppend (result,searchName);
-	    	  
-
-	      }
-	      
-	      
-	      
-	    };
-	    
-
-	    // Make the call to the venue price service.
-	    venueDetailsSvc.getPrices(callback);
-	
-}
-
-private void searchAndAppend (VenueDetails[] result,String searchName)
-{
-	
-	ArrayList<VenueDetails> appended = new ArrayList<VenueDetails>();
-	
-	
-	appended = filterByName(result, searchName);
-	
-	VenueDetails[] appendedAsArray = new VenueDetails[appended.size()];
-	appendedAsArray = appended.toArray(new VenueDetails[appended.size()]);
-	System.out.println("reached");
-	addVenues(appendedAsArray);
-	
-}
-
-private ArrayList<VenueDetails> filterByName(VenueDetails[] result,
-		String searchName) 
-{	
-	ArrayList<VenueDetails> filteredByName = new ArrayList<VenueDetails>();
-	for (int i=0;i<result.length;i++)
-	{
-		VenueDetails curr = result[i];
-		if (curr.getVenueName().toLowerCase().contains(searchName.toLowerCase()))
-		{
-			
-			filteredByName.add(curr);
-			
+	private void searchVenues(final String name, final String address,
+			final String city, final String type) {
+		if (venueDetailsSvc == null) {
+			venueDetailsSvc = GWT.create(VenueDetailsService.class);
 		}
-		
+		// Set up the callback object.
+		AsyncCallback<VenueDetails[]> callback = new AsyncCallback<VenueDetails[]>() {
+			public void onFailure(Throwable caught) {
+				errorMsgLabel.setText("Error while making call to server");
+				errorMsgLabel.setVisible(true);
+			}
+
+			public void onSuccess(VenueDetails[] result) {
+				VenueDetails[] venues = cleanVenueArray(result);
+				Arrays.sort(venues);
+				findCity(result); // used to get all cities
+				if (name.isEmpty() && address.isEmpty() && city == "All"
+						&& type == "All") {
+					displayVenues(venues);
+				} else {
+					VenueDetails[] filteredVenueArray = filter(venues, name,
+							address, city, type);
+					displayVenues(filteredVenueArray);
+				}
+			}
+		};
+		lastUpdatedLabel.setText("Last update : "
+				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
+		// Make the call to the venue price service.
+		venueDetailsSvc.getPrices(callback);
 	}
-	
-	return filteredByName;
-}
 
-/**
- * Add venues to FlexTable. Executed when the user clicks the updateVenuesButton
- */
-private void addVenues(VenueDetails[] venues) 
-{
-	  
-	  venuesFlexTable.removeAllRows();
-	  setUpFirstRow();
-	  lastUpdatedLabel.setText(Integer.toString(venues.length));
-	  for (int i = 0; i < venues.length; i++)
-	  {
-		
-	    venuesFlexTable.setText(i+1, 0, venues[i].getVenueName());
-	    venuesFlexTable.setText(i+1, 1, venues[i].getVenueAdd1());
-	    venuesFlexTable.setText(i+1, 2, venues[i].getVenueAdd2());
-	    venuesFlexTable.setText(i+1, 3, venues[i].getVenueCity());
-	    venuesFlexTable.setText(i+1, 4, venues[i].getVenuePostal());
-	    venuesFlexTable.setText(i+1, 5, venues[i].getVenuePhone());
-	    venuesFlexTable.setText(i+1, 6, venues[i].getVenueType());
-	    venuesFlexTable.setText(i+1, 7, venues[i].getVenueCapacity());
-	    
-	  }
-	  
-}
-	  
+	private VenueDetails[] filter(VenueDetails[] venues, String name,
+			String address, String city, String type) {
+		if (name.isEmpty() && address.isEmpty() && city.equals("All")
+				&& type.equals("All"))
+			return venues; // empty search returns all venues
+		else {
+			ArrayList<VenueDetails> filteredVenueList = new ArrayList<VenueDetails>();
+			if (city.equals("All")) {
+				if (type.equals("All")) {
+					for (int i = 0; i < venues.length; i++) {
+						VenueDetails curr = venues[i];
+						if (curr.getVenueName().trim().toLowerCase()
+								.contains(name.trim().toLowerCase())
+								&& curr.getVenueAdd1().trim().toLowerCase()
+										.contains(address.trim().toLowerCase()))
+							filteredVenueList.add(curr);
+					}
+				} else {
+					for (int i = 0; i < venues.length; i++) {
+						VenueDetails curr = venues[i];
+						if (curr.getVenueName().trim().toLowerCase()
+								.contains(name.trim().toLowerCase())
+								&& curr.getVenueAdd1().trim().toLowerCase()
+										.contains(address.trim().toLowerCase())
+								&& curr.getVenueType().trim().toLowerCase()
+										.contains(type.trim().toLowerCase()))
+							filteredVenueList.add(curr);
+					}
+				}
+			} else {
+				if (type.equals("All")) {
+					for (int i = 0; i < venues.length; i++) {
+						VenueDetails curr = venues[i];
+						if (curr.getVenueName().trim().toLowerCase()
+								.contains(name.trim().toLowerCase())
+								&& curr.getVenueAdd1().trim().toLowerCase()
+										.contains(address.trim().toLowerCase())
+								&& curr.getVenueCity().trim().toLowerCase()
+										.equals(city.trim().toLowerCase()))
+							filteredVenueList.add(curr);
+					}
+				} else {
+					for (int i = 0; i < venues.length; i++) {
+						VenueDetails curr = venues[i];
+						if (curr.getVenueName().trim().toLowerCase()
+								.contains(name.trim().toLowerCase())
+								&& curr.getVenueAdd1().trim().toLowerCase()
+										.contains(address.trim().toLowerCase())
+								&& curr.getVenueCity().trim().toLowerCase()
+										.equals(city.trim().toLowerCase())
+								&& curr.getVenueType().trim().toLowerCase()
+										.contains(type.trim().toLowerCase()))
+							filteredVenueList.add(curr);
+					}
+				}
+			}
+			VenueDetails[] filteredVenueArray = new VenueDetails[filteredVenueList
+					.size()];
+			filteredVenueArray = filteredVenueList
+					.toArray(new VenueDetails[filteredVenueList.size()]);
+			return filteredVenueArray;
+		}
+	}
 
+	private void refreshVenueList() {
+		if (venueDetailsSvc == null) {
+			venueDetailsSvc = GWT.create(VenueDetailsService.class);
+		}
+		// Set up the callback object.
+		AsyncCallback<VenueDetails[]> callback = new AsyncCallback<VenueDetails[]>() {
+			public void onFailure(Throwable caught) {
+				errorMsgLabel.setText("Error while making call to server");
+				errorMsgLabel.setVisible(true);
+			}
 
+			public void onSuccess(VenueDetails[] result) {
+				VenueDetails[] venues = cleanVenueArray(result);
+				displayVenues(venues);
+			}
+		};
+		lastUpdatedLabel.setText("Last update : "
+				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
+		// Make the call to the venue price service.
+		venueDetailsSvc.getPrices(callback);
+	}
 
+	/**
+	 * Takes list of venues minues the first row, removes empty venue names, and
+	 * sorts it alphabetically;
+	 */
+	private VenueDetails[] cleanVenueArray(VenueDetails[] venues) {
+		VenueDetails[] results = new VenueDetails[(venues.length) - 1];
+		for (int i = 0; i < results.length; i++) {
+			results[i] = venues[i + 1]; // first row is field parameters
+		}
+		Arrays.sort(results);
+		return results;
+	}
+
+	private void findCity(VenueDetails[] result) {
+		Set<String> cities = new TreeSet<String>();
+		for (VenueDetails venue : result) {
+			cities.add(venue.getVenueCity());
+		}
+		System.out.println(cities);
+	}
+
+	/**
+	 * Add venues to FlexTable. Executed when the user clicks the
+	 * updateVenuesButton
+	 */
+	private void displayVenues(VenueDetails[] venues) {
+		venuesFlexTable.removeAllRows();
+		setUpFirstRow();
+		lastUpdatedLabel.setText(Integer.toString(venues.length));
+		for (int i = 0; i < venues.length; i++) {
+			venuesFlexTable.setText(i + 1, 0, venues[i].getVenueName());
+			venuesFlexTable.setText(i + 1, 1, venues[i].getVenueAdd1());
+			venuesFlexTable.setText(i + 1, 2, venues[i].getVenueCity());
+			venuesFlexTable.setText(i + 1, 3, venues[i].getVenuePostal());
+			venuesFlexTable.setText(i + 1, 4, venues[i].getVenuePhone());
+			venuesFlexTable.setText(i + 1, 5, venues[i].getVenueType());
+			venuesFlexTable.setText(i + 1, 6, venues[i].getVenueCapacity());
+
+		}
+
+	}
 
 }
