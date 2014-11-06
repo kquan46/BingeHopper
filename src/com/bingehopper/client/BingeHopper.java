@@ -31,6 +31,7 @@ private FlexTable venuesFlexTable = new FlexTable();
 private HorizontalPanel updatePanel = new HorizontalPanel();
 private HorizontalPanel searchPanel = new HorizontalPanel();
 private HorizontalPanel likePanel = new HorizontalPanel();
+private HorizontalPanel tweetPanel = new HorizontalPanel();
 private Button updateVenuesButton = new Button("Update");
 private Label lastUpdatedLabel = new Label();
 private Button searchVenuesButton = new Button("Search by name");
@@ -41,6 +42,9 @@ private Label typeLabel = new Label("Type");
 private ListBox typeListBox = new ListBox();
 private String fbHtml = "<div class='fb-like' data-href='http://teamfantastic310.appspot.com/' data-layout='button_count' data-action='like' data-show-faces='true' data-share='true'></div>";
 private HTML likeHtml = new HTML(fbHtml);
+private String twtrHtml = "<a href='https://twitter.com/share' class='twitter-share-button' data-url='http://teamfantastic310.appspot.com/' data-hashtags='TeamFantastic'>Tweet</a>";
+private HTML twitterHtml = new HTML(twtrHtml);
+private HTML twtfcn = new HTML("<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>");
 
 
 private VenueDetailsServiceAsync venueDetailsSvc = GWT.create(VenueDetailsService.class);
@@ -128,6 +132,11 @@ private void loadBingeHopper()
 	likePanel.add(likeHtml);
 	likePanel.addStyleName("fbLikePanel");
 	
+	// Assemble Twitter like panel
+	tweetPanel.add(twitterHtml);
+	tweetPanel.add(twtfcn);
+	tweetPanel.addStyleName("fbLikePanel");
+	
 	// Assemble Search Venues panel
 	
 	searchPanel.add (searchVenuesButton);
@@ -151,10 +160,11 @@ private void loadBingeHopper()
 	errorMsgLabel.setStyleName("errorMessage");
     errorMsgLabel.setVisible(false);
     
+    mainPanel.add(likePanel);
+    mainPanel.add(tweetPanel);
     mainPanel.add(signOutLink);
     mainPanel.add(errorMsgLabel);
     mainPanel.add(updatePanel);
-    mainPanel.add(likePanel);
     mainPanel.add(searchPanel);
 	mainPanel.add(venuesFlexTable);
 	
