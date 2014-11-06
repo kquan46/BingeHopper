@@ -150,9 +150,11 @@ public class BingeHopper implements EntryPoint {
 		cityListBox.addItem("Delta");
 		cityListBox.addItem("Fort Langley");
 		cityListBox.addItem("Hoarrison Hot Springs");
+		cityListBox.addItem("Kamloops");
 		cityListBox.addItem("Kelowna");
 		cityListBox.addItem("Lake Cowichan");
 		cityListBox.addItem("Langley");
+		cityListBox.addItem("Maple Ridge");
 		cityListBox.addItem("Mission");
 		cityListBox.addItem("Nanaimo");
 		cityListBox.addItem("New Westminster");
@@ -208,9 +210,7 @@ public class BingeHopper implements EntryPoint {
 		// Listen for mouse events on the Add button.
 		updateVenuesButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-
 				refreshVenueList();
-
 			}
 		});
 
@@ -223,7 +223,6 @@ public class BingeHopper implements EntryPoint {
 						addressBox.getText(),
 						cityListBox.getItemText(cityListBox.getSelectedIndex()),
 						typeListBox.getItemText(typeListBox.getSelectedIndex()));
-
 			}
 		});
 
@@ -252,7 +251,6 @@ public class BingeHopper implements EntryPoint {
 				}
 			}
 		});
-
 	}
 
 	private void setUpFirstRow() {
@@ -326,8 +324,8 @@ public class BingeHopper implements EntryPoint {
 								.contains(name.trim().toLowerCase())
 								&& curr.getVenueAdd1().trim().toLowerCase()
 										.contains(address.trim().toLowerCase())
-								&& curr.getVenueCity().trim().toLowerCase()
-										.contains(city.trim().toLowerCase()))
+								&& curr.getVenueType().trim().toLowerCase()
+										.contains(type.trim().toLowerCase()))
 							filteredVenueList.add(curr);
 					}
 				}
@@ -340,7 +338,7 @@ public class BingeHopper implements EntryPoint {
 								&& curr.getVenueAdd1().trim().toLowerCase()
 										.contains(address.trim().toLowerCase())
 								&& curr.getVenueCity().trim().toLowerCase()
-										.contains(type.trim().toLowerCase()))
+										.equals(city.trim().toLowerCase()))
 							filteredVenueList.add(curr);
 					}
 				} else {
@@ -351,14 +349,13 @@ public class BingeHopper implements EntryPoint {
 								&& curr.getVenueAdd1().trim().toLowerCase()
 										.contains(address.trim().toLowerCase())
 								&& curr.getVenueCity().trim().toLowerCase()
-										.contains(city.trim().toLowerCase())
+										.equals(city.trim().toLowerCase())
 								&& curr.getVenueType().trim().toLowerCase()
 										.contains(type.trim().toLowerCase()))
 							filteredVenueList.add(curr);
 					}
 				}
 			}
-
 			VenueDetails[] filteredVenueArray = new VenueDetails[filteredVenueList
 					.size()];
 			filteredVenueArray = filteredVenueList
@@ -415,12 +412,10 @@ public class BingeHopper implements EntryPoint {
 	 * updateVenuesButton
 	 */
 	private void displayVenues(VenueDetails[] venues) {
-
 		venuesFlexTable.removeAllRows();
 		setUpFirstRow();
 		lastUpdatedLabel.setText(Integer.toString(venues.length));
 		for (int i = 0; i < venues.length; i++) {
-
 			venuesFlexTable.setText(i + 1, 0, venues[i].getVenueName());
 			venuesFlexTable.setText(i + 1, 1, venues[i].getVenueAdd1());
 			venuesFlexTable.setText(i + 1, 2, venues[i].getVenueCity());
