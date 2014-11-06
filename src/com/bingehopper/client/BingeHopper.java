@@ -1,5 +1,6 @@
 package com.bingehopper.client;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -10,6 +11,9 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -183,7 +187,7 @@ public class BingeHopper implements EntryPoint {
 		typeListBox.addItem("Wine Store");
 		typeListBox.addItem("Winery");
 		searchPanel.add(typeListBox);
-		
+
 		searchPanel.add(searchButton);
 
 		// Assemble Main panel.
@@ -210,46 +214,117 @@ public class BingeHopper implements EntryPoint {
 			}
 		});
 
-		// Listen for mouse events on the Venue Name Search button.
+		// Listen for mouse events on the venue Search button.
 
 		searchButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-
-				search(nameBox.getText());
+				search(nameBox.getText(),
+						addressBox.getText(),
+						cityListBox.getItemText(cityListBox.getSelectedIndex()),
+						typeListBox.getItemText(typeListBox.getSelectedIndex()));
 
 			}
 		});
 
-		
+		// Listen for keyboard events in the Name input box.
+		nameBox.addKeyDownHandler(new KeyDownHandler() {
+			public void onKeyDown(KeyDownEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+					search(nameBox.getText(), addressBox.getText(), cityListBox
+							.getItemText(cityListBox.getSelectedIndex()),
+							typeListBox.getItemText(typeListBox
+									.getSelectedIndex()));
+				}
+			}
+		});
+
+		// Listen for keyboard events in the Address input box.
+		addressBox.addKeyDownHandler(new KeyDownHandler() {
+			public void onKeyDown(KeyDownEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+					search(nameBox.getText(), addressBox.getText(), cityListBox
+							.getItemText(cityListBox.getSelectedIndex()),
+							typeListBox.getItemText(typeListBox
+									.getSelectedIndex()));
+				}
+			}
+		});
 
 	}
 
 	private void setUpFirstRow() {
 		venuesFlexTable.setText(0, 0, "Name");
 		venuesFlexTable.setText(0, 1, "Address");
-		venuesFlexTable.setText(0, 3, "City");
-		venuesFlexTable.setText(0, 4, "Postal Code");
-		venuesFlexTable.setText(0, 5, "Telephone");
-		venuesFlexTable.setText(0, 6, "Type");
-		venuesFlexTable.setText(0, 7, "Capacity");
-		venuesFlexTable.setText(0, 8, "Share");
+		venuesFlexTable.setText(0, 2, "City");
+		venuesFlexTable.setText(0, 3, "Postal Code");
+		venuesFlexTable.setText(0, 4, "Telephone");
+		venuesFlexTable.setText(0, 5, "Type");
+		venuesFlexTable.setText(0, 6, "Capacity");
+		venuesFlexTable.setText(0, 7, "Share");
 
 		// Add styles to elements in the venue list table.
 		venuesFlexTable.getRowFormatter().addStyleName(0, "venueListHeader");
 		venuesFlexTable.addStyleName("venueList");
 	}
 
-	private void search(String searchPar) {
+	private void search(final String name, final String address,
+			final String city, final String type) {
+		/*
+		 * if (venueDetailsSvc == null) { venueDetailsSvc =
+		 * GWT.create(VenueDetailsService.class); }
+		 */
+		// Set up the callback object.
+		AsyncCallback<VenueDetails[]> callback = new AsyncCallback<VenueDetails[]>() {
+			public void onFailure(Throwable caught) {
+				errorMsgLabel.setText("Error while making call to server");
+				errorMsgLabel.setVisible(true);
+			}
 
-		if (!searchPar.isEmpty()) {
-			searchVenueList(searchPar);
-		} else {
+			public void onSuccess(VenueDetails[] result) {
+				VenueDetails[] venues = cleanVenueArray(result);
+				Arrays.sort(venues);
+				if (name.isEmpty() && address.isEmpty() && city == "All"
+						&& type == "All") {
+					displayVenues(venues);
+				} else {
+					VenueDetails[] filteredVenueArray = filter(venues, name, address, city, type);
+					displayVenues(filteredVenueArray);
+				}
+			}
+		};
+		lastUpdatedLabel.setText("Last update : "
+				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
+		// Make the call to the venue price service.
+		venueDetailsSvc.getPrices(callback);
+	}
 
-			errorMsgLabel.setText("Please input text");
-			errorMsgLabel.setVisible(true);
+	private VenueDetails[] filter(VenueDetails[] venues, String name,
+			String address, String city, String type) {
+		if (name.isEmpty() && address.isEmpty() && city == "All"
+				&& type == "All")
+			return venues;
+		else {
+			ArrayList<VenueDetails> filteredVenueList = new ArrayList<VenueDetails>();
+			for (int i = 0; i < venues.length; i++) {
+				VenueDetails curr = venues[i];
+				if (curr.getVenueName().trim().toLowerCase().
+						contains(name.trim().toLowerCase())
+						&& curr.getVenueAdd1().trim().toLowerCase()
+								.contains(address.trim().toLowerCase())
+						&& curr.getVenueCity().trim().toLowerCase()
+								.equals(city.trim().toLowerCase())
+						&& curr.getVenueType().trim().toLowerCase()
+								.contains(type.trim().toLowerCase())) {
 
+					filteredVenueList.add(curr);
+				}
+			}
+			VenueDetails[] filteredVenueArray = new VenueDetails[filteredVenueList
+					.size()];
+			filteredVenueArray = filteredVenueList
+					.toArray(new VenueDetails[filteredVenueList.size()]);
+			return filteredVenueArray;
 		}
-
 	}
 
 	private void refreshVenueList() {
@@ -279,11 +354,11 @@ public class BingeHopper implements EntryPoint {
 	 * sorts it alphabetically;
 	 */
 	private VenueDetails[] cleanVenueArray(VenueDetails[] venues) {
-		VenueDetails[] results = new VenueDetails[200]; // VenueDetails[(venues.length)-1];
+		VenueDetails[] results = new  VenueDetails[(venues.length)-1]; //VenueDetails[200]; 
 														// //don't want first
 														// row of field
 														// paramters
-		for (int i = 0; i < 200; i++) {// (int i=0; i<results.length; i++) {
+		for  (int i=0; i<results.length; i++) {  //(int i = 0; i < 200; i++) {
 			results[i] = venues[i + 1]; // first row is field paramters
 		}
 		Arrays.sort(results);
