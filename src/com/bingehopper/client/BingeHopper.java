@@ -33,9 +33,10 @@ public class BingeHopper implements EntryPoint {
 	private HorizontalPanel likePanel = new HorizontalPanel();
 	private Button updateVenuesButton = new Button("Update");
 	private Label lastUpdatedLabel = new Label();
-	private Button searchVenuesButton = new Button("Search by name");
-	private TextBox searchBox = new TextBox();
-	private Button searchAddressButton = new Button("Search by address");
+	private Button searchButton = new Button("Search");
+	private Label nameLabel = new Label("Name");
+	private TextBox nameBox = new TextBox();
+	private Label addressLabel = new Label("Address");
 	private TextBox addressBox = new TextBox();
 	private Label typeLabel = new Label("Type");
 	private Label cityLabel = new Label("City");
@@ -126,9 +127,9 @@ public class BingeHopper implements EntryPoint {
 
 		// Assemble Search Venues panel
 
-		searchPanel.add(searchVenuesButton);
-		searchPanel.add(searchBox);
-		searchPanel.add(searchAddressButton);
+		searchPanel.add(nameLabel);
+		searchPanel.add(nameBox);
+		searchPanel.add(addressLabel);
 		searchPanel.add(addressBox);
 
 		searchPanel.add(cityLabel);
@@ -182,6 +183,8 @@ public class BingeHopper implements EntryPoint {
 		typeListBox.addItem("Wine Store");
 		typeListBox.addItem("Winery");
 		searchPanel.add(typeListBox);
+		
+		searchPanel.add(searchButton);
 
 		// Assemble Main panel.
 
@@ -189,9 +192,9 @@ public class BingeHopper implements EntryPoint {
 		errorMsgLabel.setVisible(false);
 
 		mainPanel.add(signOutLink);
-		mainPanel.add(errorMsgLabel);
 		mainPanel.add(updatePanel);
 		mainPanel.add(likePanel);
+		mainPanel.add(errorMsgLabel);
 		mainPanel.add(searchPanel);
 		mainPanel.add(venuesFlexTable);
 
@@ -209,23 +212,15 @@ public class BingeHopper implements EntryPoint {
 
 		// Listen for mouse events on the Venue Name Search button.
 
-		searchVenuesButton.addClickHandler(new ClickHandler() {
+		searchButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 
-				search(searchBox.getText());
+				search(nameBox.getText());
 
 			}
 		});
 
-		// Listen for mouse events on the Venue Address Search button.
-
-		searchAddressButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-
-				search(searchBox.getText());
-
-			}
-		});
+		
 
 	}
 
