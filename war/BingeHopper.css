@@ -65,8 +65,8 @@ body {
 /* sign out link */
 .signOutLink {
 	position: absolute;
-	top: 20px;
-	right: 150px;
+	bottom: 20px;
+	left: 80px;
 	padding: 10px;
 }
 
@@ -87,9 +87,10 @@ body {
 /* tabBar */
 .gwt-TabBar {
 	position: absolute;
+	padding: 20px;
 	transform: rotate(90deg);
-	bottom: -450px;
-	right: 850px;
+	transform-origin: 0px 0px;
+
 }
 
 .gwt-TabBarItem {

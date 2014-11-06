@@ -33,7 +33,6 @@ private VerticalPanel mainPanel = new VerticalPanel();
 private FlexTable venuesFlexTable = new FlexTable();  
 private HorizontalPanel updatePanel = new HorizontalPanel();
 private HorizontalPanel searchPanel = new HorizontalPanel();
-private FlexTable bookmarksFlexTable = new FlexTable();
 private HorizontalPanel likePanel = new HorizontalPanel();
 private Button updateVenuesButton = new Button("Update");
 private Label lastUpdatedLabel = new Label();
@@ -157,8 +156,6 @@ private void loadBingeHopper()
 	typeListBox.addItem("Independant Agent");
 	searchPanel.add(typeLabel);
 	searchPanel.add(typeListBox);
-	
-	// Assemble Bookmarks Panel
 	
 	// Assemble Main panel.
 	
