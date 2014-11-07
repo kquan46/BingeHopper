@@ -320,9 +320,6 @@ private void loadBingeHopper()
 	tabs.add(visitedTab, "Visited");
 	tabs.add(mapTab, "Map");
 	tabs.add(socialTab, "Social");
-	System.out.println("tabs id");
-    tabs.addStyleName("tabs");
-	System.out.println("tabs id");
 
 	
 	// show the 'map' tab initially
