@@ -2,7 +2,9 @@ package com.bingehopper.client;
 
 import java.io.Serializable;
 
-public class VenueDetails implements Serializable, Comparable<VenueDetails>{
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class VenueDetails implements IsSerializable, Serializable, Comparable<VenueDetails>{
 	
 	private String venueName;
 	private String venueAdd1;

@@ -19,7 +19,7 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	
 	@Override
 	public List<VenueDetails> getPrices() {
 		
@@ -33,7 +33,7 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 	      
 	      String splitBy = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 	      
-	      ArrayList<VenueDetails> listOfVenues = new ArrayList<VenueDetails>();
+	      List<VenueDetails> listOfVenues = new ArrayList<VenueDetails>();
 	      
 	      try 
 	      {
@@ -63,7 +63,6 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 	            //setValues (location,venue);
 	            
 	            listOfVenues.add(location);
-	            
 	         }
 	         
 	         rd.close();

@@ -18,9 +18,11 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -39,7 +41,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 
 public class BingeHopper implements EntryPoint {
 
-	private static final VenueDetails[][] VenueDetails = null;
+	//private static final List<VenueDetails> VenueDetails = null;
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private FlexTable venuesFlexTable = new FlexTable();
 	private HorizontalPanel updatePanel = new HorizontalPanel();
@@ -59,10 +61,10 @@ public class BingeHopper implements EntryPoint {
 	private String fbHtml = "<div class='fb-like' data-href='http://teamfantastic310.appspot.com/' data-layout='button_count' data-action='like' data-show-faces='true' data-share='true'></div>";
 	private HTML likeHtml = new HTML(fbHtml);
 
-	private static VenueDetailsServiceAsync venueDetailsSvc = GWT
+	private VenueDetailsServiceAsync venueDetailsSvc = GWT
 			.create(VenueDetailsService.class);
 
-	private static Label errorMsgLabel = new Label();
+	private Label errorMsgLabel = new Label();
 
 	private LoginInfo loginInfo = null;
 	private VerticalPanel loginPanel = new VerticalPanel();
@@ -127,8 +129,9 @@ public class BingeHopper implements EntryPoint {
 
 		// Create table for venue data
 
-		setUpFirstRow();
-
+		//setUpFirstRow();
+		setUpCellTable();
+		
 		// Assemble Update Venues panel.
 
 		updatePanel.add(updateVenuesButton);
@@ -217,22 +220,22 @@ public class BingeHopper implements EntryPoint {
 		// Associate the Main panel with the HTML host page.
 		RootPanel.get("venueList").add(mainPanel);
 
-		// Listen for mouse events on the Add button.
-		updateVenuesButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				refreshVenueList();
-			}
-		});
+//		// Listen for mouse events on the Update button.
+//		updateVenuesButton.addClickHandler(new ClickHandler() {
+//			public void onClick(ClickEvent event) {
+//				refreshVenueList();
+//			}
+//		});
 
 		// Listen for mouse events on the venue Search button.
 
 		searchButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				searchVenues(
-						nameBox.getText(),
-						addressBox.getText(),
-						cityListBox.getItemText(cityListBox.getSelectedIndex()),
-						typeListBox.getItemText(typeListBox.getSelectedIndex()));
+//				searchVenues(
+//						nameBox.getText(),
+//						addressBox.getText(),
+//						cityListBox.getItemText(cityListBox.getSelectedIndex()),
+//						typeListBox.getItemText(typeListBox.getSelectedIndex()));
 			}
 		});
 
@@ -240,11 +243,11 @@ public class BingeHopper implements EntryPoint {
 		nameBox.addKeyDownHandler(new KeyDownHandler() {
 			public void onKeyDown(KeyDownEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-					searchVenues(nameBox.getText(), addressBox.getText(),
-							cityListBox.getItemText(cityListBox
-									.getSelectedIndex()),
-							typeListBox.getItemText(typeListBox
-									.getSelectedIndex()));
+//					searchVenues(nameBox.getText(), addressBox.getText(),
+//							cityListBox.getItemText(cityListBox
+//									.getSelectedIndex()),
+//							typeListBox.getItemText(typeListBox
+//									.getSelectedIndex()));
 				}
 			}
 		});
@@ -253,11 +256,11 @@ public class BingeHopper implements EntryPoint {
 		addressBox.addKeyDownHandler(new KeyDownHandler() {
 			public void onKeyDown(KeyDownEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-					searchVenues(nameBox.getText(), addressBox.getText(),
-							cityListBox.getItemText(cityListBox
-									.getSelectedIndex()),
-							typeListBox.getItemText(typeListBox
-									.getSelectedIndex()));
+//					searchVenues(nameBox.getText(), addressBox.getText(),
+//							cityListBox.getItemText(cityListBox
+//									.getSelectedIndex()),
+//							typeListBox.getItemText(typeListBox
+//									.getSelectedIndex()));
 				}
 			}
 		});
@@ -278,10 +281,12 @@ public class BingeHopper implements EntryPoint {
 		venuesFlexTable.addStyleName("venueList");
 	}
 
-	/*private void setUpCellTable() {
+	private void setUpCellTable() {
 		// Create a CellTable
-		CellTable<VenueDetails> table = new CellTable<VenueDetails>();
-		// table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
+		final CellTable<VenueDetails> table = new CellTable<VenueDetails>();
+		table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
+		// Display 100 rows in one page
+		table.setPageSize(100);
 
 		// Add a text column to show the name.
 		TextColumn<VenueDetails> nameColumn = new TextColumn<VenueDetails>() {
@@ -346,92 +351,94 @@ public class BingeHopper implements EntryPoint {
 		};
 		table.addColumn(capacityColumn, "Capacity");
 		
-		// Add a selection model to handle user selection
-		final SingleSelectionModel<VenueDetails> selectionModel = new SingleSelectionModel<VenueDetails>();
-		table.setSelectionModel(selectionModel);;
-		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-			public void onSelectionChange(SelectionChangeEvent event) {
-				VenueDetails selected = selectionModel.getSelectedObject();
-				if (selected != null) {
-					Window.alert("You selected: " +selected.getVenueName());
-				}
-			}
-		});
 		
-		// Set the total row count to keep the row count up to date for paging calculations
-		table.setRowCount(VenueDetails[].size(), true);
-		
-		// Push the data into the widget
-		table.setRowData(0, VenueDetails[]);
-		
+		//provider.updateRowCount(VENUES.size(), true);
+
+		SimplePager pager = new SimplePager();
+		pager.setDisplay(table);
+
+		VerticalPanel vp = new VerticalPanel();
+		vp.add(table);
+		vp.add(pager);
+
 		// Add it to the root panel
-		RootPanel.get().add(table);
-	
+		RootPanel.get().add(vp);
 
-	}*/
-	/**
-	   * A custom {@link AsyncDataProvider}.
-	   */
-	  private static class MyDataProvider extends AsyncDataProvider<String> {
-	    /**
-	     * {@link #onRangeChanged(HasData)} is called when the table requests a new
-	     * range of data. You can push data back to the displays using
-	     * {@link #updateRowData(int, List)}.
-	     */
-	    @Override
-	    protected void onRangeChanged(HasData<String> display) {
-	      // Get the new range.
-	      final Range range = display.getVisibleRange();
+		/*
+		 * // Add a selection model to handle user selection final
+		 * SingleSelectionModel<VenueDetails> selectionModel = new
+		 * SingleSelectionModel<VenueDetails>();
+		 * table.setSelectionModel(selectionModel);;
+		 * selectionModel.addSelectionChangeHandler(new
+		 * SelectionChangeEvent.Handler() { public void
+		 * onSelectionChange(SelectionChangeEvent event) { VenueDetails selected
+		 * = selectionModel.getSelectedObject(); if (selected != null) {
+		 * Window.alert("You selected: " +selected.getVenueName()); } } });
+		 * 
+		 * // Set the total row count to keep the row count up to date for
+		 * paging calculations table.setRowCount(VenueDetails[].size(), true);
+		 * 
+		 * // Push the data into the widget table.setRowData(0, VenueDetails[]);
+		 * 
+		 * // Add it to the root panel RootPanel.get().add(table);
+		 */
 
-	      /*
-	       * Query the data asynchronously. If you are using a database, you can
-	       * make an RPC call here. We'll use a Timer to simulate a delay.
-	       */
-	      if (venueDetailsSvc == null) {
-				venueDetailsSvc = GWT.create(VenueDetailsService.class);
+		// Associate an async data provider on the table
+		// XXX: Use AsyncCallback in the method onRangeChanged
+		// to actually get the data from the server side
+		if (venueDetailsSvc == null) {
+			venueDetailsSvc = GWT.create(VenueDetailsService.class);
+		}
+		AsyncDataProvider<VenueDetails> provider = new AsyncDataProvider<VenueDetails>() {
+			@Override
+			protected void onRangeChanged(HasData<VenueDetails> display) {
+				final int start = display.getVisibleRange().getStart();
+				int length = display.getVisibleRange().getLength();
+				AsyncCallback<List<VenueDetails>> callback = new AsyncCallback<List<VenueDetails>>() {
+					
+					public void onFailure(Throwable caught) {
+						errorMsgLabel
+								.setText("Error while making call to server");
+						errorMsgLabel.setVisible(true);
+					}
+
+					
+					public void onSuccess(List<VenueDetails> result) {
+						updateRowData(9500, result);
+						
+					}
+				};
+				// The remote service that should be implemented
+				//RemoteService.fetchPage(start, length, callback);
+				
+//				lastUpdatedLabel.setText("Last update : "
+//						+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
+//				// Make the call to the venue price service.
+				venueDetailsSvc.getPrices(callback);
+				
 			}
-			// Set up the callback object.
-			AsyncCallback<List<VenueDetails>> callback = new AsyncCallback<List<VenueDetails>>() {
-				public void onFailure(Throwable caught) {
-					errorMsgLabel.setText("Error while making call to server");
-					errorMsgLabel.setVisible(true);
-				}
+		};
+		provider.addDataDisplay(table);
 
-				public void onSuccess(List<VenueDetails> result) { 
-					// Push the data to the displays. AsyncDataProvider will only update
-			          // displays that are within range of the data.
-					//VenueDetails[] venues = cleanVenueArray(result);
-					List<VenueDetails> VENUES = Arrays.asList();
-					updateRowData(1, VENUES);
-				}
-			};
-	    
-			lastUpdatedLabel.setText("Last update : "
-					+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
-			// Make the call to the venue price service.
-			venueDetailsSvc.getPrices(callback);
 		
 
-	         
-	        
-	      
-	    
-	  }
-	private void searchVenues(final String name, final String address,
+	}
+
+	/*private void searchVenues(final String name, final String address,
 			final String city, final String type) {
 		if (venueDetailsSvc == null) {
 			venueDetailsSvc = GWT.create(VenueDetailsService.class);
 		}
 		// Set up the callback object.
-		AsyncCallback<VenueDetails[]> callback = new AsyncCallback<VenueDetails[]>() {
+		AsyncCallback<List<VenueDetails>> callback = new AsyncCallback<List<VenueDetails>>() {
 			public void onFailure(Throwable caught) {
 				errorMsgLabel.setText("Error while making call to server");
 				errorMsgLabel.setVisible(true);
 			}
 
-			public void onSuccess(VenueDetails[] result) {
-				VenueDetails[] venues = cleanVenueArray(result);
-				Arrays.sort(venues);
+			public void onSuccess(List<VenueDetails> result) {
+				List<VenueDetails> venues = cleanVenueArray(result);
+				//Arrays.sort(venues);
 				findCity(result); // used to get all cities
 				if (name.isEmpty() && address.isEmpty() && city == "All"
 						&& type == "All") {
@@ -447,9 +454,9 @@ public class BingeHopper implements EntryPoint {
 				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
 		// Make the call to the venue price service.
 		venueDetailsSvc.getPrices(callback);
-	}
+	}*/
 
-	private VenueDetails[] filter(VenueDetails[] venues, String name,
+	/*private VenueDetails[] filter(VenueDetails[] venues, String name,
 			String address, String city, String type) {
 		if (name.isEmpty() && address.isEmpty() && city.equals("All")
 				&& type.equals("All"))
@@ -511,68 +518,77 @@ public class BingeHopper implements EntryPoint {
 					.toArray(new VenueDetails[filteredVenueList.size()]);
 			return filteredVenueArray;
 		}
-	}
+	}*/
 
-	private void refreshVenueList() {
-		if (venueDetailsSvc == null) {
-			venueDetailsSvc = GWT.create(VenueDetailsService.class);
-		}
-		// Set up the callback object.
-		AsyncCallback<VenueDetails[]> callback = new AsyncCallback<VenueDetails[]>() {
-			public void onFailure(Throwable caught) {
-				errorMsgLabel.setText("Error while making call to server");
-				errorMsgLabel.setVisible(true);
-			}
-
-			public void onSuccess(VenueDetails[] result) {
-				VenueDetails[] venues = cleanVenueArray(result);
-				displayVenues(venues);
-			}
-		};
-		lastUpdatedLabel.setText("Last update : "
-				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
-		// Make the call to the venue price service.
-		venueDetailsSvc.getPrices(callback);
-	}
+//	private void refreshVenueList() {
+//		if (venueDetailsSvc == null) {
+//			venueDetailsSvc = GWT.create(VenueDetailsService.class);
+//		}
+//		// Set up the callback object.
+//		AsyncCallback<VenueDetails[]> callback = new AsyncCallback<VenueDetails[]>() {
+//			public void onFailure(Throwable caught) {
+//				errorMsgLabel.setText("Error while making call to server");
+//				errorMsgLabel.setVisible(true);
+//			}
+//
+//			public void onSuccess(VenueDetails[] result) {
+//				VenueDetails[] venues = cleanVenueArray(result);
+//				displayVenues(venues);
+//			}
+//		};
+//		lastUpdatedLabel.setText("Last update : "
+//				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
+//		// Make the call to the venue price service.
+//		venueDetailsSvc.getPrices(callback);
+//	}
 
 	/**
 	 * Takes list of venues minues the first row, removes empty venue names, and
 	 * sorts it alphabetically;
 	 */
-	private static VenueDetails[] cleanVenueArray(VenueDetails[] venues) {
-		VenueDetails[] results = new VenueDetails[(venues.length) - 1];
-		for (int i = 0; i < results.length; i++) {
-			results[i] = venues[i + 1]; // first row is field parameters
-		}
-		Arrays.sort(results);
-		return results;
-	}
+//	private List<VenueDetails> cleanVenueArray(List<VenueDetails> venues) {
+//		VenueDetails[] results = new VenueDetails[(venues.length) - 1];
+//		for (int i = 0; i < results.length; i++) {
+//			results[i] = venues[i + 1]; // first row is field parameters
+//		}
+//		Arrays.sort(results);
+//		return results;
+//	}
+	
+//	private List<VenueDetails> cleanVenueList(List<VenueDetails> venues) {
+//		List<VenueDetails> results = new ArrayList<VenueDetails>();
+//		for (int i = 0; i < results.length; i++) {
+//			results. // first row is field parameters
+//		}
+//		Arrays.sort(results);
+//		return results;
+//	}
 
-	private void findCity(VenueDetails[] result) {
-		Set<String> cities = new TreeSet<String>();
-		for (VenueDetails venue : result) {
-			cities.add(venue.getVenueCity());
-		}
-		System.out.println(cities);
-	}
-
-	/**
-	 * Add venues to FlexTable. Executed when the user clicks the
-	 * updateVenuesButton
-	 */
-	private void displayVenues(VenueDetails[] venues) {
-		venuesFlexTable.removeAllRows();
-		setUpFirstRow();
-		lastUpdatedLabel.setText(Integer.toString(venues.length));
-		for (int i = 0; i < venues.length; i++) {
-			venuesFlexTable.setText(i + 1, 0, venues[i].getVenueName());
-			venuesFlexTable.setText(i + 1, 1, venues[i].getVenueAdd1());
-			venuesFlexTable.setText(i + 1, 2, venues[i].getVenueCity());
-			venuesFlexTable.setText(i + 1, 3, venues[i].getVenuePostal());
-			venuesFlexTable.setText(i + 1, 4, venues[i].getVenuePhone());
-			venuesFlexTable.setText(i + 1, 5, venues[i].getVenueType());
-			venuesFlexTable.setText(i + 1, 6, venues[i].getVenueCapacity());
-		}
-	}
+//	private void findCity(List<VenueDetails> result) {
+//		Set<String> cities = new TreeSet<String>();
+//		for (VenueDetails venue : result) {
+//			cities.add(venue.getVenueCity());
+//		}
+//		System.out.println(cities);
+//	}
+//
+//	/**
+//	 * Add venues to FlexTable. Executed when the user clicks the
+//	 * updateVenuesButton
+//	 */
+//	private void displayVenues(VenueDetails[] venues) {
+//		venuesFlexTable.removeAllRows();
+//		setUpFirstRow();
+//		lastUpdatedLabel.setText(Integer.toString(venues.length));
+//		for (int i = 0; i < venues.length; i++) {
+//			venuesFlexTable.setText(i + 1, 0, venues[i].getVenueName());
+//			venuesFlexTable.setText(i + 1, 1, venues[i].getVenueAdd1());
+//			venuesFlexTable.setText(i + 1, 2, venues[i].getVenueCity());
+//			venuesFlexTable.setText(i + 1, 3, venues[i].getVenuePostal());
+//			venuesFlexTable.setText(i + 1, 4, venues[i].getVenuePhone());
+//			venuesFlexTable.setText(i + 1, 5, venues[i].getVenueType());
+//			venuesFlexTable.setText(i + 1, 6, venues[i].getVenueCapacity());
+//		}
+//	}
 
 }
