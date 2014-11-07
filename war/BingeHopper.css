@@ -46,6 +46,10 @@ body {
 	top:30px;
 }
 
+gwt-TabPanelBottom > div {
+	height:auto !important;
+}
+
 /* venue list header row */
 .venueListHeader {
   background-color: #2062B8;
@@ -69,6 +73,15 @@ body {
 	opacity:1;
 }
 
+#venueList {
+  opacity:.9;
+ 
+}
+
+#venueList > * {
+  opacity:1;
+ 
+}
 /* Update Venues panel */
 .updatePanel {
   margin: 10px 0px 15px 0px;

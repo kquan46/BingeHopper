@@ -9,6 +9,8 @@ import java.util.TreeSet;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.HeadingElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -120,13 +122,11 @@ public void onModuleLoad()
         loginInfo = result;
         if(loginInfo.isLoggedIn()) 
         {	
-        	System.out.println("loadBingeHopper");
         	loadBingeHopper();
         }
         
         else 
         {
-        	System.out.println("loadLogin");
             loadLogin();
         }
       }
@@ -158,7 +158,7 @@ private void loadBingeHopper()
 	
 	// Create table for venue data
 	
-	setUpFirstRow();    
+    setUpFirstRow();    
 	
 	// Assemble Update Venues panel. 
 	
@@ -237,6 +237,13 @@ private void loadBingeHopper()
 	searchPanel.add(typeListBox);
 
 	searchPanel.add(searchButton);
+	
+	
+	//Bookmarks Panel
+	
+	HTML bookmarksHeader = new HTML("<h2>Headline</h2>");
+	
+	bookmarksTab.add(bookmarksHeader);
 	
 	// Create table for Bookmarks
 	bookmarksFirstRow();
@@ -528,7 +535,6 @@ private void setUpFirstRow() {
 		for (VenueDetails venue : result) {
 			cities.add(venue.getVenueCity());
 		}
-		System.out.println(cities);
 	}
 
 	/**
