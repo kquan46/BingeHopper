@@ -5,8 +5,7 @@ html{
 	overflow:hidden !important;
 	
   background-color: #c9f2ec !important;
-  background-image: url("images/background.png");
-  opacity:.7;
+  background-image: url("images/lounge.jpg");
 }
 
 body {
@@ -19,7 +18,7 @@ body {
 #logo {
 	margin-right: auto;
 	margin-left: auto;
-	width:250px;
+	width:300px;
 	margin-top:25px;
 }
 
@@ -47,6 +46,10 @@ height: 25px !important;
 border-radius: 10px;*/
 }
 
+gwt-TabPanelBottom > div {
+	height:auto !important;
+}
+
 /* venue list header row */
 .venueListHeader {
   background-color: #2062B8;
@@ -62,6 +65,15 @@ border-radius: 10px;*/
   overflow:scroll;
 }
 
+#venueList {
+  opacity:.9;
+ 
+}
+
+#venueList > * {
+  opacity:1;
+ 
+}
 /* Update Venues panel */
 .updatePanel {
   margin: 10px 0px 15px 0px;
@@ -113,7 +125,7 @@ border-radius: 10px;*/
 /* tabs */
 .gwt-TabPanelBottom {
 	position:fixed;
-	overflow: hidden !important;
+	overflow: scroll !important;
 	right:100px;
 	left:170px;
 	top:100px;
@@ -123,7 +135,8 @@ border-radius: 10px;*/
 	
 }
 
-.gwt-TabPanelBottom td {
+.gwt-TabPanelBottom > div {
+	height:auto !important;
 }
 
 .tabs {

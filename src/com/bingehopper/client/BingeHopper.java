@@ -9,6 +9,8 @@ import java.util.TreeSet;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.HeadingElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -104,13 +106,11 @@ public void onModuleLoad()
         loginInfo = result;
         if(loginInfo.isLoggedIn()) 
         {	
-        	System.out.println("loadBingeHopper");
         	loadBingeHopper();
         }
         
         else 
         {
-        	System.out.println("loadLogin");
             loadLogin();
         }
       }
@@ -142,7 +142,7 @@ private void loadBingeHopper()
 	
 	// Create table for venue data
 	
-	setUpFirstRow();    
+    venuesFlexTable = setUpFirstRow(venuesFlexTable);    
 	
 	// Assemble Update Venues panel. 
 	
@@ -221,6 +221,13 @@ private void loadBingeHopper()
 	searchPanel.add(typeListBox);
 
 	searchPanel.add(searchButton);
+	
+	
+	//Bookmarks Panel
+	
+	HTML bookmarksHeader = new HTML("<h2>Headline</h2>");
+	
+	bookmarksTab.add(bookmarksHeader);
 	
 	
 	// Assemble Main panel.
@@ -333,20 +340,22 @@ private void loadBingeHopper()
 
 }
 
-private void setUpFirstRow() {
-	venuesFlexTable.setText(0, 0, "Name");  
-	venuesFlexTable.setText(0, 1, "Address Line 1");  
-	venuesFlexTable.setText(0, 2, "Address Line 2");  
-	venuesFlexTable.setText(0, 3, "City");
-	venuesFlexTable.setText(0, 4, "Postal Code");
-	venuesFlexTable.setText(0, 5, "Telephone");
-	venuesFlexTable.setText(0, 6, "Type");
-	venuesFlexTable.setText(0, 7, "Capacity");
-	venuesFlexTable.setText(0, 8, "Share");
+private FlexTable setUpFirstRow(FlexTable table) {
+	table.setText(0, 0, "Name");  
+	table.setText(0, 1, "Address Line 1");  
+	table.setText(0, 2, "Address Line 2");  
+	table.setText(0, 3, "City");
+	table.setText(0, 4, "Postal Code");
+	table.setText(0, 5, "Telephone");
+	table.setText(0, 6, "Type");
+	table.setText(0, 7, "Capacity");
+	table.setText(0, 8, "Share");
 	
 	// Add styles to elements in the venue list table.
-    venuesFlexTable.getRowFormatter().addStyleName(0, "venueListHeader");
-    venuesFlexTable.addStyleName("venueList");
+    table.getRowFormatter().addStyleName(0, "venueListHeader");
+    table.addStyleName("venueList");
+    
+    return table;
 }
 
 
@@ -488,7 +497,6 @@ private void setUpFirstRow() {
 		for (VenueDetails venue : result) {
 			cities.add(venue.getVenueCity());
 		}
-		System.out.println(cities);
 	}
 
 	/**
@@ -497,7 +505,7 @@ private void setUpFirstRow() {
 	 */
 	private void displayVenues(VenueDetails[] venues) {
 		venuesFlexTable.removeAllRows();
-		setUpFirstRow();
+		venuesFlexTable = setUpFirstRow(venuesFlexTable);
 		lastUpdatedLabel.setText(Integer.toString(venues.length));
 		for (int i = 0; i < venues.length; i++) {
 			venuesFlexTable.setText(i + 1, 0, venues[i].getVenueName());
