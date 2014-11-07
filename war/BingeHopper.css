@@ -5,6 +5,13 @@ body {
   background-color: #c9f2ec !important;
 }
 
+/* tab titles */
+.title{
+	font-size: 18px;
+	font-weight: bold;
+	text-align: center;
+	padding: 10px;
+}
 
 /* Facebook like panel */
 .fbLikePanel{ 
