@@ -390,11 +390,12 @@ public class BingeHopper implements EntryPoint {
 			venueDetailsSvc = GWT.create(VenueDetailsService.class);
 		}
 		AsyncDataProvider<VenueDetails> provider = new AsyncDataProvider<VenueDetails>() {
+			List<VenueDetails> buffer;
 			@Override
 			protected void onRangeChanged(HasData<VenueDetails> display) {
 				final int start = display.getVisibleRange().getStart();
 				int length = display.getVisibleRange().getLength();
-				AsyncCallback<List<VenueDetails>> callback = new AsyncCallback<List<VenueDetails>>() {
+				AsyncCallback<VenueDetails[]> callback = new AsyncCallback<VenueDetails[]>() {
 					
 					public void onFailure(Throwable caught) {
 						errorMsgLabel
@@ -403,8 +404,13 @@ public class BingeHopper implements EntryPoint {
 					}
 
 					
-					public void onSuccess(List<VenueDetails> result) {
-						updateRowData(9500, result);
+					public void onSuccess(VenueDetails[] result) {
+//						int i;
+						buffer = Arrays.asList(result);
+//						for (i=0;i<200;i++){
+//						buffer.add(result[i]);
+//						}
+						updateRowData(start, buffer);
 						
 					}
 				};

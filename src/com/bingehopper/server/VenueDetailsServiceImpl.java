@@ -21,7 +21,7 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 	private static final long serialVersionUID = 1L;
 	
 	@Override
-	public List<VenueDetails> getPrices() {
+	public VenueDetails[] getPrices() {
 		
 		  URL url;
 	      
@@ -33,7 +33,7 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 	      
 	      String splitBy = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 	      
-	      List<VenueDetails> listOfVenues = new ArrayList<VenueDetails>();
+	      ArrayList<VenueDetails> listOfVenues = new ArrayList<VenueDetails>();
 	      
 	      try 
 	      {
@@ -83,9 +83,9 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 	         
 	      }
 	      
-//		VenueDetails[] arrayOfVenues = new VenueDetails[listOfVenues.size()];
-//		arrayOfVenues = listOfVenues.toArray(arrayOfVenues);
-		return listOfVenues;
+		VenueDetails[] arrayOfVenues = new VenueDetails[listOfVenues.size()];
+		arrayOfVenues = listOfVenues.toArray(arrayOfVenues);
+		return arrayOfVenues;
 		
 	}
 	
