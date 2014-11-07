@@ -18,6 +18,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -57,6 +58,10 @@ private HTML likeHtml = new HTML(fbHtml);
 private String twtrHtml = "<a href='https://twitter.com/share' class='twitter-share-button' data-url='http://teamfantastic310.appspot.com/' data-hashtags='TeamFantastic'>Tweet</a>";
 private HTML twitterHtml = new HTML(twtrHtml);
 private HTML twtfcn = new HTML("<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>");
+
+private FlexTable bookmarksFlexTable = new FlexTable();
+private Button removeBookmarkButton = new Button();
+private CheckBox visitedCheckbox = new CheckBox();
 
 private TabPanel tabs = new TabPanel();
 private VerticalPanel searchTab = new VerticalPanel();
@@ -220,6 +225,8 @@ private void loadBingeHopper()
 
 	searchPanel.add(searchButton);
 	
+	// Create table for Bookmarks
+	bookmarksFirstRow();
 	
 	// Assemble Main panel.
 	
@@ -291,8 +298,7 @@ private void loadBingeHopper()
     searchTab.add(venuesFlexTable);
     
     // Organize Bookmarks Tab
-    Label bookmarksTest = new Label("I am a bookmark. Fear me.");
-    bookmarksTab.add(bookmarksTest);
+    bookmarksTab.add(bookmarksFlexTable);
     
     // Organize Visited Tab
     Label visitedTest = new Label("You have visited me. Fear me as well.");
@@ -306,13 +312,6 @@ private void loadBingeHopper()
     socialTab.add(likePanel);
  
     // configure tabs
-	//Image cha = new Image();
-	//cha.setUrl("sprouting-cha.gif");
-	//tabs.add(new HTML("I am Cha"), cha);
-    
-    //cha.addStyleName("tabIcon");
-    //link.addStyleName("tabIcon");
-    
     tabs.add(searchTab, "Search");
 	tabs.add(bookmarksTab, "Bookmarks");
 	tabs.add(visitedTab, "Visited");
@@ -329,6 +328,23 @@ private void loadBingeHopper()
 	// set stylename for tabs
 	tabs.setStyleName("tabs");
 
+}
+
+private void bookmarksFirstRow() {
+	bookmarksFlexTable.setText(0, 0, "Name");  
+	bookmarksFlexTable.setText(0, 1, "Address"); 
+	bookmarksFlexTable.setText(0, 2, "City");
+	bookmarksFlexTable.setText(0, 3, "Postal Code");
+	bookmarksFlexTable.setText(0, 4, "Telephone");
+	bookmarksFlexTable.setText(0, 5, "Type");
+	bookmarksFlexTable.setText(0, 6, "Capacity");
+	bookmarksFlexTable.setText(0, 7, "Share");
+	bookmarksFlexTable.setText(0, 8, "Visited");
+	bookmarksFlexTable.setText(0, 9, "Remove");
+	
+	// Add styles to elements in the bookmarks list table.
+    bookmarksFlexTable.getRowFormatter().addStyleName(0, "venueListHeader");
+    bookmarksFlexTable.addStyleName("venueList");
 }
 
 private void setUpFirstRow() {
