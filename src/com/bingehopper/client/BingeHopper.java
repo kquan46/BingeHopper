@@ -43,6 +43,7 @@ private HorizontalPanel tweetPanel = new HorizontalPanel();
 private Button updateVenuesButton = new Button("Update");
 private Label lastUpdatedLabel = new Label();
 
+private Image searchIcon = new Image();
 private Label searchTitle = new Label("Search");
 private Button searchButton = new Button("Search");
 private Label nameLabel = new Label("Name");
@@ -62,12 +63,16 @@ private String twtrHtml = "<a href='https://twitter.com/share' class='twitter-sh
 private HTML twitterHtml = new HTML(twtrHtml);
 private HTML twtfcn = new HTML("<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>");
 
+private Image bookmarksIcon = new Image();
 private Label bookmarksTitle = new Label("Bookmarks");
 private FlexTable bookmarksFlexTable = new FlexTable();
 private Button removeBookmarkButton = new Button("x");
 private CheckBox visitedCheckbox = new CheckBox();
 
+private Image visitedIcon = new Image();
 private Label visitedTitle = new Label("Visited");
+
+private Image mapIcon = new Image();
 
 private TabPanel tabs = new TabPanel();
 private VerticalPanel searchTab = new VerticalPanel();
@@ -299,6 +304,8 @@ private void loadBingeHopper()
     // ----------- TABS --------------
     //
     // Organize Search Tab
+	searchIcon.setUrl("search.png");
+	searchIcon.addStyleName("tabIcon");
 	searchTab.add(searchTitle);
 	searchTitle.addStyleName("title");
     searchTab.add(updatePanel);
@@ -306,15 +313,21 @@ private void loadBingeHopper()
     searchTab.add(venuesFlexTable);
     
     // Organize Bookmarks Tab
+    bookmarksIcon.setUrl("bookmarks.png");
+    bookmarksIcon.addStyleName("tabIcon");
     bookmarksTab.add(bookmarksTitle);
     bookmarksTitle.addStyleName("title");
     bookmarksTab.add(bookmarksFlexTable);
     
     // Organize Visited Tab
+    visitedIcon.setUrl("visited.png");
+    visitedIcon.addStyleName("tabIcon");
     visitedTab.add(visitedTitle);
     visitedTitle.addStyleName("title");
     
     // Organize Map Tab
+    mapIcon.setUrl("maps.png");
+    mapIcon.addStyleName("tabIcon");
     Label mapTest = new Label("I solemnly swear I'm up to no good.");
     mapTab.add(mapTest);
     
@@ -324,10 +337,10 @@ private void loadBingeHopper()
     socialTab.add(likePanel);
  
     // configure tabs
-    tabs.add(searchTab, "Search");
-	tabs.add(bookmarksTab, "Bookmarks");
-	tabs.add(visitedTab, "Visited");
-	tabs.add(mapTab, "Map");
+    tabs.add(searchTab, searchIcon);
+	tabs.add(bookmarksTab, bookmarksIcon);
+	tabs.add(visitedTab, visitedIcon);
+	tabs.add(mapTab, mapIcon);
 	tabs.add(socialTab, "Social");
 
 	
