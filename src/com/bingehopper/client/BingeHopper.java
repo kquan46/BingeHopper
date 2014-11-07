@@ -120,11 +120,13 @@ public void onModuleLoad()
         loginInfo = result;
         if(loginInfo.isLoggedIn()) 
         {	
+        	System.out.println("loadBingeHopper");
         	loadBingeHopper();
         }
         
         else 
         {
+        	System.out.println("loadLogin");
             loadLogin();
         }
       }
@@ -304,7 +306,7 @@ private void loadBingeHopper()
     // ----------- TABS --------------
     //
     // Organize Search Tab
-	searchIcon.setUrl("search.png");
+	searchIcon.setUrl("images/search.png");
 	searchIcon.addStyleName("tabIcon");
 	searchTab.add(searchTitle);
 	searchTitle.addStyleName("title");
@@ -313,20 +315,20 @@ private void loadBingeHopper()
     searchTab.add(venuesFlexTable);
     
     // Organize Bookmarks Tab
-    bookmarksIcon.setUrl("bookmarks.png");
+    bookmarksIcon.setUrl("images/bookmarks.png");
     bookmarksIcon.addStyleName("tabIcon");
     bookmarksTab.add(bookmarksTitle);
     bookmarksTitle.addStyleName("title");
     bookmarksTab.add(bookmarksFlexTable);
     
     // Organize Visited Tab
-    visitedIcon.setUrl("visited.png");
+    visitedIcon.setUrl("images/visited.png");
     visitedIcon.addStyleName("tabIcon");
     visitedTab.add(visitedTitle);
     visitedTitle.addStyleName("title");
     
     // Organize Map Tab
-    mapIcon.setUrl("maps.png");
+    mapIcon.setUrl("images/maps.png");
     mapIcon.addStyleName("tabIcon");
     Label mapTest = new Label("I solemnly swear I'm up to no good.");
     mapTab.add(mapTest);
@@ -410,6 +412,8 @@ private void setUpFirstRow() {
 				} else {
 					VenueDetails[] filteredVenueArray = filter(venues, name,
 							address, city, type);
+					
+					//pagination();
 					displayVenues(filteredVenueArray);
 				}
 			}
