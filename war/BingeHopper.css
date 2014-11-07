@@ -14,12 +14,13 @@ body {
 	width:100%;
   padding: 10px;
   background-color:transparent !important;
+  opacity: .9;
   }
 
 #logo {
 	margin-right: auto;
 	margin-left: auto;
-	width:250px;
+	width:300px;
 	margin-top:25px;
 }
 
@@ -108,6 +109,7 @@ body {
 	top: 25px;
 	right: 80px;
 	padding: 10px;
+	background-color: white;
 }
 
 /* tabs */
@@ -119,11 +121,11 @@ body {
 	top:100px;
 	bottom:0px;
 	border: none !important;
-	background-color: white;
-	
+	background-color: white
 }
 
-.gwt-TabPanelBottom td {
+.gwt-TabPanelBottom > div{
+	height: auto !important;
 }
 
 .tabs {
@@ -138,11 +140,10 @@ body {
 	padding: 20px;
 	transform: rotate(90deg);
 	transform-origin: 0px 0px;
-
 }
 
 .gwt-TabBarItem {
-	background-color: green !important;
+	background-color: white !important;
 	transform: rotate(-90deg);
 	width: 65px;
 	height: 65px;

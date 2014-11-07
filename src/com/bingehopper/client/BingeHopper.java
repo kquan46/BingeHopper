@@ -306,7 +306,7 @@ private void loadBingeHopper()
     // ----------- TABS --------------
     //
     // Organize Search Tab
-	searchIcon.setUrl("images/search.png");
+	searchIcon.setUrl("search.png");
 	searchIcon.addStyleName("tabIcon");
 	searchTab.add(searchTitle);
 	searchTitle.addStyleName("title");
@@ -315,20 +315,20 @@ private void loadBingeHopper()
     searchTab.add(venuesFlexTable);
     
     // Organize Bookmarks Tab
-    bookmarksIcon.setUrl("images/bookmarks.png");
+    bookmarksIcon.setUrl("bookmarks.png");
     bookmarksIcon.addStyleName("tabIcon");
     bookmarksTab.add(bookmarksTitle);
     bookmarksTitle.addStyleName("title");
     bookmarksTab.add(bookmarksFlexTable);
     
     // Organize Visited Tab
-    visitedIcon.setUrl("images/visited.png");
+    visitedIcon.setUrl("visited.png");
     visitedIcon.addStyleName("tabIcon");
     visitedTab.add(visitedTitle);
     visitedTitle.addStyleName("title");
     
     // Organize Map Tab
-    mapIcon.setUrl("images/maps.png");
+    mapIcon.setUrl("maps.png");
     mapIcon.addStyleName("tabIcon");
     Label mapTest = new Label("I solemnly swear I'm up to no good.");
     mapTab.add(mapTest);
