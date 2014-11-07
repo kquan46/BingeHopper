@@ -93,6 +93,7 @@ border-radius: 10px;*/
 
 /* sign in link */
 .signInLink {
+	width:300px;
 	font-size: 78px;
 	text-decoration: none;
 	position: absolute;
