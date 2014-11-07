@@ -238,13 +238,6 @@ private void loadBingeHopper()
 
 	searchPanel.add(searchButton);
 	
-	
-	//Bookmarks Panel
-	
-	HTML bookmarksHeader = new HTML("<h2>Headline</h2>");
-	
-	bookmarksTab.add(bookmarksHeader);
-	
 	// Create table for Bookmarks
 	bookmarksFirstRow();
 	
