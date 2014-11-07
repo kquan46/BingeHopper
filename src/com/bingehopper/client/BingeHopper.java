@@ -354,7 +354,7 @@ private void loadBingeHopper()
 
 	
 	// show the 'map' tab initially
-	tabs.selectTab(3);
+	tabs.selectTab(0);
 	
 	// add to mainPanel
 	mainPanel.add(tabs);
