@@ -28,6 +28,14 @@ body {
 	height:auto;
 }
 
+/* tab titles */
+.title{
+	font-size: 18px;
+	font-weight: bold;
+	text-align: center;
+	padding: 10px;
+}
+
 /* Facebook like panel */
 .fbLikePanel{ 
    border:1px solid green;
@@ -37,14 +45,6 @@ body {
 	position:fixed;
 	right:50px;
 	top:30px;
-}
-
-.gwt-TabBarItem {
-background-color: green !important;
-/*width: 25px !important;
-opacity: 1;
-height: 25px !important;
-border-radius: 10px;*/
 }
 
 /* venue list header row */
@@ -142,7 +142,7 @@ border-radius: 10px;*/
 }
 
 .gwt-TabBarItem {
-	background-color: white !important;
+	background-color: green !important;
 	transform: rotate(-90deg);
 	width: 65px;
 	height: 65px;
@@ -154,6 +154,10 @@ border-radius: 10px;*/
 
 /* tabIcon */
 .tabIcon {
-	width: 50px;
-	height: 50px;
+	width: 58px;
+	height: 58px;
+	display:block;
+	margin-left: auto;
+	margin-right: auto;
+	padding-top: 3px;
 }
