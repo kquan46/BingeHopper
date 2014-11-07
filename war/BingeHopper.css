@@ -6,7 +6,6 @@ html{
 	
   background-color: #c9f2ec !important;
   background-image: url("images/background.png");
-  opacity:1;
 }
 
 body {
@@ -14,7 +13,6 @@ body {
 	width:100%;
   padding: 10px;
   background-color:transparent !important;
-  opacity: .9;
   }
 
 #logo {
@@ -61,6 +59,14 @@ body {
   padding: 2px;
   margin-bottom:6px;
   overflow:scroll;
+}
+
+#venueList {
+	opacity:.9;
+}
+
+#venueList > * {
+	opacity:1;
 }
 
 /* Update Venues panel */
