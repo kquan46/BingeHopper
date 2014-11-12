@@ -73,15 +73,6 @@ gwt-TabPanelBottom > div {
 	opacity:1;
 }
 
-#venueList {
-  opacity:.9;
- 
-}
-
-#venueList > * {
-  opacity:1;
- 
-}
 /* Update Venues panel */
 .updatePanel {
   margin: 10px 0px 15px 0px;
@@ -166,6 +157,7 @@ gwt-TabPanelBottom > div {
 	transform: rotate(-90deg);
 	width: 65px;
 	height: 65px;
+	border-radius: 35px;
 }
 
 .gwt-TabBarItem-selected {
@@ -174,10 +166,10 @@ gwt-TabPanelBottom > div {
 
 /* tabIcon */
 .tabIcon {
-	width: 58px;
-	height: 58px;
+	width: 35px;
+	height: 35px;
 	display:block;
 	margin-left: auto;
 	margin-right: auto;
-	padding-top: 3px;
+	padding-top: 12px;
 }
