@@ -11,8 +11,7 @@ import com.bingehopper.client.VenueDetails;
 import com.bingehopper.client.VenueDetailsService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
-		VenueDetailsService {
+public class VenueDetailsServiceImpl extends RemoteServiceServlet implements VenueDetailsService {
 	
 	/**
 	 * 
@@ -47,6 +46,9 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 	         // initiates input stream
 	         rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 	         
+	         // start a counter to assign id's as VenueDetails objects are created
+	         int idAssign = 1;
+	         
 	         // for every iteration of this while loop, line is a String which represents a single line in our csv file (each line is a location)
 	         while ((line = rd.readLine()) != null) 
 	         {
@@ -56,12 +58,14 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 	        	// venue is an array of strings such that venue[i] is the i'th item in the current line, so venue[0] is the name of establishment, venue[1] is the address line 1 (refer to csv)
 	            String[] venue = line.split(splitBy);
 	            
-	            VenueDetails location = new VenueDetails(venue[0], venue[1], venue[2], venue[3], venue[4], venue[10], venue [11], venue[12]);
+	            VenueDetails location = new VenueDetails(venue[0], venue[1], venue[2], venue[3], venue[4], venue[10], venue [11], venue[12], idAssign);
 	            
 	            // helper method to assign the fields of VenueDetails object
 	            //setValues (location,venue);
 	            
 	            listOfVenues.add(location);
+	            
+	            idAssign++;
 	            
 	         }
 	         
@@ -88,19 +92,5 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 		return arrayOfVenues;
 		
 	}
-	
-	/*public static void setValues (VenueDetails location, String[] venue)
-	   {
-		   
-		   location.setVenueName(venue[0]);
-		   location.setVenueAdd1(venue[1]);
-		   location.setVenueAdd2(venue[2]);
-		   location.setVenueCity(venue[3]);
-		   location.setVenuePostal(venue[4]);
-		   location.setVenuePhone(venue[10]);
-		   location.setVenueType(venue[11]);
-		   location.setVenueCapacity(venue[12]);
-		   
-	   }*/
 
 }

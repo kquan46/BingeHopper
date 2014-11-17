@@ -2,8 +2,10 @@ package com.bingehopper.client;
 
 import java.io.Serializable;
 
+
 public class VenueDetails implements Serializable, Comparable<VenueDetails>{
 	
+
 	private String venueName;
 	private String venueAdd1;
 	private String venueAdd2;
@@ -12,6 +14,7 @@ public class VenueDetails implements Serializable, Comparable<VenueDetails>{
 	private String venuePhone;
 	private String venueType;
 	private String venueCapacity;
+	private int id;
 	
 	private static final long serialVersionUID = 1L;
 
@@ -19,7 +22,7 @@ public class VenueDetails implements Serializable, Comparable<VenueDetails>{
 	
 	public VenueDetails(String venueName, String venueAdd1, 
 			String venueAdd2, String venueCity, String venuePostal, 
-			String venuePhone, String venueType, String venueCapacity) {
+			String venuePhone, String venueType, String venueCapacity, int id) {
 		this.venueName = venueName;
 		this.venueAdd1 = venueAdd1;
 		this.venueAdd2 = venueAdd2;
@@ -28,6 +31,7 @@ public class VenueDetails implements Serializable, Comparable<VenueDetails>{
 		this.venuePhone = venuePhone;
 		this.venueType = venueType;
 		this.venueCapacity = venueCapacity;
+		this.id = id;
 	}
 	
 	
@@ -83,6 +87,11 @@ public class VenueDetails implements Serializable, Comparable<VenueDetails>{
 
 	public int compareTo(VenueDetails other) {
 		return this.venueName.toLowerCase().compareTo(other.venueName.toLowerCase());
+	}
+
+	public int getId() {
+		// TODO Auto-generated method stub
+		return this.id;
 	}
 
 	
