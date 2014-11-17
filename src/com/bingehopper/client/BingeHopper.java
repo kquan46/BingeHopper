@@ -58,10 +58,9 @@ public class BingeHopper implements EntryPoint
 	// create buttons
 	private Button updateVenuesButton = new Button("Update");
 	private Button searchButton = new Button("Search");
-	private Button removeBookmarkButton = new Button("x");
-	private Button addBookmarksButton = new Button("Add");
-	private Button removeBoomarksButton = new Button("Remove");
-	private Button displayBookmarksButton = new Button("Display");
+	private Button removeBookmarksButton = new Button("Remove (currently removes the 4 arbitrary Venues added by the add button)");
+	private Button addBookmarksButton = new Button("Add (currently adds 4 arbitrary Venues to the bookmarks list: check buttonlistener for details)");
+	private Button displayBookmarksButton = new Button("Display (displays the 4 bookmarks if add was pressed last, nothing if remove was pressed)");
 	
 	
 	// create labels
@@ -118,7 +117,8 @@ public class BingeHopper implements EntryPoint
 	
 	
 	// initialize async callback service
-	private VenueDetailsServiceAsync venueDetailsSvc = GWT.create(VenueDetailsService.class);	
+	private VenueDetailsServiceAsync venueDetailsSvc = GWT.create(VenueDetailsService.class);
+	// async callback service for bookmarks functionality
 	private final VenueServiceAsync venueService = GWT.create(VenueService.class);
 	
 	// setup login service
@@ -417,7 +417,7 @@ public class BingeHopper implements EntryPoint
 		
 		
 		// implemented to test the removal of bookmarks functionality. Removes the 4 bookmarks added above
-		removeBookmarkButton.addClickHandler(new ClickHandler() 
+		removeBookmarksButton.addClickHandler(new ClickHandler() 
 	    {
 	    	
 		      public void onClick(ClickEvent event) 
@@ -466,7 +466,7 @@ public class BingeHopper implements EntryPoint
 	    bookmarksIcon.addStyleName("tabIcon");
 	    bookmarksTab.add(bookmarksTitle);
 	    bookmarksTab.add(addBookmarksButton);
-	    bookmarksTab.add(removeBookmarkButton);
+	    bookmarksTab.add(removeBookmarksButton);
 	    bookmarksTab.add(displayBookmarksButton);
 	    bookmarksTitle.addStyleName("title");
 	    bookmarksTab.add(bookmarksFlexTable);
