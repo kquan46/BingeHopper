@@ -1,5 +1,2 @@
 # Module bingehopper
 # RPC service class, partial path of RPC policy file
-com.bingehopper.client.VenueService, 6EC1D65BEBF8E8DE2A3ED12AF93F46D0.gwt.rpc
-com.bingehopper.client.LoginService, 83E6106726CF1F9D37BCC9BF44B380BE.gwt.rpc
-com.bingehopper.client.VenueDetailsService, C50860FCE89AEECF627ACF4C97198DF2.gwt.rpc

@@ -138,6 +138,10 @@ gwt-TabPanelBottom > div {
 	height: auto !important;
 }
 
+.gwt-TabPanelBottom div + div + div + div{
+	height: 100% !important;
+}
+
 .tabs {
 	padding-left: 175px;
 	padding-right: 125px;
@@ -172,4 +176,10 @@ gwt-TabPanelBottom > div {
 	margin-left: auto;
 	margin-right: auto;
 	padding-top: 12px;
+}
+
+#map-canvas{
+	width:100%;
+	height:100%;
+	background-color:red;
 }

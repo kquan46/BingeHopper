@@ -24,6 +24,20 @@
     <!-- be added before this line.                -->
     <!--                                           -->
     <script type="text/javascript" language="javascript" src="bingehopper/bingehopper.nocache.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+    <script>
+    	var map;
+	  function initialize() {
+	    var mapCanvas = document.getElementById('map-canvas');
+	    var mapOptions = {
+	      center: new google.maps.LatLng(49.4000, -123.3500),
+	      zoom: 10,
+	      mapTypeId: google.maps.MapTypeId.ROADMAP
+	    }
+	    map = new google.maps.Map(mapCanvas, mapOptions);
+	  }
+      google.maps.event.addDomListener(window, 'load', initialize);
+	</script>
   </head>
 
   <!--                                           -->

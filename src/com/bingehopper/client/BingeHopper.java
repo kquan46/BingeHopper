@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -46,6 +47,7 @@ public class BingeHopper implements EntryPoint
 	private VerticalPanel bookmarksTab = new VerticalPanel();
 	private VerticalPanel visitedTab = new VerticalPanel();
 	private VerticalPanel mapTab = new VerticalPanel();
+	private FlowPanel mapContainer = new FlowPanel();
 	private VerticalPanel socialTab = new VerticalPanel();
 	private VerticalPanel loginPanel = new VerticalPanel();
 	
@@ -481,7 +483,10 @@ public class BingeHopper implements EntryPoint
 	    mapIcon.setUrl("maps.png");
 	    mapIcon.addStyleName("tabIcon");
 	    Label mapTest = new Label("I solemnly swear I'm up to no good.");
-	    mapTab.add(mapTest);
+	    mapContainer.getElement().setId("map-canvas");
+	    mapTab.add(mapContainer);
+	    mapTab.getElement().setId("map");
+
 	    
 	    // Organize Social Tab
 	    socialTab.add(socialTitle);
