@@ -14,6 +14,7 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.maps.client.Maps;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -25,9 +26,18 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.maps.client.InfoWindowContent;
+import com.google.gwt.maps.client.MapWidget;
+import com.google.gwt.maps.client.control.LargeMapControl;
+import com.google.gwt.maps.client.geom.LatLng;
+import com.google.gwt.maps.client.overlay.Marker;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+
 
 public class BingeHopper implements EntryPoint 
 
@@ -137,6 +147,8 @@ public class BingeHopper implements EntryPoint
 	public void onModuleLoad() 
 	{
 		
+		   
+		
 		// Check login status using login service
 	    LoginServiceAsync loginService = GWT.create(LoginService.class);
 	    loginService.login(GWT.getHostPageBaseURL(), new AsyncCallback<LoginInfo>() 
@@ -157,8 +169,13 @@ public class BingeHopper implements EntryPoint
 			        
 			        if(loginInfo.isLoggedIn()) 
 			        {	
-			        	
-			        	loadBingeHopper();
+			 		   
+			        	Maps.loadMapsApi("AIzaSyCTk1NtYlfZeSWetnBjL6bOrLnl99A6now", "2", false, new Runnable() {
+						      public void run() {  
+						    	  loadBingeHopper();
+						      }
+						    } );
+//			        	loadBingeHopper();
 			        	
 			        }
 			        
@@ -173,8 +190,15 @@ public class BingeHopper implements EntryPoint
 	      
 	     }
 	    					);
+	    
+	    
+		   /*
+		    * Asynchronously loads the Maps API.
+		   */
+		
+
+		
 	}
-	
 	
 	
 	
@@ -300,6 +324,31 @@ public class BingeHopper implements EntryPoint
 		// Create table for Bookmarks
 		bookmarksFirstRow();
 		
+		
+		// Create Map Panel
+
+	    LatLng vancouver = LatLng.newInstance(49.2500, -123.1000);
+
+	    final MapWidget map = new MapWidget(vancouver, 10);
+	    map.setSize("100%", "100%");
+	    
+	    // Add some controls for the zoom level
+	    map.addControl(new LargeMapControl());
+
+	    // Add a marker
+	    map.addOverlay(new Marker(vancouver));
+
+	    // Add an info window to highlight a point of interest
+	    map.getInfoWindow().open(map.getCenter(),
+	        new InfoWindowContent("Hi there!"));
+
+//	    HorizontalPanel mapPanel = new HorizontalPanel();
+	    DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
+	    dock.addNorth(map, 500);
+//	    StackLayoutPanel stack = new StackLayoutPanel(Unit.PX);
+//	    stack.add(map);
+	    
+
 		
 		// Assemble Main panel.		
 		errorMsgLabel.setStyleName("errorMessage");
@@ -482,7 +531,8 @@ public class BingeHopper implements EntryPoint
 	    mapIcon.addStyleName("tabIcon");
 	    Label mapTest = new Label("I solemnly swear I'm up to no good.");
 	    mapTab.add(mapTest);
-	    
+	    mapTab.add(dock);
+
 	    // Organize Social Tab
 	    socialTab.add(socialTitle);
 	    socialTitle.addStyleName("title");
@@ -498,6 +548,7 @@ public class BingeHopper implements EntryPoint
 		
 		// show the 'map' tab initially
 		tabs.selectTab(0);
+		
 		
 		// add to mainPanel
 		mainPanel.add(tabs);
@@ -687,7 +738,6 @@ public class BingeHopper implements EntryPoint
 			
 		}
 	}
-	
 	
 	
 	// adds the Venue with id "id" to the current user's bookmarks list
@@ -961,5 +1011,7 @@ public class BingeHopper implements EntryPoint
 		}
 
 	}
+	
+
 
 }
