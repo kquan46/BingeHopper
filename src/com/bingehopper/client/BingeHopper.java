@@ -81,8 +81,10 @@ public class BingeHopper implements EntryPoint
 	private Label typeLabel = new Label("Type");
 	private Label cityLabel = new Label("City");
 	private Label socialTitle = new Label("Social");
+	private Label filterLabel = new Label("Filter");
 	private Label bookmarksTitle = new Label("Bookmarks");
 	private Label visitedTitle = new Label("Visited");
+	private Label mapTitle = new Label("Map");
 	private Label errorMsgLabel = new Label();
 	private Label loginLabel = new Label("Please sign in to your Google Account to access the BingeHopper application.");
 	private Label welcomeText = new Label("Welcome to BingeHopper!");
@@ -103,6 +105,7 @@ public class BingeHopper implements EntryPoint
 	private TextBox addressBox = new TextBox();	
 	private ListBox typeListBox = new ListBox();
 	private ListBox cityListBox = new ListBox();
+	private ListBox visitedBox = new ListBox();
 	private CheckBox visitedCheckbox = new CheckBox();
 	
 	
@@ -134,7 +137,8 @@ public class BingeHopper implements EntryPoint
 	// setup login service
 	private LoginInfo loginInfo = null;
 	private Anchor signInLink = new Anchor("Sign In");
-	private Anchor signOutLink = new Anchor("Sign Out");
+	private Image signOutImage = new Image("images/signout.png");
+	private Anchor signOutLink = new Anchor();
 	
 	
 	
@@ -235,6 +239,7 @@ public class BingeHopper implements EntryPoint
 		// Set up sign out hyperlink.
 	    signOutLink.setHref(loginInfo.getLogoutUrl());
 	    signOutLink.addStyleName("signOutLink");
+	    signOutLink.getElement().appendChild(signOutImage.getElement());
 	    
 		
 		// Create table for venue data		
@@ -517,8 +522,15 @@ public class BingeHopper implements EntryPoint
 	    bookmarksTab.add(addBookmarksButton);
 	    bookmarksTab.add(removeBookmarksButton);
 	    bookmarksTab.add(displayBookmarksButton);
+	    bookmarksTab.add(filterLabel);
+	    visitedBox.addItem("All");
+	    visitedBox.addItem("To Visit");
+	    visitedBox.addItem("Visited");
+	    bookmarksTab.add(visitedBox);
 	    bookmarksTitle.addStyleName("title");
 	    bookmarksTab.add(bookmarksFlexTable);
+	    
+	    
 	    
 	    // Organize Visited Tab
 	    visitedIcon.setUrl("visited.png");
@@ -529,8 +541,7 @@ public class BingeHopper implements EntryPoint
 	    // Organize Map Tab
 	    mapIcon.setUrl("maps.png");
 	    mapIcon.addStyleName("tabIcon");
-	    Label mapTest = new Label("I solemnly swear I'm up to no good.");
-	    mapTab.add(mapTest);
+	    mapTab.add(mapTitle);
 	    mapTab.add(dock);
 
 	    // Organize Social Tab

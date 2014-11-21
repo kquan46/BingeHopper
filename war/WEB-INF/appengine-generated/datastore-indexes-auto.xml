@@ -1,8 +1,8 @@
-<!-- Indices written at Tue, 18 Nov 2014 14:58:11 PST -->
+<!-- Indices written at Thu, 20 Nov 2014 23:26:33 PST -->
 
 <datastore-indexes>
 
-    <!-- Used 6 times in query history -->
+    <!-- Used 1 time in query history -->
     <datastore-index kind="Venue" ancestor="false" source="auto">
         <property name="user" direction="asc"/>
         <property name="createDate" direction="asc"/>
