@@ -10,7 +10,8 @@
   <servlet>
     <servlet-name>loginService</servlet-name>
     <servlet-class>com.bingehopper.server.LoginServiceImpl</servlet-class>
-  </servlet>
+  </servlet> 
+  
 
   <servlet-mapping>
     <servlet-name>loginService</servlet-name>
@@ -25,6 +26,16 @@
   <servlet-mapping>
     <servlet-name>venueDetailsServiceImpl</servlet-name>
     <url-pattern>/bingehopper/venueDetails</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>venueServiceImpl</servlet-name>
+    <servlet-class>com.bingehopper.server.VenueServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>venueServiceImpl</servlet-name>
+    <url-pattern>/bingehopper/venue</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->
