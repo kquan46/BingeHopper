@@ -1,13 +1,17 @@
 package com.bingehopper.client;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 
 
-public class VenueDetails implements Serializable, Comparable<VenueDetails>{
+public class VenueDetails implements IsSerializable, Serializable, Comparable<VenueDetails>{
 
 	
-
+	private ArrayList<VenueDetails> venues;
 	private String venueName;
 	private String venueAdd1;
 	private String venueAdd2;

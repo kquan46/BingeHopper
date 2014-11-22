@@ -9,6 +9,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("venueDetails")
 public interface VenueDetailsService extends RemoteService {
 
-  VenueDetails[] getPrices();
+  List<VenueDetails> getPrices();
   
 }

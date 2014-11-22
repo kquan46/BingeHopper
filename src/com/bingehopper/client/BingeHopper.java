@@ -158,7 +158,7 @@ public class BingeHopper implements EntryPoint
 	// EntryPoint method
 	public void onModuleLoad() {
 
-		refreshVenueList();
+//		refreshVenueList();
 		// Check login status using login service
 		LoginServiceAsync loginService = GWT.create(LoginService.class);
 		loginService.login(GWT.getHostPageBaseURL(),
@@ -300,7 +300,7 @@ public class BingeHopper implements EntryPoint
 			public void onClick(ClickEvent event) {
 
 				lastUpdatedLabel.setText("reached clickhandler");
-				refreshVenueList();
+//				refreshVenueList();
 
 			}
 
@@ -637,7 +637,7 @@ public class BingeHopper implements EntryPoint
 				//final int start = display.getVisibleRange().getStart();
 				//int length = display.getVisibleRange().getLength();
 		//final ListDataProvider<VenueDetails> provider;
-				AsyncCallback<VenueDetails[]> callback = new AsyncCallback<VenueDetails[]>() {
+				AsyncCallback<List<VenueDetails>> callback = new AsyncCallback<List<VenueDetails>>() {
 
 					public void onFailure(Throwable caught) {
 						errorMsgLabel
@@ -645,11 +645,11 @@ public class BingeHopper implements EntryPoint
 						errorMsgLabel.setVisible(true);
 					}
 
-					public void onSuccess(VenueDetails[] result) {
-						listOfVenues = new ArrayList<VenueDetails>(
-								Arrays.asList(result));
-						
-						provider = new ListDataProvider<VenueDetails>(listOfVenues);
+					public void onSuccess(List<VenueDetails> result) {
+//						listOfVenues = new ArrayList<VenueDetails>(
+//								Arrays.asList(result));
+						listOfVenues = new ArrayList<VenueDetails>(result);
+						provider = new ListDataProvider<VenueDetails>(result);
 //						updateRowData(0, listOfVenues);
 //						updateRowCount(listOfVenues.size(), true);
 						provider.addDataDisplay(venuesTable);
@@ -924,7 +924,7 @@ public class BingeHopper implements EntryPoint
 
 	}
 
-	private void refreshVenueList() {
+	/*private void refreshVenueList() {
 
 		if (venueDetailsSvc == null) {
 
@@ -954,7 +954,7 @@ public class BingeHopper implements EntryPoint
 
 				lastUpdatedLabel.setText("successfully added");
 
-				/*
+				
 				 * Set<String> listOfTypes = new TreeSet<String>(); Set<String>
 				 * listOfCities = new TreeSet<String>(); for (VenueDetails venue
 				 * : listOfVenues) { listOfTypes.add(venue.getVenueType());
@@ -963,7 +963,7 @@ public class BingeHopper implements EntryPoint
 				 * listOfCities) { cityListBox.addItem(venueCity); }
 				 * typeListBox.addItem("ALL"); for (String venueType :
 				 * listOfTypes) { typeListBox.addItem(venueType); }
-				 */
+				 
 
 			}
 		};
@@ -972,7 +972,7 @@ public class BingeHopper implements EntryPoint
 
 		venueDetailsSvc.getPrices(callback);
 
-	}
+	}*/
 
 	// private void refreshVenueList() {
 	// if (venueDetailsSvc == null) {
