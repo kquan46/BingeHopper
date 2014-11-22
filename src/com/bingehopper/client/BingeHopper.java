@@ -19,6 +19,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.maps.client.Maps;
@@ -40,6 +41,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
@@ -54,10 +56,14 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 public class BingeHopper implements EntryPoint
 
 {
-
+	private ListDataProvider<VenueDetails> provider;
 	// create ArrayList of VenueDetails objects
 	ArrayList<VenueDetails> listOfVenues = new ArrayList<VenueDetails>();
 
+	// create pagination
+	SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
+	SimplePager pager = new SimplePager(TextLocation.CENTER, pagerResources, false, 200, true);
+	
 	// create panels
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private HorizontalPanel updatePanel = new HorizontalPanel();
@@ -76,8 +82,6 @@ public class BingeHopper implements EntryPoint
 	// private FlexTable venuesFlexTable = new FlexTable();
 	private FlexTable bookmarksFlexTable = new FlexTable();
 
-	// create pager
-	private SimplePager pager = new SimplePager();
 
 	// create buttons
 	private Button updateVenuesButton = new Button("Update");
@@ -524,8 +528,9 @@ public class BingeHopper implements EntryPoint
 		// Create a CellTable
 		venuesTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 		// Display 100 rows in one page
-		venuesTable.setPageSize(5000);
-
+		//venuesTable.setPageSize(5000);
+		venuesTable.setPageSize(100);
+		//venuesTable.setVisibleRange(0, 100);
 		// Add a text column to show the name.
 		TextColumn<VenueDetails> nameColumn = new TextColumn<VenueDetails>() {
 			@Override
@@ -589,7 +594,15 @@ public class BingeHopper implements EntryPoint
 		};
 		venuesTable.addColumn(capacityColumn, "Capacity");
 
-		// provider.updateRowCount(VENUES.size(), true);
+		// Make the columns sortable
+		nameColumn.setSortable(true);
+		addressColumn.setSortable(true);
+		cityColumn.setSortable(true);
+		postalCodeColumn.setSortable(true);
+		telephoneColumn.setSortable(true);
+		typeColumn.setSortable(true);
+		capacityColumn.setSortable(true);
+		
 
 		/*
 		 * // Add a selection model to handle user selection final
@@ -618,11 +631,12 @@ public class BingeHopper implements EntryPoint
 		if (venueDetailsSvc == null) {
 			venueDetailsSvc = GWT.create(VenueDetailsService.class);
 		}
-		AsyncDataProvider<VenueDetails> provider = new AsyncDataProvider<VenueDetails>() {
-			@Override
-			protected void onRangeChanged(HasData<VenueDetails> display) {
-				final int start = display.getVisibleRange().getStart();
-				int length = display.getVisibleRange().getLength();
+		//ListDataProvider<VenueDetails> provider = new ListDataProvider<VenueDetails>();
+			//@Override
+			//protected void onRangeChanged(HasData<VenueDetails> display) {
+				//final int start = display.getVisibleRange().getStart();
+				//int length = display.getVisibleRange().getLength();
+		//final ListDataProvider<VenueDetails> provider;
 				AsyncCallback<VenueDetails[]> callback = new AsyncCallback<VenueDetails[]>() {
 
 					public void onFailure(Throwable caught) {
@@ -634,9 +648,14 @@ public class BingeHopper implements EntryPoint
 					public void onSuccess(VenueDetails[] result) {
 						listOfVenues = new ArrayList<VenueDetails>(
 								Arrays.asList(result));
-						updateRowData(start, listOfVenues);
+						
+						provider = new ListDataProvider<VenueDetails>(listOfVenues);
+//						updateRowData(0, listOfVenues);
+//						updateRowCount(listOfVenues.size(), true);
+						provider.addDataDisplay(venuesTable);
 						addDropDownList();
 					}
+					
 				};
 				// The remote service that should be implemented
 				// RemoteService.fetchPage(start, length, callback);
@@ -646,13 +665,18 @@ public class BingeHopper implements EntryPoint
 				// Date()));
 				// // Make the call to the venue price service.
 				venueDetailsSvc.getPrices(callback);
-
-			}
-		};
-		provider.addDataDisplay(venuesTable);
-
+				
+			
+		
+		// create pager
+		//venuesTable.setPageSize(100);
+		//provider.addDataDisplay(venuesTable);
+//		SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
+//		SimplePager pager = new SimplePager(TextLocation.CENTER, pagerResources, false, 200, true);
+//		pager.setStyleName("gwt-SimplePager");
+//		pager.setPageSize(100);
 		pager.setDisplay(venuesTable);
-
+//		searchTab.add(pager);
 	}
 
 	/*
