@@ -3,7 +3,6 @@ package com.bingehopper.client;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -39,10 +38,7 @@ import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.view.client.AsyncDataProvider;
-import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.gwt.dom.client.Style.Unit;
@@ -61,9 +57,11 @@ public class BingeHopper implements EntryPoint
 	ArrayList<VenueDetails> listOfVenues = new ArrayList<VenueDetails>();
 
 	// create pagination
-	SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
-	SimplePager pager = new SimplePager(TextLocation.CENTER, pagerResources, false, 200, true);
-	
+	SimplePager.Resources pagerResources = GWT
+			.create(SimplePager.Resources.class);
+	SimplePager pager = new SimplePager(TextLocation.CENTER, pagerResources,
+			false, 200, true);
+
 	// create panels
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private HorizontalPanel updatePanel = new HorizontalPanel();
@@ -81,7 +79,6 @@ public class BingeHopper implements EntryPoint
 	private CellTable<VenueDetails> venuesTable = new CellTable<VenueDetails>();
 	// private FlexTable venuesFlexTable = new FlexTable();
 	private FlexTable bookmarksFlexTable = new FlexTable();
-
 
 	// create buttons
 	private Button updateVenuesButton = new Button("Update");
@@ -157,8 +154,6 @@ public class BingeHopper implements EntryPoint
 
 	// EntryPoint method
 	public void onModuleLoad() {
-
-//		refreshVenueList();
 		// Check login status using login service
 		LoginServiceAsync loginService = GWT.create(LoginService.class);
 		loginService.login(GWT.getHostPageBaseURL(),
@@ -184,7 +179,6 @@ public class BingeHopper implements EntryPoint
 											loadBingeHopper();
 										}
 									});
-							// loadBingeHopper();
 
 						}
 
@@ -228,10 +222,9 @@ public class BingeHopper implements EntryPoint
 		signOutLink.addStyleName("signOutLink");
 
 		// fetch venue data from server
-		// refreshVenueList();
+		fetchData();
 
 		// Create table for venue data
-		// setUpFirstRow();
 		setUpCellTable();
 
 		// Assemble Update Venues panel.
@@ -254,7 +247,8 @@ public class BingeHopper implements EntryPoint
 		searchPanel.add(addressLabel);
 		searchPanel.add(addressBox);
 		searchPanel.add(cityLabel);
-		searchPanel.add(cityListBox);		
+		searchPanel.add(cityListBox);
+		searchPanel.add(typeLabel);
 		searchPanel.add(typeListBox);
 		searchPanel.add(searchButton);
 
@@ -300,7 +294,7 @@ public class BingeHopper implements EntryPoint
 			public void onClick(ClickEvent event) {
 
 				lastUpdatedLabel.setText("reached clickhandler");
-//				refreshVenueList();
+				// refreshVenueList();
 
 			}
 
@@ -486,23 +480,6 @@ public class BingeHopper implements EntryPoint
 
 	}
 
-	/*
-	 * private void setUpFirstRow() {
-	 * 
-	 * venuesFlexTable.setText(0, 0, "Name"); venuesFlexTable.setText(0, 1,
-	 * "Address"); venuesFlexTable.setText(0, 2, "City");
-	 * venuesFlexTable.setText(0, 3, "Postal Code"); venuesFlexTable.setText(0,
-	 * 4, "Telephone"); venuesFlexTable.setText(0, 5, "Type");
-	 * venuesFlexTable.setText(0, 6, "Capacity"); venuesFlexTable.setText(0, 7,
-	 * "Bookmark");
-	 * 
-	 * // Add styles to elements in the venue list table.
-	 * venuesFlexTable.getRowFormatter().addStyleName(0, "venueListHeader");
-	 * venuesFlexTable.addStyleName("venueList");
-	 * 
-	 * }
-	 */
-
 	private void addDropDownList() {
 		Set<String> listOfTypes = new TreeSet<String>();
 		Set<String> listOfCities = new TreeSet<String>();
@@ -512,25 +489,25 @@ public class BingeHopper implements EntryPoint
 		}
 		cityListBox.addItem("ALL");
 		for (String venueCity : listOfCities) {
-			if (!venueCity.isEmpty())
+			if (!venueCity.equals("n/a"))
 				cityListBox.addItem(venueCity);
 		}
 		typeListBox.addItem("ALL");
 		for (String venueType : listOfTypes) {
-			if (!venueType.isEmpty()) {
-				if (!venueType.equals("Independent Agent"))
-					typeListBox.addItem(venueType);
-			}
+			if (!venueType.equals("n/a")
+					&& !venueType.equals("Independent Agent"))
+				typeListBox.addItem(venueType);
 		}
 	}
 
 	private void setUpCellTable() {
 		// Create a CellTable
 		venuesTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
+
 		// Display 100 rows in one page
-		//venuesTable.setPageSize(5000);
 		venuesTable.setPageSize(100);
-		//venuesTable.setVisibleRange(0, 100);
+		// venuesTable.setVisibleRange(0, 100);
+
 		// Add a text column to show the name.
 		TextColumn<VenueDetails> nameColumn = new TextColumn<VenueDetails>() {
 			@Override
@@ -538,7 +515,6 @@ public class BingeHopper implements EntryPoint
 				return venue.getVenueName();
 			}
 		};
-		venuesTable.addColumn(nameColumn, "Name");
 
 		// Add a text column to show the address.
 		TextColumn<VenueDetails> addressColumn = new TextColumn<VenueDetails>() {
@@ -547,7 +523,6 @@ public class BingeHopper implements EntryPoint
 				return venue.getVenueAdd1();
 			}
 		};
-		venuesTable.addColumn(addressColumn, "Address");
 
 		// Add a text column to show the city.
 		TextColumn<VenueDetails> cityColumn = new TextColumn<VenueDetails>() {
@@ -556,7 +531,6 @@ public class BingeHopper implements EntryPoint
 				return venue.getVenueCity();
 			}
 		};
-		venuesTable.addColumn(cityColumn, "City");
 
 		// Add a text column to show the postal code.
 		TextColumn<VenueDetails> postalCodeColumn = new TextColumn<VenueDetails>() {
@@ -565,7 +539,6 @@ public class BingeHopper implements EntryPoint
 				return venue.getVenuePostal();
 			}
 		};
-		venuesTable.addColumn(postalCodeColumn, "Postal Code");
 
 		// Add a text column to show the telephone number.
 		TextColumn<VenueDetails> telephoneColumn = new TextColumn<VenueDetails>() {
@@ -574,7 +547,6 @@ public class BingeHopper implements EntryPoint
 				return venue.getVenuePhone();
 			}
 		};
-		venuesTable.addColumn(telephoneColumn, "Telephone");
 
 		// Add a text column to show the establishment type.
 		TextColumn<VenueDetails> typeColumn = new TextColumn<VenueDetails>() {
@@ -583,7 +555,6 @@ public class BingeHopper implements EntryPoint
 				return venue.getVenueType();
 			}
 		};
-		venuesTable.addColumn(typeColumn, "Type");
 
 		// Add a text column to show the capacity.
 		TextColumn<VenueDetails> capacityColumn = new TextColumn<VenueDetails>() {
@@ -592,6 +563,14 @@ public class BingeHopper implements EntryPoint
 				return venue.getVenueCapacity();
 			}
 		};
+
+		// Add Columns to CellTable
+		venuesTable.addColumn(nameColumn, "Name");
+		venuesTable.addColumn(addressColumn, "Address");
+		venuesTable.addColumn(cityColumn, "City");
+		venuesTable.addColumn(postalCodeColumn, "Postal Code");
+		venuesTable.addColumn(telephoneColumn, "Telephone");
+		venuesTable.addColumn(typeColumn, "Type");
 		venuesTable.addColumn(capacityColumn, "Capacity");
 
 		// Make the columns sortable
@@ -602,132 +581,57 @@ public class BingeHopper implements EntryPoint
 		telephoneColumn.setSortable(true);
 		typeColumn.setSortable(true);
 		capacityColumn.setSortable(true);
-		
 
 		/*
 		 * // Add a selection model to handle user selection final
 		 * SingleSelectionModel<VenueDetails> selectionModel = new
 		 * SingleSelectionModel<VenueDetails>();
-		 * venuesTable.setSelectionModel(selectionModel);;
-		 * selectionModel.addSelectionChangeHandler(new
-		 * SelectionChangeEvent.Handler() { public void
-		 * onSelectionChange(SelectionChangeEvent event) { VenueDetails selected
-		 * = selectionModel.getSelectedObject(); if (selected != null) {
-		 * Window.alert("You selected: " +selected.getVenueName()); } } });
-		 * 
-		 * // Set the total row count to keep the row count up to date for
-		 * paging calculations venuesTable.setRowCount(VenueDetails[].size(),
-		 * true);
-		 * 
-		 * // Push the data into the widget venuesTable.setRowData(0,
-		 * VenueDetails[]);
-		 * 
-		 * // Add it to the root panel RootPanel.get().add(venuesTable);
+		 * venuesTable.setSelectionModel(selectionModel); selectionModel
+		 * .addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+		 * public void onSelectionChange(SelectionChangeEvent event) {
+		 * VenueDetails selected = selectionModel .getSelectedObject(); if
+		 * (selected != null) { Window.alert("You selected: " +
+		 * selected.getVenueName()); } } });
 		 */
+	}
 
-		// Associate an async data provider on the venuesTable
-		// XXX: Use AsyncCallback in the method onRangeChanged
-		// to actually get the data from the server side
+	public void fetchData() {
 		if (venueDetailsSvc == null) {
 			venueDetailsSvc = GWT.create(VenueDetailsService.class);
 		}
-		//ListDataProvider<VenueDetails> provider = new ListDataProvider<VenueDetails>();
-			//@Override
-			//protected void onRangeChanged(HasData<VenueDetails> display) {
-				//final int start = display.getVisibleRange().getStart();
-				//int length = display.getVisibleRange().getLength();
-		//final ListDataProvider<VenueDetails> provider;
-				AsyncCallback<List<VenueDetails>> callback = new AsyncCallback<List<VenueDetails>>() {
 
-					public void onFailure(Throwable caught) {
-						errorMsgLabel
-								.setText("Error while making call to server");
-						errorMsgLabel.setVisible(true);
-					}
+		AsyncCallback<List<VenueDetails>> callback = new AsyncCallback<List<VenueDetails>>() {
 
-					public void onSuccess(List<VenueDetails> result) {
-//						listOfVenues = new ArrayList<VenueDetails>(
-//								Arrays.asList(result));
-						listOfVenues = new ArrayList<VenueDetails>(result);
-						provider = new ListDataProvider<VenueDetails>(result);
-//						updateRowData(0, listOfVenues);
-//						updateRowCount(listOfVenues.size(), true);
-						provider.addDataDisplay(venuesTable);
-						addDropDownList();
-					}
-					
-				};
-				// The remote service that should be implemented
-				// RemoteService.fetchPage(start, length, callback);
+			public void onFailure(Throwable caught) {
+				errorMsgLabel.setText("Error while making call to server");
+				errorMsgLabel.setVisible(true);
+			}
 
-				// lastUpdatedLabel.setText("Last update : "
-				// + DateTimeFormat.getMediumDateTimeFormat().format(new
-				// Date()));
-				// // Make the call to the venue price service.
-				venueDetailsSvc.getPrices(callback);
-				
-			
-		
-		// create pager
-		//venuesTable.setPageSize(100);
-		//provider.addDataDisplay(venuesTable);
-//		SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
-//		SimplePager pager = new SimplePager(TextLocation.CENTER, pagerResources, false, 200, true);
-//		pager.setStyleName("gwt-SimplePager");
-//		pager.setPageSize(100);
+			public void onSuccess(List<VenueDetails> result) {
+				listOfVenues = new ArrayList<VenueDetails>(result);
+				provider = new ListDataProvider<VenueDetails>(result);
+				provider.addDataDisplay(venuesTable);
+				addDropDownList();
+			}
+
+		};
+
+		lastUpdatedLabel.setText("Last update : "
+				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
+		// Make the call to the venue price service.
+		venueDetailsSvc.getPrices(callback);
 		pager.setDisplay(venuesTable);
-//		searchTab.add(pager);
 	}
-
-	/*
-	 * private void searchVenues(final String name, final String address, final
-	 * String city, final String type) { if (venueDetailsSvc == null) {
-	 * venueDetailsSvc = GWT.create(VenueDetailsService.class); } // Set up the
-	 * callback object. AsyncCallback<List<VenueDetails>> callback = new
-	 * AsyncCallback<List<VenueDetails>>() { public void onFailure(Throwable
-	 * caught) { errorMsgLabel.setText("Error while making call to server");
-	 * errorMsgLabel.setVisible(true); }
-	 * 
-	 * public void onSuccess(List<VenueDetails> result) { List<VenueDetails>
-	 * venues = cleanVenueArray(result); //Arrays.sort(venues);
-	 * findCity(result); // used to get all cities if (name.isEmpty() &&
-	 * address.isEmpty() && city == "ALL" && type == "ALL") {
-	 * displayVenues(venues); } else { VenueDetails[] filteredVenueArray =
-	 * filter(venues, name, address, city, type);
-	 * displayVenues(filteredVenueArray); } } }; // Make the call to the venue
-	 * price service. venueDetailsSvc.getPrices(callback); }
-	 */
 
 	private void searchVenues(final String name, final String address,
 			final String city, final String type) {
 
 		if (name.isEmpty() && address.isEmpty() && city == "ALL"
 				&& type == "ALL") {
-
-			// displayVenues(listOfVenues);
+			provider.setList(listOfVenues);
+			provider.refresh();
+			pager.setPage(0);
 		} else {
-
-			ArrayList<VenueDetails> filteredVenueList = filter(listOfVenues,
-					name, address, city, type);
-
-			// pagination();
-			// displayVenues(filteredVenueList);
-
-		}
-
-		lastUpdatedLabel.setText("Last update : "
-				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
-	}
-
-	private ArrayList<VenueDetails> filter(ArrayList<VenueDetails> venues,
-			String name, String address, String city, String type) {
-
-		if (name.isEmpty() && address.isEmpty() && city.equals("ALL")
-				&& type.equals("ALL"))
-			// empty search returns all venues
-			return venues;
-
-		else {
 
 			ArrayList<VenueDetails> filteredVenueList = new ArrayList<VenueDetails>();
 
@@ -735,16 +639,14 @@ public class BingeHopper implements EntryPoint
 
 				if (type.equals("ALL")) {
 
-					for (int i = 0; i < venues.size(); i++) {
+					for (VenueDetails venue : listOfVenues) {
 
-						VenueDetails curr = venues.get(i);
-
-						if (curr.getVenueName().trim().toLowerCase()
+						if (venue.getVenueName().trim().toLowerCase()
 								.contains(name.trim().toLowerCase())
-								&& curr.getVenueAdd1().trim().toLowerCase()
+								&& venue.getVenueAdd1().trim().toLowerCase()
 										.contains(address.trim().toLowerCase()))
 
-							filteredVenueList.add(curr);
+							filteredVenueList.add(venue);
 
 					}
 
@@ -752,18 +654,16 @@ public class BingeHopper implements EntryPoint
 
 				else {
 
-					for (int i = 0; i < venues.size(); i++) {
+					for (VenueDetails venue : listOfVenues) {
 
-						VenueDetails curr = venues.get(i);
-
-						if (curr.getVenueName().trim().toLowerCase()
+						if (venue.getVenueName().trim().toLowerCase()
 								.contains(name.trim().toLowerCase())
-								&& curr.getVenueAdd1().trim().toLowerCase()
+								&& venue.getVenueAdd1().trim().toLowerCase()
 										.contains(address.trim().toLowerCase())
-								&& curr.getVenueType().trim().toLowerCase()
+								&& venue.getVenueType().trim().toLowerCase()
 										.contains(type.trim().toLowerCase()))
 
-							filteredVenueList.add(curr);
+							filteredVenueList.add(venue);
 					}
 				}
 
@@ -773,18 +673,16 @@ public class BingeHopper implements EntryPoint
 
 				if (type.equals("ALL")) {
 
-					for (int i = 0; i < venues.size(); i++) {
+					for (VenueDetails venue : listOfVenues) {
 
-						VenueDetails curr = venues.get(i);
-
-						if (curr.getVenueName().trim().toLowerCase()
+						if (venue.getVenueName().trim().toLowerCase()
 								.contains(name.trim().toLowerCase())
-								&& curr.getVenueAdd1().trim().toLowerCase()
+								&& venue.getVenueAdd1().trim().toLowerCase()
 										.contains(address.trim().toLowerCase())
-								&& curr.getVenueCity().trim().toLowerCase()
+								&& venue.getVenueCity().trim().toLowerCase()
 										.equals(city.trim().toLowerCase()))
 
-							filteredVenueList.add(curr);
+							filteredVenueList.add(venue);
 
 					}
 
@@ -792,31 +690,31 @@ public class BingeHopper implements EntryPoint
 
 				else {
 
-					for (int i = 0; i < venues.size(); i++) {
+					for (VenueDetails venue : listOfVenues) {
 
-						VenueDetails curr = venues.get(i);
-
-						if (curr.getVenueName().trim().toLowerCase()
+						if (venue.getVenueName().trim().toLowerCase()
 								.contains(name.trim().toLowerCase())
-								&& curr.getVenueAdd1().trim().toLowerCase()
+								&& venue.getVenueAdd1().trim().toLowerCase()
 										.contains(address.trim().toLowerCase())
-								&& curr.getVenueCity().trim().toLowerCase()
+								&& venue.getVenueCity().trim().toLowerCase()
 										.equals(city.trim().toLowerCase())
-								&& curr.getVenueType().trim().toLowerCase()
+								&& venue.getVenueType().trim().toLowerCase()
 										.contains(type.trim().toLowerCase()))
 
-							filteredVenueList.add(curr);
+							filteredVenueList.add(venue);
 
 					}
 
 				}
 
 			}
-
-			return filteredVenueList;
-
+			provider.setList(filteredVenueList);
+			provider.refresh();
+			pager.setPage(0);
 		}
 
+		lastUpdatedLabel.setText("Last update : "
+				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
 	}
 
 	// adds the Venue with id "id" to the current user's bookmarks list
@@ -924,56 +822,6 @@ public class BingeHopper implements EntryPoint
 
 	}
 
-	/*private void refreshVenueList() {
-
-		if (venueDetailsSvc == null) {
-
-			venueDetailsSvc = GWT.create(VenueDetailsService.class);
-
-		}
-
-		// Set up the callback object.
-		AsyncCallback<VenueDetails[]> callback = new AsyncCallback<VenueDetails[]>() {
-
-			public void onFailure(Throwable caught) {
-
-				errorMsgLabel.setText("Error while making call to server");
-				errorMsgLabel.setVisible(true);
-
-			}
-
-			public void onSuccess(VenueDetails[] result) {
-
-				VenueDetails[] venues = cleanVenueArray(result);
-
-				for (int i = 0; i < venues.length; i++) {
-
-					listOfVenues.add(venues[i]);
-
-				}
-
-				lastUpdatedLabel.setText("successfully added");
-
-				
-				 * Set<String> listOfTypes = new TreeSet<String>(); Set<String>
-				 * listOfCities = new TreeSet<String>(); for (VenueDetails venue
-				 * : listOfVenues) { listOfTypes.add(venue.getVenueType());
-				 * listOfCities.add(venue.getVenueCity()); }
-				 * cityListBox.addItem("ALL"); for (String venueCity :
-				 * listOfCities) { cityListBox.addItem(venueCity); }
-				 * typeListBox.addItem("ALL"); for (String venueType :
-				 * listOfTypes) { typeListBox.addItem(venueType); }
-				 
-
-			}
-		};
-
-		// Make the call to the venue price service.
-
-		venueDetailsSvc.getPrices(callback);
-
-	}*/
-
 	// private void refreshVenueList() {
 	// if (venueDetailsSvc == null) {
 	// venueDetailsSvc = GWT.create(VenueDetailsService.class);
@@ -1010,15 +858,6 @@ public class BingeHopper implements EntryPoint
 	// return results;
 	// }
 
-	// private List<VenueDetails> cleanVenueList(List<VenueDetails> venues) {
-	// List<VenueDetails> results = new ArrayList<VenueDetails>();
-	// for (int i = 0; i < results.length; i++) {
-	// results. // first row is field parameters
-	// }
-	// Arrays.sort(results);
-	// return results;
-	// }
-
 	private VenueDetails[] cleanVenueArray(VenueDetails[] venues) {
 
 		VenueDetails[] results = new VenueDetails[(venues.length) - 1];
@@ -1040,32 +879,6 @@ public class BingeHopper implements EntryPoint
 
 	}
 
-	// /**
-	// * Add venues to FlexTable. Executed when the user clicks the
-	// * updateVenuesButton
-	// */
-	// private void displayVenues(ArrayList<VenueDetails> venues)
-	// {
-	//
-	// venuesFlexTable.removeAllRows();
-	// setUpFirstRow();
-	// lastUpdatedLabel.setText(Integer.toString(venues.size()));
-	//
-	// for (int i = 0; i < venues.size(); i++)
-	// {
-	//
-	// venuesFlexTable.setText(i + 1, 0, venues.get(i).getVenueName());
-	// venuesFlexTable.setText(i + 1, 1, venues.get(i).getVenueAdd1());
-	// venuesFlexTable.setText(i + 1, 2, venues.get(i).getVenueCity());
-	// venuesFlexTable.setText(i + 1, 3, venues.get(i).getVenuePostal());
-	// venuesFlexTable.setText(i + 1, 4, venues.get(i).getVenuePhone());
-	// venuesFlexTable.setText(i + 1, 5, venues.get(i).getVenueType());
-	// venuesFlexTable.setText(i + 1, 6, venues.get(i).getVenueCapacity());
-	//
-	// }
-	//
-	// }
-	//
 	private void displayBookmarks(ArrayList<VenueDetails> venues) {
 
 		lastUpdatedLabel.setText("reached displayBookmark");

@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.bingehopper.client.VenueDetails;
@@ -65,9 +66,11 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 				String[] venue = line.split(splitBy);
 				for (int i = 0; i< venue.length; i++) {
 					if (venue[i].isEmpty())
-						venue[i] = "N/A";
+						venue[i] = "n/a";
 				}
-				if (!venue[0].equals("N/A") && !venue[0].equals("establishment name")) {
+				if (venue[0].charAt(0) == '"' && venue[0].charAt(venue[0].length()-1) == '"')
+					venue[0] = venue[0].substring(1, venue[0].length()-1);
+				if (!venue[0].equals("n/a") && !venue[0].equals("establishment name") && !venue[0].startsWith(",")) {
 					VenueDetails location = new VenueDetails(venue[0],
 							venue[1], venue[2], venue[3], venue[4], venue[10],
 							venue[11], venue[12], idAssign);
@@ -77,7 +80,7 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 					idAssign++;
 				}
 			}
-
+			Collections.sort(listOfVenues);
 			rd.close();
 
 		}
@@ -94,14 +97,6 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 
 		}
 
-		// VenueDetails[] arrayOfVenues = new VenueDetails[listOfVenues.size()];
-		// arrayOfVenues = listOfVenues.toArray(arrayOfVenues);
-		// ArrayList<String> names = new ArrayList<String>();
-		// for (VenueDetails venue : listOfVenues){
-		// String name = venue.getVenueName();
-		// names.add(name);
-		// }
-		// System.out.println(names);
 		return listOfVenues;
 
 	}
