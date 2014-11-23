@@ -67,9 +67,9 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 				for (int i = 0; i< venue.length; i++) {
 					if (venue[i].isEmpty())
 						venue[i] = "n/a";
+					if (venue[i].charAt(0) == '"' && venue[i].charAt(venue[i].length()-1) == '"')
+						venue[i] = venue[i].substring(1, venue[i].length()-1);
 				}
-				if (venue[0].charAt(0) == '"' && venue[0].charAt(venue[0].length()-1) == '"')
-					venue[0] = venue[0].substring(1, venue[0].length()-1);
 				if (!venue[0].equals("n/a") && !venue[0].equals("establishment name") && !venue[0].startsWith(",")) {
 					VenueDetails location = new VenueDetails(venue[0],
 							venue[1], venue[2], venue[3], venue[4], venue[10],
@@ -96,7 +96,16 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 			e.printStackTrace();
 
 		}
-
+//		ArrayList<String> s = new ArrayList<String>();
+//		ArrayList<String> l = new ArrayList<String>();
+//		for (VenueDetails venue : listOfVenues) {
+//			if (venue.getVenuePostal().length()<6 || venue.getVenuePostal().length()>6){
+//				s.add(venue.getVenuePostal());
+//				l.add(venue.getVenueName());
+//			}
+//		}
+//		System.out.println(s);
+//		System.out.println(l);
 		return listOfVenues;
 
 	}

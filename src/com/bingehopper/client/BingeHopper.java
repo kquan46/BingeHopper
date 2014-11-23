@@ -631,90 +631,44 @@ public class BingeHopper implements EntryPoint
 			provider.setList(listOfVenues);
 			provider.refresh();
 			pager.setPage(0);
-		} else {
-
+		} 
+		else {
 			ArrayList<VenueDetails> filteredVenueList = new ArrayList<VenueDetails>();
-
 			if (city.equals("ALL")) {
+				if (type.equals("ALL"))
+					filteredVenueList = filter(name, address, "ALL", "ALL");
+				else
+					filteredVenueList = filter(name, address, "ALL", type);
 
-				if (type.equals("ALL")) {
-
-					for (VenueDetails venue : listOfVenues) {
-
-						if (venue.getVenueName().trim().toLowerCase()
-								.contains(name.trim().toLowerCase())
-								&& venue.getVenueAdd1().trim().toLowerCase()
-										.contains(address.trim().toLowerCase()))
-
-							filteredVenueList.add(venue);
-
-					}
-
-				}
-
-				else {
-
-					for (VenueDetails venue : listOfVenues) {
-
-						if (venue.getVenueName().trim().toLowerCase()
-								.contains(name.trim().toLowerCase())
-								&& venue.getVenueAdd1().trim().toLowerCase()
-										.contains(address.trim().toLowerCase())
-								&& venue.getVenueType().trim().toLowerCase()
-										.contains(type.trim().toLowerCase()))
-
-							filteredVenueList.add(venue);
-					}
-				}
-
-			}
-
-			else {
-
-				if (type.equals("ALL")) {
-
-					for (VenueDetails venue : listOfVenues) {
-
-						if (venue.getVenueName().trim().toLowerCase()
-								.contains(name.trim().toLowerCase())
-								&& venue.getVenueAdd1().trim().toLowerCase()
-										.contains(address.trim().toLowerCase())
-								&& venue.getVenueCity().trim().toLowerCase()
-										.equals(city.trim().toLowerCase()))
-
-							filteredVenueList.add(venue);
-
-					}
-
-				}
-
-				else {
-
-					for (VenueDetails venue : listOfVenues) {
-
-						if (venue.getVenueName().trim().toLowerCase()
-								.contains(name.trim().toLowerCase())
-								&& venue.getVenueAdd1().trim().toLowerCase()
-										.contains(address.trim().toLowerCase())
-								&& venue.getVenueCity().trim().toLowerCase()
-										.equals(city.trim().toLowerCase())
-								&& venue.getVenueType().trim().toLowerCase()
-										.contains(type.trim().toLowerCase()))
-
-							filteredVenueList.add(venue);
-
-					}
-
-				}
-
+			} else {
+				if (type.equals("ALL"))
+					filteredVenueList = filter(name, address, city, "ALL");
+				else
+					filteredVenueList = filter(name, address, city, type);
 			}
 			provider.setList(filteredVenueList);
 			provider.refresh();
 			pager.setPage(0);
 		}
-
 		lastUpdatedLabel.setText("Last update : "
 				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
+	}
+
+	private ArrayList<VenueDetails> filter(String name, String address,
+			String city, String type) {
+		ArrayList<VenueDetails> filteredList = new ArrayList<VenueDetails>();
+		for (VenueDetails venue : listOfVenues) {
+			if (venue.getVenueName().trim().toLowerCase()
+					.contains(name.trim().toLowerCase())
+					&& venue.getVenueAdd1().trim().toLowerCase()
+							.contains(address.trim().toLowerCase())
+					&& venue.getVenueCity().trim().toLowerCase()
+							.equals(city.trim().toLowerCase())
+					&& venue.getVenueType().trim().toLowerCase()
+							.equals(type.trim().toLowerCase()))
+				filteredList.add(venue);
+		}
+		return filteredList;
 	}
 
 	// adds the Venue with id "id" to the current user's bookmarks list
@@ -821,29 +775,6 @@ public class BingeHopper implements EntryPoint
 		});
 
 	}
-
-	// private void refreshVenueList() {
-	// if (venueDetailsSvc == null) {
-	// venueDetailsSvc = GWT.create(VenueDetailsService.class);
-	// }
-	// // Set up the callback object.
-	// AsyncCallback<VenueDetails[]> callback = new
-	// AsyncCallback<VenueDetails[]>() {
-	// public void onFailure(Throwable caught) {
-	// errorMsgLabel.setText("Error while making call to server");
-	// errorMsgLabel.setVisible(true);
-	// }
-	//
-	// public void onSuccess(VenueDetails[] result) {
-	// VenueDetails[] venues = cleanVenueArray(result);
-	// displayVenues(venues);
-	// }
-	// };
-	// lastUpdatedLabel.setText("Last update : "
-	// + DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
-	// // Make the call to the venue price service.
-	// venueDetailsSvc.getPrices(callback);
-	// }
 
 	/**
 	 * Takes list of venues minues the first row, removes empty venue names, and
