@@ -56,6 +56,9 @@ public class BingeHopper implements EntryPoint
 	// create ArrayList of VenueDetails objects
 	ArrayList<VenueDetails> listOfVenues = new ArrayList<VenueDetails>();
 
+	Set<String> listOfTypes = new TreeSet<String>();
+	Set<String> listOfCities = new TreeSet<String>();
+	
 	// create pagination
 	SimplePager.Resources pagerResources = GWT
 			.create(SimplePager.Resources.class);
@@ -481,8 +484,6 @@ public class BingeHopper implements EntryPoint
 	}
 
 	private void addDropDownList() {
-		Set<String> listOfTypes = new TreeSet<String>();
-		Set<String> listOfCities = new TreeSet<String>();
 		for (VenueDetails venue : listOfVenues) {
 			listOfCities.add(venue.getVenueCity());
 			listOfTypes.add(venue.getVenueType());
@@ -625,47 +626,47 @@ public class BingeHopper implements EntryPoint
 
 	private void searchVenues(final String name, final String address,
 			final String city, final String type) {
-
+		ArrayList<VenueDetails> filteredVenueList = new ArrayList<VenueDetails>();
 		if (name.isEmpty() && address.isEmpty() && city == "ALL"
 				&& type == "ALL") {
-			provider.setList(listOfVenues);
-			provider.refresh();
-			pager.setPage(0);
+			filteredVenueList = listOfVenues;
 		} 
 		else {
-			ArrayList<VenueDetails> filteredVenueList = new ArrayList<VenueDetails>();
+			
+			TreeSet<String> selectedCity = new TreeSet<String>();
+			selectedCity.add(city);
+			TreeSet<String> selectedType = new TreeSet<String>();
+			selectedType.add(type);
 			if (city.equals("ALL")) {
 				if (type.equals("ALL"))
-					filteredVenueList = filter(name, address, "ALL", "ALL");
+					filteredVenueList = filter(name, address, listOfCities, listOfTypes);
 				else
-					filteredVenueList = filter(name, address, "ALL", type);
+					filteredVenueList = filter(name, address, listOfCities, selectedType);
 
 			} else {
 				if (type.equals("ALL"))
-					filteredVenueList = filter(name, address, city, "ALL");
+					filteredVenueList = filter(name, address, selectedCity, listOfTypes);
 				else
-					filteredVenueList = filter(name, address, city, type);
+					filteredVenueList = filter(name, address, selectedCity, selectedType);
 			}
-			provider.setList(filteredVenueList);
-			provider.refresh();
-			pager.setPage(0);
 		}
+		provider.setList(filteredVenueList);
+		provider.refresh();
+		pager.setPage(0);
 		lastUpdatedLabel.setText("Last update : "
 				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
 	}
 
 	private ArrayList<VenueDetails> filter(String name, String address,
-			String city, String type) {
+			Set<String> cities, Set<String> types) {
 		ArrayList<VenueDetails> filteredList = new ArrayList<VenueDetails>();
 		for (VenueDetails venue : listOfVenues) {
 			if (venue.getVenueName().trim().toLowerCase()
 					.contains(name.trim().toLowerCase())
 					&& venue.getVenueAdd1().trim().toLowerCase()
 							.contains(address.trim().toLowerCase())
-					&& venue.getVenueCity().trim().toLowerCase()
-							.equals(city.trim().toLowerCase())
-					&& venue.getVenueType().trim().toLowerCase()
-							.equals(type.trim().toLowerCase()))
+					&& cities.contains(venue.getVenueCity())
+					&& types.contains(venue.getVenueType()))
 				filteredList.add(venue);
 		}
 		return filteredList;
