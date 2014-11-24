@@ -17,13 +17,14 @@
     <!-- Any title is fine                         -->
     <!--                                           -->
     <title>BingeHopper</title>
-    
+     
     <!--                                           -->
     <!-- This script loads your compiled module.   -->
     <!-- If you add any GWT meta tags, they must   -->
     <!-- be added before this line.                -->
     <!--                                           -->
     <script type="text/javascript" language="javascript" src="bingehopper/bingehopper.nocache.js"></script>
+    
   </head>
 
   <!--                                           -->
@@ -31,20 +32,11 @@
   <!-- you can leave the body empty if you want  -->
   <!-- to create a completely dynamic UI.        -->
   <!--                                           -->
+  
   <body>
   	<div id ="logo">
  		<img src="images/logo.png" />
  	</div>
- 
-<!-- Loading Facebook SDK for JavaScript -->
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.0";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
 
 	<div id="venueList"></div>
     <!-- OPTIONAL: include this if you want history support -->
@@ -58,9 +50,27 @@
       </div>
     </noscript>
 
+    <!-- LOADING Facebook SDK for JavaScript -->
+    <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '289293167948083',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+  
+(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&appId=289293167948083&version=v2.0";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+    <!-- END -->
 
 <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://teamfantastic310.appspot.com/" data-hashtags="TeamFantastic">Tweet</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
 	<div class='fb-like' data-href='http://teamfantastic310.appspot.com/'
 		data-layout='button_count' data-action='like' data-show-faces='true'

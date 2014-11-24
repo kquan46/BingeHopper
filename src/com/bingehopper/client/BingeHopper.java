@@ -69,8 +69,9 @@ public class BingeHopper implements EntryPoint
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private HorizontalPanel updatePanel = new HorizontalPanel();
 	private HorizontalPanel searchPanel = new HorizontalPanel();
-	private HorizontalPanel likePanel = new HorizontalPanel();
-	private HorizontalPanel tweetPanel = new HorizontalPanel();
+	
+//CB1
+	private HorizontalPanel twitterTimelinePanel = new HorizontalPanel();
 	private VerticalPanel searchTab = new VerticalPanel();
 	private VerticalPanel bookmarksTab = new VerticalPanel();
 	private VerticalPanel visitedTab = new VerticalPanel();
@@ -133,12 +134,20 @@ public class BingeHopper implements EntryPoint
 	private Image bookmarksIcon = new Image();
 
 	// social network integration elements
-	private String fbHtml = "<div class='fb-like' data-href='http://teamfantastic310.appspot.com/' data-layout='button_count' data-action='like' data-show-faces='true' data-share='true'></div>";
-	private HTML likeHtml = new HTML(fbHtml);
-	private String twtrHtml = "<a href='https://twitter.com/share' class='twitter-share-button' data-url='http://teamfantastic310.appspot.com/' data-hashtags='TeamFantastic'>Tweet</a>";
-	private HTML twitterHtml = new HTML(twtrHtml);
-	private HTML twtfcn = new HTML(
-			"<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>");
+	private String twitterTimelineElement = "<a class=\"twitter-timeline\" href=\"https://twitter.com/hashtag/teamfantastic310\" data-widget-id=\"534804413915738112\">#teamfantastic310 Tweets</a>";
+	private HTML twitterTimeline = new HTML(twitterTimelineElement);
+	private String facebookLikeURL = "\"http://teamfantastic310.appspot.com/\"";
+	private HorizontalPanel facebookPanel = new HorizontalPanel();
+	
+	private String loadTwitterAPIElement = "<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\"://platform.twitter.com/widgets.js\";fjs.parentNode.insertBefore(js,fjs);}}(document,\"script\",\"twitter-wjs\");</script>";
+	private HTML loadTwitterAPI = new HTML(loadTwitterAPIElement);
+	
+//CB2
+	
+//	private String twtrHtml = "<a href='https://twitter.com/share' class='twitter-share-button' data-url='http://teamfantastic310.appspot.com/' data-hashtags='TeamFantastic'>Tweet</a>";
+//	private HTML twitterHtml = new HTML(twtrHtml);
+//	private HTML twtfcn = new HTML(
+//			"<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>");
 
 	// create tab panel
 	private TabPanel tabs = new TabPanel();
@@ -236,13 +245,17 @@ public class BingeHopper implements EntryPoint
 		updatePanel.addStyleName("updatePanel");
 
 		// Assemble Facebook like panel
-		likePanel.add(likeHtml);
-		likePanel.addStyleName("fbLikePanel");
+		FacebookCommentBox facebookLikeButton = new FacebookCommentBox(facebookLikeURL);
+		facebookPanel.add(facebookLikeButton);
+		facebookPanel.addStyleName("fbLikePanel");
 
+		
+// CB3
+		
 		// Assemble Twitter like panel
-		tweetPanel.add(twitterHtml);
-		tweetPanel.add(twtfcn);
-		tweetPanel.addStyleName("fbLikePanel");
+		twitterTimelinePanel.add(loadTwitterAPI);
+		twitterTimelinePanel.add(twitterTimeline);
+		twitterTimelinePanel.addStyleName("fbLikePanel");
 
 		// Assemble Search Venues panel
 		searchPanel.add(nameLabel);
@@ -444,7 +457,11 @@ public class BingeHopper implements EntryPoint
 		// Organize Social Tab
 		socialTab.add(socialTitle);
 		socialTitle.addStyleName("title");
-		socialTab.add(likePanel);
+		socialTab.add(facebookPanel);
+//		socialTab.add(facebookCommentPanel);
+//		socialTab.add(twitterTimelinePanel);
+		
+//CB4
 
 		// configure tabs
 		tabs.add(searchTab, searchIcon);
