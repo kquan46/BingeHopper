@@ -5,8 +5,6 @@ import com.google.gwt.user.client.ui.HTML;
 
 public class FacebookWidget extends HTML {
 
-	protected String id;
-
 	public FacebookWidget(String aString)
 	{
 	    super(aString);

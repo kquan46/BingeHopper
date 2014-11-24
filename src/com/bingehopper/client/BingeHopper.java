@@ -245,8 +245,8 @@ public class BingeHopper implements EntryPoint
 		updatePanel.addStyleName("updatePanel");
 
 		// Assemble Facebook like panel
-		FacebookCommentBox facebookLikeButton = new FacebookCommentBox(facebookLikeURL);
-		facebookPanel.add(facebookLikeButton);
+		FacebookCommentBox facebookCommentBox = new FacebookCommentBox(facebookLikeURL);
+		facebookPanel.add(facebookCommentBox);
 		facebookPanel.addStyleName("fbLikePanel");
 
 		
