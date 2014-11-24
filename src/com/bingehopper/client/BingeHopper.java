@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -16,6 +17,7 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
@@ -52,19 +54,6 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 public class BingeHopper implements EntryPoint
 
 {
-	private ListDataProvider<VenueDetails> provider;
-	// create ArrayList of VenueDetails objects
-	ArrayList<VenueDetails> listOfVenues = new ArrayList<VenueDetails>();
-
-	Set<String> listOfTypes = new TreeSet<String>();
-	Set<String> listOfCities = new TreeSet<String>();
-	
-	// create pagination
-	SimplePager.Resources pagerResources = GWT
-			.create(SimplePager.Resources.class);
-	SimplePager pager = new SimplePager(TextLocation.CENTER, pagerResources,
-			false, 200, true);
-
 	// create panels
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private HorizontalPanel updatePanel = new HorizontalPanel();
@@ -80,9 +69,17 @@ public class BingeHopper implements EntryPoint
 
 	// create tables
 	private CellTable<VenueDetails> venuesTable = new CellTable<VenueDetails>();
-	// private FlexTable venuesFlexTable = new FlexTable();
+	private CellTable<VenueDetails> bookmarksTable = new CellTable<VenueDetails>();
 	private FlexTable bookmarksFlexTable = new FlexTable();
-
+	
+	// create pagination
+	private SimplePager.Resources pagerResources = GWT
+				.create(SimplePager.Resources.class);
+	private SimplePager venuesPager = new SimplePager(TextLocation.CENTER, pagerResources,
+				false, 200, true);
+	private SimplePager bookmarksPager = new SimplePager(TextLocation.CENTER, pagerResources,
+			false, 200, true);
+		
 	// create buttons
 	private Button updateVenuesButton = new Button("Update");
 	private Button searchButton = new Button("Search");
@@ -126,6 +123,10 @@ public class BingeHopper implements EntryPoint
 	private ListBox cityListBox = new ListBox();
 	private CheckBox visitedCheckbox = new CheckBox();
 
+	// Create fields for drop down list box
+	private Set<String> listOfTypes = new TreeSet<String>();
+	private Set<String> listOfCities = new TreeSet<String>();
+	
 	// create custom icons
 	private Image searchIcon = new Image();
 	private Image visitedIcon = new Image();
@@ -155,6 +156,13 @@ public class BingeHopper implements EntryPoint
 	private Anchor signInLink = new Anchor("Sign In");
 	private Anchor signOutLink = new Anchor("Sign Out");
 
+	// create ArrayList of VenueDetails objects
+	private ArrayList<VenueDetails> listOfVenues;
+	
+	// create ListDataProvider for CellTable
+	private ListDataProvider<VenueDetails> venueProvider;
+	private ListDataProvider<VenueDetails> bookmarksProvider;
+	
 	// EntryPoint method
 	public void onModuleLoad() {
 		// Check login status using login service
@@ -415,7 +423,7 @@ public class BingeHopper implements EntryPoint
 		searchTab.add(updatePanel);
 		searchTab.add(searchPanel);
 		searchTab.add(venuesTable);
-		searchTab.add(pager);
+		searchTab.add(venuesPager);
 		// searchTab.add(venuesTable);
 
 		// Organize Bookmarks Tab
@@ -426,7 +434,9 @@ public class BingeHopper implements EntryPoint
 		bookmarksTab.add(removeBookmarksButton);
 		bookmarksTab.add(displayBookmarksButton);
 		bookmarksTitle.addStyleName("title");
-		bookmarksTab.add(bookmarksFlexTable);
+		//bookmarksTab.add(bookmarksFlexTable);
+		bookmarksTab.add(bookmarksTable);
+		bookmarksTab.add(bookmarksPager);
 
 		// Organize Visited Tab
 		visitedIcon.setUrl("visited.png");
@@ -564,8 +574,16 @@ public class BingeHopper implements EntryPoint
 				return venue.getVenueCapacity();
 			}
 		};
+		
+		// Add a text column to add-to Bookmarks.
+		Column<VenueDetails, String> bookmarkColumn = new Column<VenueDetails, String>(new ButtonCell()) {
+			@Override
+			public String getValue(final VenueDetails venue) {
+				return "bookmarks";
+			}
+		};
 
-		// Add Columns to CellTable
+		// Add Columns to venues CellTable
 		venuesTable.addColumn(nameColumn, "Name");
 		venuesTable.addColumn(addressColumn, "Address");
 		venuesTable.addColumn(cityColumn, "City");
@@ -573,7 +591,17 @@ public class BingeHopper implements EntryPoint
 		venuesTable.addColumn(telephoneColumn, "Telephone");
 		venuesTable.addColumn(typeColumn, "Type");
 		venuesTable.addColumn(capacityColumn, "Capacity");
-
+		venuesTable.addColumn(bookmarkColumn, "Bookmark");
+		
+		// Add Columns to bookmarks CellTable
+		bookmarksTable.addColumn(nameColumn, "Name");
+		bookmarksTable.addColumn(addressColumn, "Address");
+		bookmarksTable.addColumn(cityColumn, "City");
+		bookmarksTable.addColumn(postalCodeColumn, "Postal Code");
+		bookmarksTable.addColumn(telephoneColumn, "Telephone");
+		bookmarksTable.addColumn(typeColumn, "Type");
+		bookmarksTable.addColumn(capacityColumn, "Capacity");
+		
 		// Make the columns sortable
 		nameColumn.setSortable(true);
 		addressColumn.setSortable(true);
@@ -610,8 +638,9 @@ public class BingeHopper implements EntryPoint
 
 			public void onSuccess(List<VenueDetails> result) {
 				listOfVenues = new ArrayList<VenueDetails>(result);
-				provider = new ListDataProvider<VenueDetails>(result);
-				provider.addDataDisplay(venuesTable);
+				venueProvider = new ListDataProvider<VenueDetails>(result);
+				venueProvider.addDataDisplay(venuesTable);
+				venuesPager.setDisplay(venuesTable);
 				addDropDownList();
 			}
 
@@ -621,7 +650,6 @@ public class BingeHopper implements EntryPoint
 				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
 		// Make the call to the venue price service.
 		venueDetailsSvc.getPrices(callback);
-		pager.setDisplay(venuesTable);
 	}
 
 	private void searchVenues(final String name, final String address,
@@ -650,9 +678,9 @@ public class BingeHopper implements EntryPoint
 					filteredVenueList = filter(name, address, selectedCity, selectedType);
 			}
 		}
-		provider.setList(filteredVenueList);
-		provider.refresh();
-		pager.setPage(0);
+		venueProvider.setList(filteredVenueList);
+		venueProvider.refresh();
+		venuesPager.firstPage();
 		lastUpdatedLabel.setText("Last update : "
 				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
 	}
