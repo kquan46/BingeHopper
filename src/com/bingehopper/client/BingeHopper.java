@@ -9,6 +9,7 @@ import java.util.TreeSet;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -20,6 +21,8 @@ import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSe
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.maps.client.Maps;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -45,6 +48,8 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.maps.client.InfoWindowContent;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.control.LargeMapControl;
+import com.google.gwt.maps.client.geocode.Geocoder;
+import com.google.gwt.maps.client.geocode.LatLngCallback;
 import com.google.gwt.maps.client.geom.LatLng;
 import com.google.gwt.maps.client.overlay.Marker;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -228,7 +233,7 @@ public class BingeHopper implements EntryPoint
 	}
 
 	private void loadBingeHopper() {
-
+		
 		// Set up sign out hyperlink.
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		signOutLink.addStyleName("signOutLink");
@@ -271,29 +276,58 @@ public class BingeHopper implements EntryPoint
 		// Create table for Bookmarks
 		bookmarksFirstRow();
 
-		// Create Map Panel
-
+		
+		// Create Map Widget
 		LatLng vancouver = LatLng.newInstance(49.2500, -123.1000);
-
+		final Label statusLabel = new Label();
 		final MapWidget map = new MapWidget(vancouver, 10);
 		map.setSize("100%", "100%");
-
-		// Add some controls for the zoom level
 		map.addControl(new LargeMapControl());
+		
+		// Callback Method post obtaining LatLng
+		LatLngCallback callback = new LatLngCallback() {
 
-		// Add a marker
-		map.addOverlay(new Marker(vancouver));
+			public void onFailure() {
+			statusLabel.setText("Address was Not Found");
+			}
 
-		// Add an info window to highlight a point of interest
-		map.getInfoWindow().open(map.getCenter(),
-				new InfoWindowContent("Hi there!"));
-
-		// HorizontalPanel mapPanel = new HorizontalPanel();
-		DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
+			public void onSuccess(LatLng point) {
+			statusLabel.setText("Address was Found");
+			Marker marker = new Marker(point);
+			map.addOverlay(marker);
+			map.setCenter(point);
+			}
+		};
+			
+			// An Arraylist for Testing Purposes
+			ArrayList<String> listOfAddresses = new ArrayList<String>(); 
+			listOfAddresses.add("812 5300 NO 3 RD");
+			listOfAddresses.add("5500 No. 4 Rd");
+			
+			// Plot the Points from the ArrayList
+			// replace listOfAddresses with bookmark ArrayList
+			for (int i = 0; i<2; i++) {
+			Geocoder geocoder = new Geocoder();
+			geocoder.getLatLng(listOfAddresses.get(i), callback);
+			}
+			
+		// Map Panel
+		final DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
 		dock.addNorth(map, 500);
-		// StackLayoutPanel stack = new StackLayoutPanel(Unit.PX);
-		// stack.add(map);
+		dock.setVisible(false);
+		
+		// Create Button to show map
+		Button mapButton = new Button("Click to View Map");
+		mapButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+    			dock.setVisible(true);
+    			map.checkResizeAndCenter();
+			}
 
+		});	
+	
+		
+//maps1		
 		// Assemble Main panel.
 		errorMsgLabel.setStyleName("errorMessage");
 		errorMsgLabel.setVisible(false);
@@ -453,7 +487,8 @@ public class BingeHopper implements EntryPoint
 		Label mapTest = new Label("I solemnly swear I'm up to no good.");
 		mapTab.add(mapTest);
 		mapTab.add(dock);
-
+		mapTab.add(mapButton);
+		
 		// Organize Social Tab
 		socialTab.add(socialTitle);
 		socialTitle.addStyleName("title");
@@ -475,11 +510,23 @@ public class BingeHopper implements EntryPoint
 
 		// add to mainPanel
 		mainPanel.add(tabs);
-
+//maps2
 		// set stylename for tabs
 		tabs.setStyleName("tabs");
+		  
+//		  // Set the focus on the widget after setup completes.
+//		  Scheduler.get().scheduleDeferred(new Command() {
+//		    public void execute () {
+//			  dock.setWidgetSize(map, 501);
+//		      map.checkResizeAndCenter();
+//		    }
+//		  });
+		  
+		  
 
 	}
+
+
 
 	private void bookmarksFirstRow() {
 
