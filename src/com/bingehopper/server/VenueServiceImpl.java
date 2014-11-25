@@ -64,14 +64,10 @@ public class VenueServiceImpl extends RemoteServiceServlet implements
 			List<Venue> venues = (List<Venue>) q.execute(getUser());
 			
 			for (Venue venue : venues) {
-
-				//if (v.getVenueAdd1() == venue.getAddress()) {
 				if (v.getVenueAdd1().equals(venue.getAddress())) {
 					deleteCount++;
 					pm.deletePersistent(venue);
-
 				}
-
 			}
 
 			if (deleteCount != 1) {
