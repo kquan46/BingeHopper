@@ -37,8 +37,7 @@
   	<div id ="logo">
  		<img src="images/logo2.png" />
  	</div>
-
-	<div id="venueList"></div>
+	
     <!-- OPTIONAL: include this if you want history support -->
     <iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1' style="position:absolute;width:0;height:0;border:0"></iframe>
     
@@ -69,6 +68,20 @@
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>
     <!-- END -->
+    
+	<!-- LOADING Twitter SDK for JavaScript -->
+    <script type="text/javascript">
+window.twttr = (function (d, s, id) {
+  var t, js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id; js.src= "https://platform.twitter.com/widgets.js";
+  fjs.parentNode.insertBefore(js, fjs);
+  return window.twttr || (t = { _e: [], ready: function (f) { t._e.push(f) } });
+}(document, "script", "twitter-wjs"));
+</script>
+	<!-- END -->   
+
+	<div id="venueList"></div>
 
 <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://teamfantastic310.appspot.com/" data-hashtags="TeamFantastic">Tweet</a>
 

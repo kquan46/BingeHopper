@@ -139,21 +139,17 @@ public class BingeHopper implements EntryPoint
 	private Image bookmarksIcon = new Image();
 
 	// social network integration elements
-	private String twitterTimelineElement = "<a class=\"twitter-timeline\" href=\"https://twitter.com/hashtag/teamfantastic310\" data-widget-id=\"534804413915738112\">#teamfantastic310 Tweets</a>";
-	private HTML twitterTimeline = new HTML(twitterTimelineElement);
-	private String facebookLikeURL = "\"http://teamfantastic310.appspot.com/\"";
+	private String facebookCommentURL = "\"http://teamfantastic310.appspot.com/\"";
+	private FacebookCommentBox facebookCommentBox = new FacebookCommentBox(facebookCommentURL);
 	private HorizontalPanel facebookPanel = new HorizontalPanel();
 	
-	private String loadTwitterAPIElement = "<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\"://platform.twitter.com/widgets.js\";fjs.parentNode.insertBefore(js,fjs);}}(document,\"script\",\"twitter-wjs\");</script>";
-	private HTML loadTwitterAPI = new HTML(loadTwitterAPIElement);
+	private String twitterTimelineURL = "\"https://twitter.com/hashtag/teamfantastic310\"";
+	private TwitterTimeline twitterTimeline = new TwitterTimeline(twitterTimelineURL);
+	private HorizontalPanel twitterPanel = new HorizontalPanel();
+	
 	
 //CB2
 	
-//	private String twtrHtml = "<a href='https://twitter.com/share' class='twitter-share-button' data-url='http://teamfantastic310.appspot.com/' data-hashtags='TeamFantastic'>Tweet</a>";
-//	private HTML twitterHtml = new HTML(twtrHtml);
-//	private HTML twtfcn = new HTML(
-//			"<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>");
-
 	// create tab panel
 	private TabPanel tabs = new TabPanel();
 
@@ -249,18 +245,15 @@ public class BingeHopper implements EntryPoint
 		updatePanel.add(lastUpdatedLabel);
 		updatePanel.addStyleName("updatePanel");
 
-		// Assemble Facebook like panel
-		FacebookCommentBox facebookCommentBox = new FacebookCommentBox(facebookLikeURL);
+		// Assemble Facebook Comment Box panel
 		facebookPanel.add(facebookCommentBox);
 		facebookPanel.addStyleName("fbLikePanel");
 
 		
 // CB3
-		
-		// Assemble Twitter like panel
-		twitterTimelinePanel.add(loadTwitterAPI);
-		twitterTimelinePanel.add(twitterTimeline);
-		twitterTimelinePanel.addStyleName("fbLikePanel");
+		// Assmeble Twitter Timeline panel
+		twitterPanel.add(twitterTimeline);
+		twitterPanel.addStyleName("fbLikePanel");
 
 		// Assemble Search Venues panel
 		searchPanel.add(nameLabel);
@@ -275,7 +268,7 @@ public class BingeHopper implements EntryPoint
 
 		// Create table for Bookmarks
 		bookmarksFirstRow();
-
+		
 		
 		// Create Map Widget
 		LatLng vancouver = LatLng.newInstance(49.2500, -123.1000);
@@ -311,7 +304,7 @@ public class BingeHopper implements EntryPoint
 			geocoder.getLatLng(listOfAddresses.get(i), callback);
 			}
 			
-		// Map Panel
+		// Create Map Panel
 		final DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
 		dock.addNorth(map, 500);
 		dock.setVisible(false);
@@ -326,8 +319,7 @@ public class BingeHopper implements EntryPoint
 
 		});	
 	
-		
-//maps1		
+			
 		// Assemble Main panel.
 		errorMsgLabel.setStyleName("errorMessage");
 		errorMsgLabel.setVisible(false);
@@ -493,8 +485,7 @@ public class BingeHopper implements EntryPoint
 		socialTab.add(socialTitle);
 		socialTitle.addStyleName("title");
 		socialTab.add(facebookPanel);
-//		socialTab.add(facebookCommentPanel);
-//		socialTab.add(twitterTimelinePanel);
+		socialTab.add(twitterPanel);
 		
 //CB4
 
@@ -510,19 +501,9 @@ public class BingeHopper implements EntryPoint
 
 		// add to mainPanel
 		mainPanel.add(tabs);
-//maps2
+
 		// set stylename for tabs
-		tabs.setStyleName("tabs");
-		  
-//		  // Set the focus on the widget after setup completes.
-//		  Scheduler.get().scheduleDeferred(new Command() {
-//		    public void execute () {
-//			  dock.setWidgetSize(map, 501);
-//		      map.checkResizeAndCenter();
-//		    }
-//		  });
-		  
-		  
+		tabs.setStyleName("tabs");	  
 
 	}
 
