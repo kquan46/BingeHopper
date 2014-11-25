@@ -49,10 +49,6 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 			rd = new BufferedReader(
 					new InputStreamReader(conn.getInputStream()));
 
-			// start a counter to assign id's as VenueDetails objects are
-			// created
-			int idAssign = 1;
-
 			// for every iteration of this while loop, line is a String which
 			// represents a single line in our csv file (each line is a
 			// location)
@@ -73,11 +69,10 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 				if (!venue[0].equals("n/a") && !venue[0].equals("establishment name") && !venue[0].startsWith(",")) {
 					VenueDetails location = new VenueDetails(venue[0],
 							venue[1], venue[2], venue[3], venue[4], venue[10],
-							venue[11], venue[12], idAssign);
+							venue[11], venue[12]);
 
 
 					listOfVenues.add(location);
-					idAssign++;
 				}
 			}
 			Collections.sort(listOfVenues);

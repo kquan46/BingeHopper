@@ -7,6 +7,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.bingehopper.client.VenueDetails;
 import com.google.appengine.api.users.User;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
@@ -19,8 +20,8 @@ public class Venue {
 	  @Persistent
 	  private User user;
 	  
-	  @Persistent
-	  private int venueId;
+	  @Persistent(serialized = "true")
+	  private VenueDetails venue;
 	  
 	  @Persistent
 	  private Date createDate;
@@ -32,12 +33,12 @@ public class Venue {
 		  
 	  }
 	  
-	  public Venue(User user, int venueId)
+	  public Venue(User user, VenueDetails venue)
 	  {
 		  
 		  this();
 		  this.user = user;
-		  this.venueId = venueId;
+		  this.venue = venue;
 		  
 	  }
 	  
@@ -55,10 +56,10 @@ public class Venue {
 		  
 	  }
 	  
-	  public int getVenueId()
+	  public String getAddress()
 	  {
 		  
-		  return this.venueId;
+		  return this.venue.getVenueAdd1();
 		  
 	  }
 	  
@@ -74,7 +75,28 @@ public class Venue {
 		  
 		  this.user = user;
 		  
-	  }	  
+	  }	
+	  
+	  public void setAddress (String address)
+	  {
+		  
+		  this.venue.setVenueAdd1(address);
+		  
+	  }	 
+	  
+	  public VenueDetails getVenue ()
+	  {
+		  
+		  return this.venue;
+		  
+	  }	 
+	  
+	  public void setVenue (VenueDetails venue)
+	  {
+		  
+		  this.venue = venue;
+		  
+	  }	 
 
 
 }

@@ -1,15 +1,16 @@
 package com.bingehopper.client;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.google.gwt.cell.client.ButtonCell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -17,16 +18,13 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.maps.client.Maps;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -37,15 +35,11 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.maps.client.InfoWindowContent;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.control.LargeMapControl;
 import com.google.gwt.maps.client.geocode.Geocoder;
@@ -57,26 +51,11 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 public class BingeHopper implements EntryPoint
 
 {
-	private ListDataProvider<VenueDetails> provider;
-	// create ArrayList of VenueDetails objects
-	ArrayList<VenueDetails> listOfVenues = new ArrayList<VenueDetails>();
-
-	Set<String> listOfTypes = new TreeSet<String>();
-	Set<String> listOfCities = new TreeSet<String>();
-	
-	// create pagination
-	SimplePager.Resources pagerResources = GWT
-			.create(SimplePager.Resources.class);
-	SimplePager pager = new SimplePager(TextLocation.CENTER, pagerResources,
-			false, 200, true);
-
 	// create panels
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private HorizontalPanel updatePanel = new HorizontalPanel();
 	private HorizontalPanel searchPanel = new HorizontalPanel();
 	
-//CB1
-	private HorizontalPanel twitterTimelinePanel = new HorizontalPanel();
 	private VerticalPanel searchTab = new VerticalPanel();
 	private VerticalPanel bookmarksTab = new VerticalPanel();
 	private VerticalPanel visitedTab = new VerticalPanel();
@@ -86,8 +65,16 @@ public class BingeHopper implements EntryPoint
 
 	// create tables
 	private CellTable<VenueDetails> venuesTable = new CellTable<VenueDetails>();
-	// private FlexTable venuesFlexTable = new FlexTable();
+	private CellTable<VenueDetails> bookmarksTable = new CellTable<VenueDetails>();
 	private FlexTable bookmarksFlexTable = new FlexTable();
+
+	// create pagination
+	private SimplePager.Resources pagerResources = GWT
+			.create(SimplePager.Resources.class);
+	private SimplePager venuesPager = new SimplePager(TextLocation.CENTER,
+			pagerResources, false, 200, true);
+	private SimplePager bookmarksPager = new SimplePager(TextLocation.CENTER,
+			pagerResources, false, 200, true);
 
 	// create buttons
 	private Button updateVenuesButton = new Button("Update");
@@ -100,7 +87,8 @@ public class BingeHopper implements EntryPoint
 			"Display (displays the 4 bookmarks if add was pressed last, nothing if remove was pressed)");
 
 	// create labels
-	private Label lastUpdatedLabel = new Label();
+	private Label updatedVenueLabel = new Label();
+	private Label updatedBookmarksLabel = new Label();
 	private Label searchTitle = new Label("Search");
 	private Label nameLabel = new Label("Name");
 	private Label addressLabel = new Label("Address");
@@ -132,6 +120,10 @@ public class BingeHopper implements EntryPoint
 	private ListBox cityListBox = new ListBox();
 	private CheckBox visitedCheckbox = new CheckBox();
 
+	// Create fields for drop down list box
+	private Set<String> listOfTypes = new TreeSet<String>();
+	private Set<String> listOfCities = new TreeSet<String>();
+
 	// create custom icons
 	private Image searchIcon = new Image();
 	private Image visitedIcon = new Image();
@@ -146,9 +138,7 @@ public class BingeHopper implements EntryPoint
 	private String twitterTimelineURL = "\"https://twitter.com/hashtag/teamfantastic310\"";
 	private TwitterTimeline twitterTimeline = new TwitterTimeline(twitterTimelineURL);
 	private HorizontalPanel twitterPanel = new HorizontalPanel();
-	
-	
-//CB2
+
 	
 	// create tab panel
 	private TabPanel tabs = new TabPanel();
@@ -164,6 +154,14 @@ public class BingeHopper implements EntryPoint
 	private LoginInfo loginInfo = null;
 	private Anchor signInLink = new Anchor("Sign In");
 	private Anchor signOutLink = new Anchor("Sign Out");
+
+	// create ArrayList of VenueDetails objects
+	private ArrayList<VenueDetails> listOfVenues;
+	private ArrayList<VenueDetails> listOfBookmarks;
+
+	// create ListDataProvider for CellTable
+	private ListDataProvider<VenueDetails> venueProvider;
+	private ListDataProvider<VenueDetails> bookmarksProvider;
 
 	// EntryPoint method
 	public void onModuleLoad() {
@@ -234,23 +232,24 @@ public class BingeHopper implements EntryPoint
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		signOutLink.addStyleName("signOutLink");
 
+		// fetch bookmarked venues from server
+		loadBookmarks();
+
 		// fetch venue data from server
-		fetchData();
+		loadVenues();
 
 		// Create table for venue data
 		setUpCellTable();
 
 		// Assemble Update Venues panel.
-		updatePanel.add(updateVenuesButton);
-		updatePanel.add(lastUpdatedLabel);
+		//updatePanel.add(updateVenuesButton);
+		updatePanel.add(updatedVenueLabel);
 		updatePanel.addStyleName("updatePanel");
 
 		// Assemble Facebook Comment Box panel
 		facebookPanel.add(facebookCommentBox);
 		facebookPanel.addStyleName("fbLikePanel");
 
-		
-// CB3
 		// Assmeble Twitter Timeline panel
 		twitterPanel.add(twitterTimeline);
 		twitterPanel.addStyleName("fbLikePanel");
@@ -335,7 +334,7 @@ public class BingeHopper implements EntryPoint
 
 			public void onClick(ClickEvent event) {
 
-				lastUpdatedLabel.setText("reached clickhandler");
+				updatedVenueLabel.setText("reached clickhandler");
 				// refreshVenueList();
 
 			}
@@ -403,46 +402,46 @@ public class BingeHopper implements EntryPoint
 
 		// implemented to test the bookmark functionality. Just added 4
 		// arbitrary VenueDetails objects from the listOfVenues
-		addBookmarksButton.addClickHandler(new ClickHandler() {
-
-			public void onClick(ClickEvent event) {
-
-				addBookmark(listOfVenues.get(5).getId());
-				addBookmark(listOfVenues.get(7).getId());
-				addBookmark(listOfVenues.get(10).getId());
-				addBookmark(listOfVenues.get(18).getId());
-
-			}
-
-		});
+		// addBookmarksButton.addClickHandler(new ClickHandler() {
+		//
+		// public void onClick(ClickEvent event) {
+		//
+		// addBookmark(listOfVenues.get(5));
+		// // addBookmark(listOfVenues.get(7));
+		// // addBookmark(listOfVenues.get(10));
+		// // addBookmark(listOfVenues.get(18));
+		//
+		// }
+		//
+		// });
 
 		// implemented to test the removal of bookmarks functionality. Removes
 		// the 4 bookmarks added above
-		removeBookmarksButton.addClickHandler(new ClickHandler() {
-
-			public void onClick(ClickEvent event) {
-
-				removeBookmark(listOfVenues.get(5).getId());
-				removeBookmark(listOfVenues.get(7).getId());
-				removeBookmark(listOfVenues.get(10).getId());
-				removeBookmark(listOfVenues.get(18).getId());
-
-			}
-
-		});
+		// removeBookmarksButton.addClickHandler(new ClickHandler() {
+		//
+		// public void onClick(ClickEvent event) {
+		//
+		// removeBookmark(listOfVenues.get(5));
+		// removeBookmark(listOfVenues.get(7));
+		// removeBookmark(listOfVenues.get(10));
+		// removeBookmark(listOfVenues.get(18));
+		//
+		// }
+		//
+		// });
 
 		// this function can stay as is. Calling retrieveAndDisplayBookmarks()
 		// will display all the current bookmarks
 		// for the current user in the bookmarksFlexTable
-		displayBookmarksButton.addClickHandler(new ClickHandler() {
-
-			public void onClick(ClickEvent event) {
-
-				retrieveAndDisplayBookmarks();
-
-			}
-
-		});
+		// displayBookmarksButton.addClickHandler(new ClickHandler() {
+		//
+		// public void onClick(ClickEvent event) {
+		//
+		// loadBookmarks();
+		//
+		// }
+		//
+		// });
 
 		// ----------- TABS --------------
 
@@ -454,18 +453,21 @@ public class BingeHopper implements EntryPoint
 		searchTab.add(updatePanel);
 		searchTab.add(searchPanel);
 		searchTab.add(venuesTable);
-		searchTab.add(pager);
+		searchTab.add(venuesPager);
 		// searchTab.add(venuesTable);
 
 		// Organize Bookmarks Tab
 		bookmarksIcon.setUrl("bookmarks.png");
 		bookmarksIcon.addStyleName("tabIcon");
 		bookmarksTab.add(bookmarksTitle);
-		bookmarksTab.add(addBookmarksButton);
-		bookmarksTab.add(removeBookmarksButton);
-		bookmarksTab.add(displayBookmarksButton);
+		bookmarksTab.add(updatedBookmarksLabel);
+		// bookmarksTab.add(addBookmarksButton);
+		// bookmarksTab.add(removeBookmarksButton);
+		// bookmarksTab.add(displayBookmarksButton);
 		bookmarksTitle.addStyleName("title");
-		bookmarksTab.add(bookmarksFlexTable);
+		// bookmarksTab.add(bookmarksFlexTable);
+		bookmarksTab.add(bookmarksTable);
+		bookmarksTab.add(bookmarksPager);
 
 		// Organize Visited Tab
 		visitedIcon.setUrl("visited.png");
@@ -487,7 +489,6 @@ public class BingeHopper implements EntryPoint
 		socialTab.add(facebookPanel);
 		socialTab.add(twitterPanel);
 		
-//CB4
 
 		// configure tabs
 		tabs.add(searchTab, searchIcon);
@@ -554,7 +555,7 @@ public class BingeHopper implements EntryPoint
 		venuesTable.setPageSize(100);
 		// venuesTable.setVisibleRange(0, 100);
 
-		// Add a text column to show the name.
+		// Text column to show the name.
 		TextColumn<VenueDetails> nameColumn = new TextColumn<VenueDetails>() {
 			@Override
 			public String getValue(VenueDetails venue) {
@@ -562,7 +563,7 @@ public class BingeHopper implements EntryPoint
 			}
 		};
 
-		// Add a text column to show the address.
+		// Text column to show the address.
 		TextColumn<VenueDetails> addressColumn = new TextColumn<VenueDetails>() {
 			@Override
 			public String getValue(VenueDetails venue) {
@@ -570,7 +571,7 @@ public class BingeHopper implements EntryPoint
 			}
 		};
 
-		// Add a text column to show the city.
+		// Text column to show the city.
 		TextColumn<VenueDetails> cityColumn = new TextColumn<VenueDetails>() {
 			@Override
 			public String getValue(VenueDetails venue) {
@@ -578,7 +579,7 @@ public class BingeHopper implements EntryPoint
 			}
 		};
 
-		// Add a text column to show the postal code.
+		// Text column to show the postal code.
 		TextColumn<VenueDetails> postalCodeColumn = new TextColumn<VenueDetails>() {
 			@Override
 			public String getValue(VenueDetails venue) {
@@ -586,7 +587,7 @@ public class BingeHopper implements EntryPoint
 			}
 		};
 
-		// Add a text column to show the telephone number.
+		// Text column to show the telephone number.
 		TextColumn<VenueDetails> telephoneColumn = new TextColumn<VenueDetails>() {
 			@Override
 			public String getValue(VenueDetails venue) {
@@ -594,7 +595,7 @@ public class BingeHopper implements EntryPoint
 			}
 		};
 
-		// Add a text column to show the establishment type.
+		// Text column to show the establishment type.
 		TextColumn<VenueDetails> typeColumn = new TextColumn<VenueDetails>() {
 			@Override
 			public String getValue(VenueDetails venue) {
@@ -602,7 +603,7 @@ public class BingeHopper implements EntryPoint
 			}
 		};
 
-		// Add a text column to show the capacity.
+		// Text column to show the capacity.
 		TextColumn<VenueDetails> capacityColumn = new TextColumn<VenueDetails>() {
 			@Override
 			public String getValue(VenueDetails venue) {
@@ -610,7 +611,43 @@ public class BingeHopper implements EntryPoint
 			}
 		};
 
-		// Add Columns to CellTable
+		// Button column to add venues to bookmarks.
+		ButtonCell addBookmarkButton = new ButtonCell();
+		Column<VenueDetails, String> addbookmarkColumn = new Column<VenueDetails, String>(
+				addBookmarkButton) {
+			@Override
+			public String getValue(final VenueDetails venue) {
+				return "+Bookmark";
+			}
+		};
+		addbookmarkColumn
+				.setFieldUpdater(new FieldUpdater<VenueDetails, String>() {
+					@Override
+					public void update(int index, VenueDetails venue,
+							String value) {
+						addBookmark(venue);
+					}
+				});
+
+		// Button column to remove venues from bookmarks.
+		ButtonCell removeBookmarkButton = new ButtonCell();
+		Column<VenueDetails, String> removebookmarkColumn = new Column<VenueDetails, String>(
+				removeBookmarkButton) {
+			@Override
+			public String getValue(final VenueDetails venue) {
+				return "Remove";
+			}
+		};
+		removebookmarkColumn
+				.setFieldUpdater(new FieldUpdater<VenueDetails, String>() {
+					@Override
+					public void update(int index, VenueDetails venue,
+							String value) {
+						removeBookmark(venue);
+					}
+				});
+
+		// Add Columns to venues CellTable
 		venuesTable.addColumn(nameColumn, "Name");
 		venuesTable.addColumn(addressColumn, "Address");
 		venuesTable.addColumn(cityColumn, "City");
@@ -618,6 +655,17 @@ public class BingeHopper implements EntryPoint
 		venuesTable.addColumn(telephoneColumn, "Telephone");
 		venuesTable.addColumn(typeColumn, "Type");
 		venuesTable.addColumn(capacityColumn, "Capacity");
+		venuesTable.addColumn(addbookmarkColumn, "Bookmark");
+
+		// Add Columns to bookmarks CellTable
+		bookmarksTable.addColumn(nameColumn, "Name");
+		bookmarksTable.addColumn(addressColumn, "Address");
+		bookmarksTable.addColumn(cityColumn, "City");
+		bookmarksTable.addColumn(postalCodeColumn, "Postal Code");
+		bookmarksTable.addColumn(telephoneColumn, "Telephone");
+		bookmarksTable.addColumn(typeColumn, "Type");
+		bookmarksTable.addColumn(capacityColumn, "Capacity");
+		bookmarksTable.addColumn(removebookmarkColumn, "Bookmark");
 
 		// Make the columns sortable
 		nameColumn.setSortable(true);
@@ -641,7 +689,7 @@ public class BingeHopper implements EntryPoint
 		 */
 	}
 
-	public void fetchData() {
+	public void loadVenues() {
 		if (venueDetailsSvc == null) {
 			venueDetailsSvc = GWT.create(VenueDetailsService.class);
 		}
@@ -649,24 +697,25 @@ public class BingeHopper implements EntryPoint
 		AsyncCallback<List<VenueDetails>> callback = new AsyncCallback<List<VenueDetails>>() {
 
 			public void onFailure(Throwable caught) {
-				errorMsgLabel.setText("Error while making call to server");
+				errorMsgLabel
+						.setText("Error while fetching venues from server");
 				errorMsgLabel.setVisible(true);
 			}
 
 			public void onSuccess(List<VenueDetails> result) {
 				listOfVenues = new ArrayList<VenueDetails>(result);
-				provider = new ListDataProvider<VenueDetails>(result);
-				provider.addDataDisplay(venuesTable);
+				venueProvider = new ListDataProvider<VenueDetails>(listOfVenues);
+				venueProvider.addDataDisplay(venuesTable);
+				venuesPager.setDisplay(venuesTable);
 				addDropDownList();
 			}
 
 		};
 
-		lastUpdatedLabel.setText("Last update : "
+		updatedVenueLabel.setText("Last update : "
 				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
 		// Make the call to the venue price service.
 		venueDetailsSvc.getPrices(callback);
-		pager.setDisplay(venuesTable);
 	}
 
 	private void searchVenues(final String name, final String address,
@@ -675,30 +724,33 @@ public class BingeHopper implements EntryPoint
 		if (name.isEmpty() && address.isEmpty() && city == "ALL"
 				&& type == "ALL") {
 			filteredVenueList = listOfVenues;
-		} 
-		else {
-			
+		} else {
+
 			TreeSet<String> selectedCity = new TreeSet<String>();
 			selectedCity.add(city);
 			TreeSet<String> selectedType = new TreeSet<String>();
 			selectedType.add(type);
 			if (city.equals("ALL")) {
 				if (type.equals("ALL"))
-					filteredVenueList = filter(name, address, listOfCities, listOfTypes);
+					filteredVenueList = filter(name, address, listOfCities,
+							listOfTypes);
 				else
-					filteredVenueList = filter(name, address, listOfCities, selectedType);
+					filteredVenueList = filter(name, address, listOfCities,
+							selectedType);
 
 			} else {
 				if (type.equals("ALL"))
-					filteredVenueList = filter(name, address, selectedCity, listOfTypes);
+					filteredVenueList = filter(name, address, selectedCity,
+							listOfTypes);
 				else
-					filteredVenueList = filter(name, address, selectedCity, selectedType);
+					filteredVenueList = filter(name, address, selectedCity,
+							selectedType);
 			}
 		}
-		provider.setList(filteredVenueList);
-		provider.refresh();
-		pager.setPage(0);
-		lastUpdatedLabel.setText("Last update : "
+		venueProvider.setList(filteredVenueList);
+		venueProvider.refresh();
+		venuesPager.firstPage();
+		updatedVenueLabel.setText("Last update : "
 				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
 	}
 
@@ -718,85 +770,91 @@ public class BingeHopper implements EntryPoint
 	}
 
 	// adds the Venue with id "id" to the current user's bookmarks list
-	private void addBookmark(final int id) {
+	private void addBookmark(final VenueDetails venue) {
 
 		// calls the getVenues method to retrieve the Venue ids that have
 		// already been bookmarked by the current user, then checks if
 		// the current "id" being added exists in that list. If it does not
 		// exist, it adds the Venue with "id" to the bookmarks list, if
 		// not, it does nothing
-		venueService.getVenues(new AsyncCallback<ArrayList<Integer>>() {
+		if (listOfBookmarks.contains(venue))
+			updatedVenueLabel.setText("You already have '"
+					+ venue.getVenueName() + "' in your Bookmarks.");
+		else {
+			venueService.addVenue(venue, new AsyncCallback<Void>() {
 
-			public void onFailure(Throwable error) {
+				public void onFailure(Throwable error) {
 
-				lastUpdatedLabel.setText("reached failure");
-			}
-
-			public void onSuccess(ArrayList<Integer> ids)
-
-			{
-				if (!ids.contains(id)) {
-					// this is essentially how to add a Venue to the bookmarks
-					// list. If not for the preceding check code,
-					// calling only this method to add bookmarks will add
-					// duplicates as well
-					venueService.addVenue(id, new AsyncCallback<Void>() {
-						public void onFailure(Throwable error) {
-
-							lastUpdatedLabel.setText("failed to add venue");
-
-						}
-
-						public void onSuccess(Void ignore) {
-
-							lastUpdatedLabel.setText("successfully added");
-
-						}
-					});
-
+					updatedVenueLabel.setText("Failed to add '"
+							+ venue.getVenueName() + "' to Bookmarks.");
 				}
 
-			}
+				public void onSuccess(Void ignore)
 
-		});
+				{
+					// if (!ids.contains(id)) {
+					// // this is essentially how to add a Venue to the
+					// bookmarks
+					// // list. If not for the preceding check code,
+					// // calling only this method to add bookmarks will add
+					// // duplicates as well
+					// venueService.addVenue(id, new AsyncCallback<Void>() {
+					// public void onFailure(Throwable error) {
+					//
+					// updatedVenueLabel.setText("failed to add venue");
+					//
+					// }
+					//
+					// public void onSuccess(Void ignore) {
+					//
+					// updatedVenueLabel.setText("successfully added");
+					//
+					// }
+					// });
+					//
+					// }
+					listOfBookmarks.add(venue);
+					Collections.sort(listOfBookmarks);
+					bookmarksProvider.setList(listOfBookmarks);
+					bookmarksProvider.refresh();
+					updatedVenueLabel.setText("Successfully added '"
+							+ venue.getVenueName() + "' to Bookmarks.");
+				}
 
+			});
+		}
 	}
 
 	// retrieves an ArrayList of Venue id's that have been bookmarked by the
 	// current user,
 	// and uses the list to display the corresponding Venues in the
 	// bookmarksFlexTable using the displayBookmarks method
-	private void retrieveAndDisplayBookmarks() {
+	private void loadBookmarks() {
 
-		final ArrayList<VenueDetails> bookmarkedVenues = new ArrayList<VenueDetails>();
-		venueService.getVenues(new AsyncCallback<ArrayList<Integer>>() {
+		updatedBookmarksLabel.setText("Loading Bookmarks...");
+		venueService.getVenues(new AsyncCallback<List<VenueDetails>>() {
 
 			public void onFailure(Throwable error) {
 
-				lastUpdatedLabel
-						.setText("failed to retrieve bookmarked venues");
+				updatedBookmarksLabel
+						.setText("failed to retrieve Bookmarked venues");
 			}
 
-			public void onSuccess(ArrayList<Integer> ids)
+			public void onSuccess(List<VenueDetails> bookmarkedVenues)
 
 			{
-
-				for (int i = 0; i < ids.size(); i++) {
-
-					for (int j = 0; j < listOfVenues.size(); j++) {
-
-						if (ids.get(i) == listOfVenues.get(j).getId()) {
-
-							bookmarkedVenues.add(listOfVenues.get(j));
-
-						}
-
-					}
-
+				listOfBookmarks = new ArrayList<VenueDetails>(bookmarkedVenues);
+				bookmarksProvider = new ListDataProvider<VenueDetails>(
+						bookmarkedVenues);
+				bookmarksProvider.addDataDisplay(bookmarksTable);
+				bookmarksPager.setDisplay(bookmarksTable);
+				if (bookmarkedVenues.isEmpty())
+					updatedBookmarksLabel
+							.setText("Oops. You dont have any venues in your bookmarks!!");
+				else {
+					updatedBookmarksLabel
+							.setText("Bookmarked venues successfully loaded");
 				}
-
-				displayBookmarks(bookmarkedVenues);
-
 			}
 
 		});
@@ -804,79 +862,59 @@ public class BingeHopper implements EntryPoint
 	}
 
 	// removes the Venue with "id" from the current user's bookmarks list
-	private void removeBookmark(int id) {
-
-		venueService.removeVenue(id, new AsyncCallback<Void>() {
+	private void removeBookmark(final VenueDetails venue) {
+		venueService.removeVenue(venue, new AsyncCallback<Void>() {
 			public void onFailure(Throwable error) {
 
-				lastUpdatedLabel.setText("failed to remove venue");
+				updatedVenueLabel.setText("Failed to remove '"
+						+ venue.getVenueName() + ("'"));
 
 			}
 
 			public void onSuccess(Void ignore) {
-
-				lastUpdatedLabel.setText("successfully removed");
+				listOfBookmarks.remove(venue);
+				bookmarksProvider.setList(listOfBookmarks);
+				bookmarksProvider.refresh();
+				if (listOfBookmarks.isEmpty())
+					updatedBookmarksLabel.setText("Your Bookmarks is now empty. Removed '"
+							+ venue.getVenueName()
+							+ "'.");
+				else
+					updatedBookmarksLabel.setText("Successfully removed '"
+							+ venue.getVenueName() + ("'"));
 
 			}
 		});
 
 	}
 
-	/**
-	 * Takes list of venues minues the first row, removes empty venue names, and
-	 * sorts it alphabetically;
-	 */
-	// private List<VenueDetails> cleanVenueArray(List<VenueDetails> venues) {
-	// VenueDetails[] results = new VenueDetails[(venues.length) - 1];
-	// for (int i = 0; i < results.length; i++) {
-	// results[i] = venues[i + 1]; // first row is field parameters
+	// private ArrayList<VenueDetails> getListOfVenues() {
+	//
+	// return this.listOfVenues;
+	//
 	// }
-	// Arrays.sort(results);
-	// return results;
+	//
+	// private void displayBookmarks(ArrayList<VenueDetails> venues) {
+	//
+	// updatedVenueLabel.setText("reached displayBookmark");
+	// bookmarksFlexTable.removeAllRows();
+	// bookmarksFirstRow();
+	// // updatedVenueLabel.setText(Integer.toString(venues.size()));
+	//
+	// for (int i = 0; i < venues.size(); i++) {
+	//
+	// bookmarksFlexTable.setText(i + 1, 0, venues.get(i).getVenueName());
+	// bookmarksFlexTable.setText(i + 1, 1, venues.get(i).getVenueAdd1());
+	// bookmarksFlexTable.setText(i + 1, 2, venues.get(i).getVenueCity());
+	// bookmarksFlexTable
+	// .setText(i + 1, 3, venues.get(i).getVenuePostal());
+	// bookmarksFlexTable.setText(i + 1, 4, venues.get(i).getVenuePhone());
+	// bookmarksFlexTable.setText(i + 1, 5, venues.get(i).getVenueType());
+	// bookmarksFlexTable.setText(i + 1, 6, venues.get(i)
+	// .getVenueCapacity());
+	//
 	// }
-
-	private VenueDetails[] cleanVenueArray(VenueDetails[] venues) {
-
-		VenueDetails[] results = new VenueDetails[(venues.length) - 1];
-
-		for (int i = 0; i < results.length; i++) {
-
-			// first row is field parameters
-			results[i] = venues[i + 1];
-
-		}
-
-		Arrays.sort(results);
-		return results;
-	}
-
-	private ArrayList<VenueDetails> getListOfVenues() {
-
-		return this.listOfVenues;
-
-	}
-
-	private void displayBookmarks(ArrayList<VenueDetails> venues) {
-
-		lastUpdatedLabel.setText("reached displayBookmark");
-		bookmarksFlexTable.removeAllRows();
-		bookmarksFirstRow();
-		// lastUpdatedLabel.setText(Integer.toString(venues.size()));
-
-		for (int i = 0; i < venues.size(); i++) {
-
-			bookmarksFlexTable.setText(i + 1, 0, venues.get(i).getVenueName());
-			bookmarksFlexTable.setText(i + 1, 1, venues.get(i).getVenueAdd1());
-			bookmarksFlexTable.setText(i + 1, 2, venues.get(i).getVenueCity());
-			bookmarksFlexTable
-					.setText(i + 1, 3, venues.get(i).getVenuePostal());
-			bookmarksFlexTable.setText(i + 1, 4, venues.get(i).getVenuePhone());
-			bookmarksFlexTable.setText(i + 1, 5, venues.get(i).getVenueType());
-			bookmarksFlexTable.setText(i + 1, 6, venues.get(i)
-					.getVenueCapacity());
-
-		}
-
-	}
+	//
+	// }
 
 }
