@@ -21,10 +21,15 @@ public class VenueDetails implements IsSerializable, Serializable, Comparable<Ve
 	private String venueType;
 	private String venueCapacity;
 	private int id;
+	private boolean isBookmarked;
+	private boolean isVisited;
 	
 	private static final long serialVersionUID = 1L;
 
-	public VenueDetails(){}
+	public VenueDetails(){
+		isBookmarked = false;
+		isVisited = false;
+	}
 	
 	public VenueDetails(String venueName, String venueAdd1, 
 			String venueAdd2, String venueCity, String venuePostal, 
@@ -100,6 +105,12 @@ public class VenueDetails implements IsSerializable, Serializable, Comparable<Ve
 		return this.id;
 	}
 
+	public boolean isBookmarked() {
+		return isBookmarked;
+	}
 	
+	public boolean isVisited() {
+		return isVisited;
+	}
 
 }

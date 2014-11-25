@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -16,6 +17,7 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
@@ -81,6 +83,8 @@ public class BingeHopper implements EntryPoint
 
 	// create tables
 	private CellTable<VenueDetails> venuesTable = new CellTable<VenueDetails>();
+	private CellTable<VenueDetails> bookmarkedTable = new CellTable<VenueDetails>();
+	private CellTable<VenueDetails> visitedTable = new CellTable<VenueDetails>();
 	// private FlexTable venuesFlexTable = new FlexTable();
 	private FlexTable bookmarksFlexTable = new FlexTable();
 
@@ -581,6 +585,22 @@ public class BingeHopper implements EntryPoint
 				return venue.getVenueCapacity();
 			}
 		};
+		
+		Column<VenueDetails,Boolean> bookmarkColumn = new Column<VenueDetails,Boolean>
+		(new CheckboxCell(true,false)) {
+			@Override
+			public Boolean getValue(VenueDetails venue) {
+				return venue.isBookmarked();
+			}
+		};
+		
+		Column<VenueDetails,Boolean> visitedColumn = new Column<VenueDetails,Boolean>
+		(new CheckboxCell(true,false)) {
+			@Override
+			public Boolean getValue(VenueDetails venue) {
+				return venue.isVisited();
+			}
+		};
 
 		// Add Columns to CellTable
 		venuesTable.addColumn(nameColumn, "Name");
@@ -590,6 +610,8 @@ public class BingeHopper implements EntryPoint
 		venuesTable.addColumn(telephoneColumn, "Telephone");
 		venuesTable.addColumn(typeColumn, "Type");
 		venuesTable.addColumn(capacityColumn, "Capacity");
+		venuesTable.addColumn(bookmarkColumn, "Bookmark");
+		venuesTable.addColumn(visitedColumn, "Visited");
 
 		// Make the columns sortable
 		nameColumn.setSortable(true);
