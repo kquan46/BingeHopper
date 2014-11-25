@@ -55,7 +55,7 @@ public class BingeHopper implements EntryPoint
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private HorizontalPanel updatePanel = new HorizontalPanel();
 	private HorizontalPanel searchPanel = new HorizontalPanel();
-	
+
 	private VerticalPanel searchTab = new VerticalPanel();
 	private VerticalPanel bookmarksTab = new VerticalPanel();
 	private VerticalPanel visitedTab = new VerticalPanel();
@@ -79,12 +79,6 @@ public class BingeHopper implements EntryPoint
 	// create buttons
 	private Button updateVenuesButton = new Button("Update");
 	private Button searchButton = new Button("Search");
-	private Button removeBookmarksButton = new Button(
-			"Remove (currently removes the 4 arbitrary Venues added by the add button)");
-	private Button addBookmarksButton = new Button(
-			"Add (currently adds 4 arbitrary Venues to the bookmarks list: check buttonlistener for details)");
-	private Button displayBookmarksButton = new Button(
-			"Display (displays the 4 bookmarks if add was pressed last, nothing if remove was pressed)");
 
 	// create labels
 	private Label updatedVenueLabel = new Label();
@@ -132,14 +126,15 @@ public class BingeHopper implements EntryPoint
 
 	// social network integration elements
 	private String facebookCommentURL = "\"http://teamfantastic310.appspot.com/\"";
-	private FacebookCommentBox facebookCommentBox = new FacebookCommentBox(facebookCommentURL);
+	private FacebookCommentBox facebookCommentBox = new FacebookCommentBox(
+			facebookCommentURL);
 	private HorizontalPanel facebookPanel = new HorizontalPanel();
-	
+
 	private String twitterTimelineURL = "\"https://twitter.com/hashtag/teamfantastic310\"";
-	private TwitterTimeline twitterTimeline = new TwitterTimeline(twitterTimelineURL);
+	private TwitterTimeline twitterTimeline = new TwitterTimeline(
+			twitterTimelineURL);
 	private HorizontalPanel twitterPanel = new HorizontalPanel();
 
-	
 	// create tab panel
 	private TabPanel tabs = new TabPanel();
 
@@ -162,6 +157,10 @@ public class BingeHopper implements EntryPoint
 	// create ListDataProvider for CellTable
 	private ListDataProvider<VenueDetails> venueProvider;
 	private ListDataProvider<VenueDetails> bookmarksProvider;
+
+	// Create Map Widget
+	private Label statusLabel;
+	private MapWidget map;
 
 	// EntryPoint method
 	public void onModuleLoad() {
@@ -227,7 +226,7 @@ public class BingeHopper implements EntryPoint
 	}
 
 	private void loadBingeHopper() {
-		
+
 		// Set up sign out hyperlink.
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		signOutLink.addStyleName("signOutLink");
@@ -238,11 +237,11 @@ public class BingeHopper implements EntryPoint
 		// fetch venue data from server
 		loadVenues();
 
-		// Create table for venue data
+		// Create cell table for venues and bookmarks
 		setUpCellTable();
 
 		// Assemble Update Venues panel.
-		//updatePanel.add(updateVenuesButton);
+		// updatePanel.add(updateVenuesButton);
 		updatePanel.add(updatedVenueLabel);
 		updatePanel.addStyleName("updatePanel");
 
@@ -265,60 +264,28 @@ public class BingeHopper implements EntryPoint
 		searchPanel.add(typeListBox);
 		searchPanel.add(searchButton);
 
-		// Create table for Bookmarks
-		bookmarksFirstRow();
-		
-		
-		// Create Map Widget
+		// Initialize Map Widget
 		LatLng vancouver = LatLng.newInstance(49.2500, -123.1000);
-		final Label statusLabel = new Label();
-		final MapWidget map = new MapWidget(vancouver, 10);
+		statusLabel = new Label();
+		map = new MapWidget(vancouver, 10);
 		map.setSize("100%", "100%");
 		map.addControl(new LargeMapControl());
-		
-		// Callback Method post obtaining LatLng
-		LatLngCallback callback = new LatLngCallback() {
 
-			public void onFailure() {
-			statusLabel.setText("Address was Not Found");
-			}
-
-			public void onSuccess(LatLng point) {
-			statusLabel.setText("Address was Found");
-			Marker marker = new Marker(point);
-			map.addOverlay(marker);
-			map.setCenter(point);
-			}
-		};
-			
-			// An Arraylist for Testing Purposes
-			ArrayList<String> listOfAddresses = new ArrayList<String>(); 
-			listOfAddresses.add("812 5300 NO 3 RD");
-			listOfAddresses.add("5500 No. 4 Rd");
-			
-			// Plot the Points from the ArrayList
-			// replace listOfAddresses with bookmark ArrayList
-			for (int i = 0; i<2; i++) {
-			Geocoder geocoder = new Geocoder();
-			geocoder.getLatLng(listOfAddresses.get(i), callback);
-			}
-			
 		// Create Map Panel
 		final DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
 		dock.addNorth(map, 500);
 		dock.setVisible(false);
-		
+
 		// Create Button to show map
 		Button mapButton = new Button("Click to View Map");
 		mapButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-    			dock.setVisible(true);
-    			map.checkResizeAndCenter();
+				dock.setVisible(true);
+				map.checkResizeAndCenter();
 			}
 
-		});	
-	
-			
+		});
+
 		// Assemble Main panel.
 		errorMsgLabel.setStyleName("errorMessage");
 		errorMsgLabel.setVisible(false);
@@ -400,49 +367,6 @@ public class BingeHopper implements EntryPoint
 
 		});
 
-		// implemented to test the bookmark functionality. Just added 4
-		// arbitrary VenueDetails objects from the listOfVenues
-		// addBookmarksButton.addClickHandler(new ClickHandler() {
-		//
-		// public void onClick(ClickEvent event) {
-		//
-		// addBookmark(listOfVenues.get(5));
-		// // addBookmark(listOfVenues.get(7));
-		// // addBookmark(listOfVenues.get(10));
-		// // addBookmark(listOfVenues.get(18));
-		//
-		// }
-		//
-		// });
-
-		// implemented to test the removal of bookmarks functionality. Removes
-		// the 4 bookmarks added above
-		// removeBookmarksButton.addClickHandler(new ClickHandler() {
-		//
-		// public void onClick(ClickEvent event) {
-		//
-		// removeBookmark(listOfVenues.get(5));
-		// removeBookmark(listOfVenues.get(7));
-		// removeBookmark(listOfVenues.get(10));
-		// removeBookmark(listOfVenues.get(18));
-		//
-		// }
-		//
-		// });
-
-		// this function can stay as is. Calling retrieveAndDisplayBookmarks()
-		// will display all the current bookmarks
-		// for the current user in the bookmarksFlexTable
-		// displayBookmarksButton.addClickHandler(new ClickHandler() {
-		//
-		// public void onClick(ClickEvent event) {
-		//
-		// loadBookmarks();
-		//
-		// }
-		//
-		// });
-
 		// ----------- TABS --------------
 
 		// Organize Search Tab
@@ -454,18 +378,13 @@ public class BingeHopper implements EntryPoint
 		searchTab.add(searchPanel);
 		searchTab.add(venuesTable);
 		searchTab.add(venuesPager);
-		// searchTab.add(venuesTable);
 
 		// Organize Bookmarks Tab
 		bookmarksIcon.setUrl("bookmarks.png");
 		bookmarksIcon.addStyleName("tabIcon");
 		bookmarksTab.add(bookmarksTitle);
 		bookmarksTab.add(updatedBookmarksLabel);
-		// bookmarksTab.add(addBookmarksButton);
-		// bookmarksTab.add(removeBookmarksButton);
-		// bookmarksTab.add(displayBookmarksButton);
 		bookmarksTitle.addStyleName("title");
-		// bookmarksTab.add(bookmarksFlexTable);
 		bookmarksTab.add(bookmarksTable);
 		bookmarksTab.add(bookmarksPager);
 
@@ -482,13 +401,12 @@ public class BingeHopper implements EntryPoint
 		mapTab.add(mapTest);
 		mapTab.add(dock);
 		mapTab.add(mapButton);
-		
+
 		// Organize Social Tab
 		socialTab.add(socialTitle);
 		socialTitle.addStyleName("title");
 		socialTab.add(facebookPanel);
 		socialTab.add(twitterPanel);
-		
 
 		// configure tabs
 		tabs.add(searchTab, searchIcon);
@@ -504,28 +422,7 @@ public class BingeHopper implements EntryPoint
 		mainPanel.add(tabs);
 
 		// set stylename for tabs
-		tabs.setStyleName("tabs");	  
-
-	}
-
-
-
-	private void bookmarksFirstRow() {
-
-		bookmarksFlexTable.setText(0, 0, "Name");
-		bookmarksFlexTable.setText(0, 1, "Address");
-		bookmarksFlexTable.setText(0, 2, "City");
-		bookmarksFlexTable.setText(0, 3, "Postal Code");
-		bookmarksFlexTable.setText(0, 4, "Telephone");
-		bookmarksFlexTable.setText(0, 5, "Type");
-		bookmarksFlexTable.setText(0, 6, "Capacity");
-		bookmarksFlexTable.setText(0, 7, "Share");
-		bookmarksFlexTable.setText(0, 8, "Visited");
-		bookmarksFlexTable.setText(0, 9, "Remove");
-
-		// Add styles to elements in the bookmarks list table.
-		bookmarksFlexTable.getRowFormatter().addStyleName(0, "venueListHeader");
-		bookmarksFlexTable.addStyleName("venueList");
+		tabs.setStyleName("tabs");
 
 	}
 
@@ -848,6 +745,7 @@ public class BingeHopper implements EntryPoint
 						bookmarkedVenues);
 				bookmarksProvider.addDataDisplay(bookmarksTable);
 				bookmarksPager.setDisplay(bookmarksTable);
+				plotBookmarks();
 				if (bookmarkedVenues.isEmpty())
 					updatedBookmarksLabel
 							.setText("Oops. You dont have any venues in your bookmarks!!");
@@ -876,9 +774,9 @@ public class BingeHopper implements EntryPoint
 				bookmarksProvider.setList(listOfBookmarks);
 				bookmarksProvider.refresh();
 				if (listOfBookmarks.isEmpty())
-					updatedBookmarksLabel.setText("Your Bookmarks is now empty. Removed '"
-							+ venue.getVenueName()
-							+ "'.");
+					updatedBookmarksLabel
+							.setText("Your Bookmarks is now empty. Removed '"
+									+ venue.getVenueName() + "'.");
 				else
 					updatedBookmarksLabel.setText("Successfully removed '"
 							+ venue.getVenueName() + ("'"));
@@ -888,33 +786,28 @@ public class BingeHopper implements EntryPoint
 
 	}
 
-	// private ArrayList<VenueDetails> getListOfVenues() {
-	//
-	// return this.listOfVenues;
-	//
-	// }
-	//
-	// private void displayBookmarks(ArrayList<VenueDetails> venues) {
-	//
-	// updatedVenueLabel.setText("reached displayBookmark");
-	// bookmarksFlexTable.removeAllRows();
-	// bookmarksFirstRow();
-	// // updatedVenueLabel.setText(Integer.toString(venues.size()));
-	//
-	// for (int i = 0; i < venues.size(); i++) {
-	//
-	// bookmarksFlexTable.setText(i + 1, 0, venues.get(i).getVenueName());
-	// bookmarksFlexTable.setText(i + 1, 1, venues.get(i).getVenueAdd1());
-	// bookmarksFlexTable.setText(i + 1, 2, venues.get(i).getVenueCity());
-	// bookmarksFlexTable
-	// .setText(i + 1, 3, venues.get(i).getVenuePostal());
-	// bookmarksFlexTable.setText(i + 1, 4, venues.get(i).getVenuePhone());
-	// bookmarksFlexTable.setText(i + 1, 5, venues.get(i).getVenueType());
-	// bookmarksFlexTable.setText(i + 1, 6, venues.get(i)
-	// .getVenueCapacity());
-	//
-	// }
-	//
-	// }
+	private void plotBookmarks() {
+		// Callback Method post obtaining LatLng
+		LatLngCallback callback = new LatLngCallback() {
+
+			public void onFailure() {
+				statusLabel.setText("Address was Not Found");
+			}
+
+			public void onSuccess(LatLng point) {
+				statusLabel.setText("Address was Found");
+				Marker marker = new Marker(point);
+				map.addOverlay(marker);
+				map.setCenter(point);
+			}
+		};
+
+		// Plot the Points from the ArrayList
+		// replace listOfAddresses with bookmark ArrayList
+		for (VenueDetails venue : listOfBookmarks) {
+			Geocoder geocoder = new Geocoder();
+			geocoder.getLatLng(venue.getVenueAdd1(), callback);
+		}
+	}
 
 }
