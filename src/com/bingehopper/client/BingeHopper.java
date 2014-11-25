@@ -132,6 +132,7 @@ public class BingeHopper implements EntryPoint
 	private Image visitedIcon = new Image();
 	private Image mapIcon = new Image();
 	private Image bookmarksIcon = new Image();
+	private Image socialIcon = new Image();
 
 	// social network integration elements
 	private String twitterTimelineElement = "<a class=\"twitter-timeline\" href=\"https://twitter.com/hashtag/teamfantastic310\" data-widget-id=\"534804413915738112\">#teamfantastic310 Tweets</a>";
@@ -450,12 +451,12 @@ public class BingeHopper implements EntryPoint
 		// Organize Map Tab
 		mapIcon.setUrl("maps.png");
 		mapIcon.addStyleName("tabIcon");
-		Label mapTest = new Label("I solemnly swear I'm up to no good.");
-		mapTab.add(mapTest);
 		mapTab.add(dock);
 
 		// Organize Social Tab
-		socialTab.add(socialTitle);
+		socialIcon.setUrl("social.png");
+		socialIcon.addStyleName("tabIcon");
+		socialTab.add(socialIcon);
 		socialTitle.addStyleName("title");
 		socialTab.add(facebookPanel);
 //		socialTab.add(facebookCommentPanel);
@@ -468,7 +469,7 @@ public class BingeHopper implements EntryPoint
 		tabs.add(bookmarksTab, bookmarksIcon);
 		tabs.add(visitedTab, visitedIcon);
 		tabs.add(mapTab, mapIcon);
-		tabs.add(socialTab, "Social");
+		tabs.add(socialTab, socialIcon);
 
 		// show the 'map' tab initially
 		tabs.selectTab(0);
