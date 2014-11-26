@@ -16,6 +16,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
@@ -38,6 +40,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.maps.client.MapWidget;
@@ -277,15 +280,30 @@ public class BingeHopper implements EntryPoint
 		dock.setVisible(false);
 
 		// Create Button to show map
-		Button mapButton = new Button("Click to View Map");
-		mapButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				dock.setVisible(true);
-				map.checkResizeAndCenter();
+//		Button mapButton = new Button("Click to View Map");
+//		mapButton.addClickHandler(new ClickHandler() {
+//			public void onClick(ClickEvent event) {
+//				dock.setVisible(true);
+//				map.checkResizeAndCenter();
+//			}
+//
+//		});
+		
+		tabs.addSelectionHandler(new SelectionHandler<Integer>() {
+			public void onSelection(SelectionEvent<Integer> event) {
+				int tabId = event.getSelectedItem();
+				Widget tabWidget = tabs.getWidget(tabId);
+				if (tabWidget != null && tabId == 3) {
+					map.clearOverlays();
+					plotBookmarks();
+					map.checkResizeAndCenter();
+					dock.setVisible(true);
+				} else {
+					dock.setVisible(false);
+				}
 			}
-
 		});
-
+		
 		// Assemble Main panel.
 		errorMsgLabel.setStyleName("errorMessage");
 		errorMsgLabel.setVisible(false);
@@ -400,7 +418,7 @@ public class BingeHopper implements EntryPoint
 		Label mapTest = new Label("I solemnly swear I'm up to no good.");
 		mapTab.add(mapTest);
 		mapTab.add(dock);
-		mapTab.add(mapButton);
+//		mapTab.add(mapButton);
 
 		// Organize Social Tab
 		socialTab.add(socialTitle);
