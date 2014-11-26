@@ -47,7 +47,9 @@ import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.control.LargeMapControl;
 import com.google.gwt.maps.client.geocode.Geocoder;
 import com.google.gwt.maps.client.geocode.LatLngCallback;
+import com.google.gwt.maps.client.geom.Bounds;
 import com.google.gwt.maps.client.geom.LatLng;
+import com.google.gwt.maps.client.geom.LatLngBounds;
 import com.google.gwt.maps.client.overlay.Marker;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 
@@ -165,6 +167,18 @@ public class BingeHopper implements EntryPoint
 	// Create Map Widget
 	private Label statusLabel;
 	private MapWidget map;
+	private double maxLat = 49.2500;
+	private double maxLon = -123.1000;
+	private double minLat = 48.2500;
+	private double minLon = -122.1000;
+	private LatLng northEast;
+	private LatLng southWest;
+	private LatLngBounds bound;
+	private static LatLng ne;
+	private static LatLng sw;
+	private static LatLngBounds b;	
+	private static LatLng center;
+	
 
 	// EntryPoint method
 	public void onModuleLoad() {
@@ -273,7 +287,7 @@ public class BingeHopper implements EntryPoint
 		statusLabel = new Label();
 		map = new MapWidget(vancouver, 10);
 		map.setSize("100%", "100%");
-		map.addControl(new LargeMapControl());
+//		map.addControl(new LargeMapControl());
 
 		// Create Map Panel
 		final DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
@@ -299,6 +313,12 @@ public class BingeHopper implements EntryPoint
 					plotBookmarks();
 					map.checkResizeAndCenter();
 					dock.setVisible(true);
+					ne = northEast.newInstance(maxLat, maxLon);
+					sw = southWest.newInstance(minLat, minLon);
+					b = bound.newInstance(sw, ne);		
+					center = b.getCenter();
+					map.setZoomLevel(map.getBoundsZoomLevel(b));
+					map.setCenter(center);
 				} else {
 					dock.setVisible(false);
 				}
@@ -804,12 +824,19 @@ public class BingeHopper implements EntryPoint
 				statusLabel.setText("Address was Found");
 				Marker marker = new Marker(point);
 				map.addOverlay(marker);
+				double pointLat = point.getLatitude();
+				double pointLon = point.getLongitude();
+				if (pointLat > maxLat)
+					maxLat = pointLat;
+				if (pointLon > maxLon)
+					maxLon = pointLon;
+				if (pointLat < minLat)
+					minLat = pointLat;
+				if (pointLon < minLon)
+					minLon = pointLon;
 				// map.setCenter(point);
 			}
 		};
-
-		// Plot the Points from the ArrayList
-		// replace listOfAddresses with bookmark ArrayList
 
 		for (VenueDetails venue : listOfBookmarks) {
 			Geocoder geocoder = new Geocoder();
