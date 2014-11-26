@@ -280,15 +280,15 @@ public class BingeHopper implements EntryPoint
 		dock.setVisible(false);
 
 		// Create Button to show map
-//		Button mapButton = new Button("Click to View Map");
-//		mapButton.addClickHandler(new ClickHandler() {
-//			public void onClick(ClickEvent event) {
-//				dock.setVisible(true);
-//				map.checkResizeAndCenter();
-//			}
-//
-//		});
-		
+		// Button mapButton = new Button("Click to View Map");
+		// mapButton.addClickHandler(new ClickHandler() {
+		// public void onClick(ClickEvent event) {
+		// dock.setVisible(true);
+		// map.checkResizeAndCenter();
+		// }
+		//
+		// });
+
 		tabs.addSelectionHandler(new SelectionHandler<Integer>() {
 			public void onSelection(SelectionEvent<Integer> event) {
 				int tabId = event.getSelectedItem();
@@ -303,7 +303,7 @@ public class BingeHopper implements EntryPoint
 				}
 			}
 		});
-		
+
 		// Assemble Main panel.
 		errorMsgLabel.setStyleName("errorMessage");
 		errorMsgLabel.setVisible(false);
@@ -418,7 +418,7 @@ public class BingeHopper implements EntryPoint
 		Label mapTest = new Label("I solemnly swear I'm up to no good.");
 		mapTab.add(mapTest);
 		mapTab.add(dock);
-//		mapTab.add(mapButton);
+		// mapTab.add(mapButton);
 
 		// Organize Social Tab
 		socialTab.add(socialTitle);
@@ -686,13 +686,13 @@ public class BingeHopper implements EntryPoint
 
 	// adds the Venue with id "id" to the current user's bookmarks list
 	private void addBookmark(final VenueDetails venue) {
+		ArrayList<String> symbols = new ArrayList<String>();
 
-		// calls the getVenues method to retrieve the Venue ids that have
-		// already been bookmarked by the current user, then checks if
-		// the current "id" being added exists in that list. If it does not
-		// exist, it adds the Venue with "id" to the bookmarks list, if
-		// not, it does nothing
-		if (listOfBookmarks.contains(venue))
+		for (VenueDetails bookmark : listOfBookmarks) {
+			String symbol = bookmark.getSymbol();
+			symbols.add(symbol);
+		}
+		if (symbols.contains(venue.getSymbol()))
 			updatedVenueLabel.setText("You already have '"
 					+ venue.getVenueName() + "' in your Bookmarks.");
 		else {
@@ -707,27 +707,6 @@ public class BingeHopper implements EntryPoint
 				public void onSuccess(Void ignore)
 
 				{
-					// if (!ids.contains(id)) {
-					// // this is essentially how to add a Venue to the
-					// bookmarks
-					// // list. If not for the preceding check code,
-					// // calling only this method to add bookmarks will add
-					// // duplicates as well
-					// venueService.addVenue(id, new AsyncCallback<Void>() {
-					// public void onFailure(Throwable error) {
-					//
-					// updatedVenueLabel.setText("failed to add venue");
-					//
-					// }
-					//
-					// public void onSuccess(Void ignore) {
-					//
-					// updatedVenueLabel.setText("successfully added");
-					//
-					// }
-					// });
-					//
-					// }
 					listOfBookmarks.add(venue);
 					Collections.sort(listOfBookmarks);
 					bookmarksProvider.setList(listOfBookmarks);
@@ -788,7 +767,10 @@ public class BingeHopper implements EntryPoint
 			}
 
 			public void onSuccess(Void ignore) {
-				listOfBookmarks.remove(venue);
+				for (VenueDetails bookmark : listOfBookmarks) {
+					if (venue.getSymbol().equals(bookmark.getSymbol()))
+						listOfBookmarks.remove(venue);
+				}
 				bookmarksProvider.setList(listOfBookmarks);
 				bookmarksProvider.refresh();
 				if (listOfBookmarks.isEmpty())
@@ -816,15 +798,16 @@ public class BingeHopper implements EntryPoint
 				statusLabel.setText("Address was Found");
 				Marker marker = new Marker(point);
 				map.addOverlay(marker);
-				map.setCenter(point);
+				// map.setCenter(point);
 			}
 		};
 
 		// Plot the Points from the ArrayList
 		// replace listOfAddresses with bookmark ArrayList
+
 		for (VenueDetails venue : listOfBookmarks) {
 			Geocoder geocoder = new Geocoder();
-			geocoder.getLatLng(venue.getVenueAdd1(), callback);
+			geocoder.getLatLng(venue.getMapAddress(), callback);
 		}
 	}
 

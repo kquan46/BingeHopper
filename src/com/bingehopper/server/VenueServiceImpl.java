@@ -64,12 +64,11 @@ public class VenueServiceImpl extends RemoteServiceServlet implements
 			List<Venue> venues = (List<Venue>) q.execute(getUser());
 			
 			for (Venue venue : venues) {
-				if (v.getVenueAdd1().equals(venue.getAddress())) {
+				if (v.getSymbol().equals(venue.getSymbol())) {
 					deleteCount++;
 					pm.deletePersistent(venue);
 				}
 			}
-
 			if (deleteCount != 1) {
 
 				LOG.log(Level.WARNING, "removeVenue deleted " + deleteCount
@@ -103,7 +102,7 @@ public class VenueServiceImpl extends RemoteServiceServlet implements
 			for (Venue venue : venues) {
 				listOfBookmarks.add(venue.getVenue());
 			}
-			// Collections.sort(listOfBookmarks);
+			Collections.sort(listOfBookmarks);
 		}
 
 		finally {

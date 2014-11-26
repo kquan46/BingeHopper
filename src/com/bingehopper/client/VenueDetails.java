@@ -20,6 +20,8 @@ public class VenueDetails implements IsSerializable, Serializable, Comparable<Ve
 	private String venuePhone;
 	private String venueType;
 	private String venueCapacity;
+	private String mapAddress;
+	private String symbol;
 	
 	private static final long serialVersionUID = 1L;
 
@@ -36,6 +38,8 @@ public class VenueDetails implements IsSerializable, Serializable, Comparable<Ve
 		this.venuePhone = venuePhone;
 		this.venueType = venueType;
 		this.venueCapacity = venueCapacity;
+		this.mapAddress = venueAdd1 + ", " + venueCity + ", BC";
+		this.symbol = venueName + ", " + venueCity + ", " + venueType;
 	}
 	
 	
@@ -88,7 +92,12 @@ public class VenueDetails implements IsSerializable, Serializable, Comparable<Ve
 	public void setVenueCapacity(String venueCapacity) {
 		this.venueCapacity = venueCapacity;
 	}
-
+	public String getMapAddress() {
+		return this.mapAddress;
+	}
+	public String getSymbol() {
+		return this.symbol;
+	}
 	public int compareTo(VenueDetails other) {
 		return this.venueName.toLowerCase().compareTo(other.venueName.toLowerCase());
 	}

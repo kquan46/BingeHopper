@@ -56,10 +56,10 @@ public class Venue {
 		  
 	  }
 	  
-	  public String getAddress()
+	  public String getSymbol()
 	  {
 		  
-		  return this.venue.getVenueAdd1();
+		  return this.venue.getSymbol();
 		  
 	  }
 	  
@@ -76,13 +76,6 @@ public class Venue {
 		  this.user = user;
 		  
 	  }	
-	  
-	  public void setAddress (String address)
-	  {
-		  
-		  this.venue.setVenueAdd1(address);
-		  
-	  }	 
 	  
 	  public VenueDetails getVenue ()
 	  {
