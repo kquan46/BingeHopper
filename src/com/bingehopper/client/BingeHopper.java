@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.google.gwt.cell.client.ButtonCell;
+import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -116,7 +117,7 @@ public class BingeHopper implements EntryPoint
 	private TextBox addressBox = new TextBox();
 	private ListBox typeListBox = new ListBox();
 	private ListBox cityListBox = new ListBox();
-	private CheckBox visitedCheckbox = new CheckBox();
+	// private CheckBox visitedCheckbox = new CheckBox();
 
 	// Create fields for drop down list box
 	private Set<String> listOfTypes = new TreeSet<String>();
@@ -303,8 +304,7 @@ public class BingeHopper implements EntryPoint
 				if (tabWidget != null && tabId == 3) {
 					map.checkResizeAndCenter();
 					dock.setVisible(true);
-				}
-				else
+				} else
 					dock.setVisible(false);
 
 			}
@@ -579,6 +579,23 @@ public class BingeHopper implements EntryPoint
 					}
 				});
 
+		// Checkbox column to mark venues as selected in bookmarks.
+		CheckboxCell visitedCheckbox = new CheckboxCell();
+		Column<VenueDetails, Boolean> visitedColumn = new Column<VenueDetails, Boolean>(
+				visitedCheckbox) {
+			@Override
+			public Boolean getValue(VenueDetails venue) {
+				return venue.getVisited();
+			}
+		};
+		visitedColumn
+				.setFieldUpdater(new FieldUpdater<VenueDetails, Boolean>() {
+					public void update(int index, VenueDetails venue,
+							Boolean visited) {
+						setVisited(venue);
+					}
+				});
+
 		// Add Columns to venues CellTable
 		venuesTable.addColumn(nameColumn, "Name");
 		venuesTable.addColumn(addressColumn, "Address");
@@ -597,6 +614,7 @@ public class BingeHopper implements EntryPoint
 		bookmarksTable.addColumn(telephoneColumn, "Telephone");
 		bookmarksTable.addColumn(typeColumn, "Type");
 		bookmarksTable.addColumn(capacityColumn, "Capacity");
+		bookmarksTable.addColumn(visitedColumn, "Visited");
 		bookmarksTable.addColumn(removebookmarkColumn, "Bookmark");
 
 		// Make the columns sortable
@@ -837,6 +855,38 @@ public class BingeHopper implements EntryPoint
 		}
 	}
 
+	// sets venues as visited and not visited in bookmarks
+	private void setVisited(final VenueDetails venue) {
+		venueService.setVisited(venue, new AsyncCallback<Void>() {
+			public void onFailure(Throwable error) {
+				if (venue.getVisited() == true)
+					updatedBookmarksLabel.setText("Failed to mark '"
+							+ venue.getVenueName() + "' as not visited.");
+				else
+					updatedBookmarksLabel.setText("Failed to mark '"
+							+ venue.getVenueName() + "' as visited.");
+			}
+
+			public void onSuccess(Void ignore) {
+				for (VenueDetails bookmark : listOfBookmarks) {
+					if (venue.getSymbol().equals(bookmark.getSymbol()))
+						if (venue.getVisited() == true){
+							bookmark.setVisited(false);
+							updatedBookmarksLabel.setText("Succesfully marked '"
+									+ venue.getVenueName() + "' as not visited.");
+						}
+						else {
+							bookmark.setVisited(true);
+							updatedBookmarksLabel.setText("Succesfully marked '"
+									+ venue.getVenueName() + "' as visited.");
+						}
+				}
+				bookmarksProvider.setList(listOfBookmarks);
+				bookmarksProvider.refresh();
+			}
+		});
+	}
+
 	private void plotBookmarks() {
 		// Callback Method post obtaining LatLng
 		LatLngCallback callback = new LatLngCallback() {
@@ -859,7 +909,7 @@ public class BingeHopper implements EntryPoint
 			Geocoder geocoder = new Geocoder();
 			geocoder.getLatLng(venue.getMapAddress(), callback);
 		}
-		//map.checkResizeAndCenter();
+		// map.checkResizeAndCenter();
 	}
 
 }

@@ -107,6 +107,35 @@ public class VenueServiceImpl extends RemoteServiceServlet implements
 		}
 	}
 	
+	public void setVisited(VenueDetails v) throws NotLoggedInException {
+		checkLoggedIn();
+		PersistenceManager pm = getPersistenceManager();
+		
+		try {
+
+			Query q = pm.newQuery(Venue.class, "user == u");
+			q.declareParameters("com.google.appengine.api.users.User u");
+			@SuppressWarnings("unchecked")
+			List<Venue> venues = (List<Venue>) q.execute(getUser());
+			pm.deletePersistentAll(venues);
+			for (Venue venue : venues) {
+				if (v.getSymbol().equals(venue.getSymbol())) {
+					if (venue.getVisited() == true)
+						venue.setVisited(false);
+					else venue.setVisited(true);
+				}	
+			}
+			pm.makePersistentAll(venues);
+
+		}
+
+		finally {
+
+			pm.close();
+
+		}
+	}
+	
 	public List<VenueDetails> getVenues() throws NotLoggedInException {
 
 		checkLoggedIn();
