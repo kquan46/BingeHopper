@@ -30,7 +30,7 @@ public class VenueDetails implements IsSerializable, Serializable, Comparable<Ve
 	
 	public VenueDetails(String venueName, String venueAdd1, 
 			String venueAdd2, String venueCity, String venuePostal, 
-			String venuePhone, String venueType, String venueCapacity) {
+			String venuePhone, String venueType, String venueCapacity, Boolean visited) {
 		this.venueName = venueName;
 		this.venueAdd1 = venueAdd1;
 		this.venueAdd2 = venueAdd2;
@@ -39,7 +39,7 @@ public class VenueDetails implements IsSerializable, Serializable, Comparable<Ve
 		this.venuePhone = venuePhone;
 		this.venueType = venueType;
 		this.venueCapacity = venueCapacity;
-		this.visited = false;
+		this.visited = visited;
 		this.mapAddress = venueAdd1 + ", " + venueCity + ", BC";
 		this.symbol = venueName + " " + venueCity;
 	}

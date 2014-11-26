@@ -66,7 +66,6 @@ public class VenueServiceImpl extends RemoteServiceServlet implements
 			for (Venue venue : venues) {
 				if (v.getSymbol().equals(venue.getSymbol())) {
 					deleteCount++;
-					pm.deletePersistent(venue);
 				}
 			}
 			if (deleteCount != 1) {
@@ -110,23 +109,30 @@ public class VenueServiceImpl extends RemoteServiceServlet implements
 	public void setVisited(VenueDetails v) throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
-		
+		//Boolean visited = v.getVisited();
 		try {
-
+			pm.currentTransaction().begin();
 			Query q = pm.newQuery(Venue.class, "user == u");
 			q.declareParameters("com.google.appengine.api.users.User u");
 			@SuppressWarnings("unchecked")
+//			Venue venue = pm.getObjectById(Venue.class, venue.getId());
 			List<Venue> venues = (List<Venue>) q.execute(getUser());
-			pm.deletePersistentAll(venues);
 			for (Venue venue : venues) {
 				if (v.getSymbol().equals(venue.getSymbol())) {
 					if (venue.getVisited() == true)
 						venue.setVisited(false);
 					else venue.setVisited(true);
-				}	
+					
+					
+				}
+				pm.makePersistent(venue);
 			}
-			pm.makePersistentAll(venues);
-
+			//pm.makePersistentAll(venues);
+			//pm.getObjectsById(getUser(), v.getSymbol());
+			pm.currentTransaction().commit();
+		} catch (Exception ex) {
+			pm.currentTransaction().rollback();
+			throw new RuntimeException(ex);
 		}
 
 		finally {
