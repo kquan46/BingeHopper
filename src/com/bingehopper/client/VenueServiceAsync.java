@@ -8,5 +8,6 @@ public interface VenueServiceAsync {
 	
 	  void addVenue(VenueDetails venue, AsyncCallback<Void> async);
 	  void removeVenue(VenueDetails venue, AsyncCallback<Void> async);
+	  void removeAllVenues(AsyncCallback<Void> async);
 	  void getVenues(AsyncCallback<List<VenueDetails>> callback);
 }

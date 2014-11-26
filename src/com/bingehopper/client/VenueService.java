@@ -12,6 +12,7 @@ public interface VenueService extends RemoteService {
 	
 	  public void addVenue(VenueDetails venue) throws NotLoggedInException;
 	  public void removeVenue(VenueDetails venue) throws NotLoggedInException;
+	  public void removeAllVenues() throws NotLoggedInException;
 	  public List<VenueDetails> getVenues() throws NotLoggedInException;
 	  
 }
