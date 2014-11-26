@@ -317,21 +317,14 @@ public class BingeHopper implements EntryPoint
 				if (tabWidget != null && tabId == 3) {
 					map.checkResizeAndCenter();
 					dock.setVisible(true);
-<<<<<<< HEAD
 					ne = northEast.newInstance(maxLat, maxLon);
 					sw = southWest.newInstance(minLat, minLon);
 					b = bound.newInstance(sw, ne);		
 					center = b.getCenter();
 					map.setZoomLevel(map.getBoundsZoomLevel(b));
 					map.setCenter(center);
-				} else {
+				} else 
 					dock.setVisible(false);
-=======
->>>>>>> 5bc5ee973d7ed2cc71fe2831f3b51ac03df7e388
-				}
-				else
-					dock.setVisible(false);
-
 			}
 		});
 
@@ -888,11 +881,8 @@ public class BingeHopper implements EntryPoint
 			}
 		};
 
-<<<<<<< HEAD
-=======
 		map.clearOverlays();
 
->>>>>>> 5bc5ee973d7ed2cc71fe2831f3b51ac03df7e388
 		for (VenueDetails venue : listOfBookmarks) {
 			Geocoder geocoder = new Geocoder();
 			geocoder.getLatLng(venue.getMapAddress(), callback);
