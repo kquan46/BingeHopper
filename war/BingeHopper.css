@@ -3,16 +3,14 @@
 html{
 	height:100%;
 	overflow:hidden !important;
-	
-  background-color: #c9f2ec !important;
-  background-image: url("images/background.png");
+  	background-image: url("images/background.png");
 }
 
 body {
 	height:100%;
 	width:100%;
-  padding: 10px;
-  background-color:transparent !important;
+ 	padding: 10px;
+  	background-color:transparent !important;
   }
 
 #logo {
@@ -65,13 +63,6 @@ gwt-TabPanelBottom > div {
   overflow:scroll;
 }
 
-#venueList {
-	opacity:.9;
-}
-
-#venueList > * {
-	opacity:1;
-}
 
 /* Update Venues panel */
 .updatePanel {
@@ -87,9 +78,12 @@ gwt-TabPanelBottom > div {
 .welcomeText {
 	font-size: 68px;
 	text-align: center;
+	background-color: rgba(0,0,0,0.5);
+	border-radius: 20px;
 	position: relative;
 	left: 30%;
 	color:white;
+	padding: 10px;
 }
 
 /* app description */
@@ -97,9 +91,12 @@ gwt-TabPanelBottom > div {
 	font-size: 18px;
 	max-width: 550px;
 	float:left;
-	padding-left: 200px;
-	color:white;
-	
+	margin-left: 200px;
+	margin-top: 30px;
+	color:white !important;
+	background-color: rgba(0,0,0,0.5);
+	padding: 20px;
+	border-radius: 20px;
 }
 
 /* sign in link */
@@ -107,11 +104,18 @@ gwt-TabPanelBottom > div {
 	width:300px;
 	font-size: 78px;
 	text-decoration: none;
+	text-align: center;
+	color:white !important;
+	background-color: #ffcc00;
 	position: absolute;
-	padding-right: 300px;
+	right: 300px;
 	top: 300px;
 	left: 875px;
+	border-radius: 20px;
+	padding: 10px;
+	padding-bottom:20px;
 }
+
 
 /* sign out link */
 .signOutLink {
