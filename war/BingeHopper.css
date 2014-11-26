@@ -44,10 +44,6 @@ body {
 	top:30px;
 }
 
-gwt-TabPanelBottom > div {
-	height:auto !important;
-}
-
 /* venue list header row */
 .venueListHeader {
   background-color: #2062B8;
@@ -127,6 +123,7 @@ gwt-TabPanelBottom > div {
 }
 
 /* tabs */
+
 .gwt-TabPanelBottom {
 	position:fixed;
 	overflow: scroll !important;
@@ -145,6 +142,11 @@ gwt-TabPanelBottom > div {
 .tabs {
 	padding-left: 175px;
 	padding-right: 125px;
+}
+
+.tabElement {
+	padding: 115px;
+	padding-top: 20px;
 }
 
 /* tabBar */

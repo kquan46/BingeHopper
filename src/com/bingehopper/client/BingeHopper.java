@@ -76,7 +76,7 @@ public class BingeHopper implements EntryPoint
 	private VerticalPanel bookmarksTab = new VerticalPanel();
 	private VerticalPanel visitedTab = new VerticalPanel();
 	private VerticalPanel mapTab = new VerticalPanel();
-	private VerticalPanel socialTab = new VerticalPanel();
+	private HorizontalPanel socialTab = new HorizontalPanel();
 	private VerticalPanel loginPanel = new VerticalPanel();
 
 	// create tables
@@ -430,7 +430,7 @@ public class BingeHopper implements EntryPoint
 		searchTab.add(searchPanel);
 		searchTab.add(venuesTable);
 		searchTab.add(pager);
-		// searchTab.add(venuesTable);
+		searchTab.addStyleName("tabElement");
 
 		// Organize Bookmarks Tab
 		bookmarksIcon.setUrl("bookmarks.png");
@@ -441,17 +441,20 @@ public class BingeHopper implements EntryPoint
 		bookmarksTab.add(displayBookmarksButton);
 		bookmarksTitle.addStyleName("title");
 		bookmarksTab.add(bookmarksFlexTable);
+		bookmarksTab.addStyleName("tabElement");
 
 		// Organize Visited Tab
 		visitedIcon.setUrl("visited.png");
 		visitedIcon.addStyleName("tabIcon");
 		visitedTab.add(visitedTitle);
 		visitedTitle.addStyleName("title");
+		visitedTab.addStyleName("tabElement");
 
 		// Organize Map Tab
 		mapIcon.setUrl("maps.png");
 		mapIcon.addStyleName("tabIcon");
 		mapTab.add(dock);
+		mapTab.addStyleName("tab");
 
 		// Organize Social Tab
 		socialIcon.setUrl("social.png");
@@ -461,6 +464,7 @@ public class BingeHopper implements EntryPoint
 		socialTab.add(facebookPanel);
 //		socialTab.add(facebookCommentPanel);
 //		socialTab.add(twitterTimelinePanel);
+		socialTab.addStyleName("tabElement");
 		
 //CB4
 
