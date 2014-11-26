@@ -30,8 +30,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -56,7 +56,8 @@ public class BingeHopper implements EntryPoint
 {
 	// create panels
 	private VerticalPanel mainPanel = new VerticalPanel();
-	private HorizontalPanel updatePanel = new HorizontalPanel();
+	private HorizontalPanel venueUpdatePanel = new HorizontalPanel();
+	private HorizontalPanel bookmarksUpdatePanel = new HorizontalPanel();
 	private HorizontalPanel searchPanel = new HorizontalPanel();
 
 	private VerticalPanel searchTab = new VerticalPanel();
@@ -69,7 +70,6 @@ public class BingeHopper implements EntryPoint
 	// create tables
 	private CellTable<VenueDetails> venuesTable = new CellTable<VenueDetails>();
 	private CellTable<VenueDetails> bookmarksTable = new CellTable<VenueDetails>();
-	private FlexTable bookmarksFlexTable = new FlexTable();
 
 	// create pagination
 	private SimplePager.Resources pagerResources = GWT
@@ -82,6 +82,7 @@ public class BingeHopper implements EntryPoint
 	// create buttons
 	private Button updateVenuesButton = new Button("Update");
 	private Button searchButton = new Button("Search");
+	private Button removeAllButton = new Button("Remove All");
 
 	// create labels
 	private Label updatedVenueLabel = new Label();
@@ -246,8 +247,13 @@ public class BingeHopper implements EntryPoint
 
 		// Assemble Update Venues panel.
 		// updatePanel.add(updateVenuesButton);
-		updatePanel.add(updatedVenueLabel);
-		updatePanel.addStyleName("updatePanel");
+		venueUpdatePanel.add(updatedVenueLabel);
+		venueUpdatePanel.addStyleName("updatePanel");
+		bookmarksUpdatePanel.add(updatedBookmarksLabel);
+		bookmarksUpdatePanel.add(removeAllButton);
+		bookmarksUpdatePanel.setCellHorizontalAlignment(removeAllButton,
+				HasHorizontalAlignment.ALIGN_RIGHT);
+		bookmarksUpdatePanel.addStyleName("updatePanel");
 
 		// Assemble Facebook Comment Box panel
 		facebookPanel.add(facebookCommentBox);
@@ -278,7 +284,7 @@ public class BingeHopper implements EntryPoint
 		// Create Map Panel
 		final DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
 		dock.addNorth(map, 500);
-		dock.setVisible(false);
+		dock.setVisible(true);
 
 		// Create Button to show map
 		// Button mapButton = new Button("Click to View Map");
@@ -295,13 +301,12 @@ public class BingeHopper implements EntryPoint
 				int tabId = event.getSelectedItem();
 				Widget tabWidget = tabs.getWidget(tabId);
 				if (tabWidget != null && tabId == 3) {
-					map.clearOverlays();
-					plotBookmarks();
 					map.checkResizeAndCenter();
 					dock.setVisible(true);
-				} else {
-					dock.setVisible(false);
 				}
+				else
+					dock.setVisible(false);
+
 			}
 		});
 
@@ -321,7 +326,6 @@ public class BingeHopper implements EntryPoint
 			public void onClick(ClickEvent event) {
 
 				updatedVenueLabel.setText("reached clickhandler");
-				// refreshVenueList();
 
 			}
 
@@ -386,6 +390,13 @@ public class BingeHopper implements EntryPoint
 
 		});
 
+		// Listen for mouse events on the Add button.
+		removeAllButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				removeAllBookmarks();
+			}
+		});
+
 		// ----------- TABS --------------
 
 		// Organize Search Tab
@@ -393,7 +404,7 @@ public class BingeHopper implements EntryPoint
 		searchIcon.addStyleName("tabIcon");
 		searchTab.add(searchTitle);
 		searchTitle.addStyleName("title");
-		searchTab.add(updatePanel);
+		searchTab.add(venueUpdatePanel);
 		searchTab.add(searchPanel);
 		searchTab.add(venuesTable);
 		searchTab.add(venuesPager);
@@ -403,7 +414,7 @@ public class BingeHopper implements EntryPoint
 		bookmarksIcon.setUrl("bookmarks.png");
 		bookmarksIcon.addStyleName("tabIcon");
 		bookmarksTab.add(bookmarksTitle);
-		bookmarksTab.add(updatedBookmarksLabel);
+		bookmarksTab.add(bookmarksUpdatePanel);
 		bookmarksTitle.addStyleName("title");
 		bookmarksTab.add(bookmarksTable);
 		bookmarksTab.add(bookmarksPager);
@@ -420,7 +431,7 @@ public class BingeHopper implements EntryPoint
 		mapIcon.setUrl("maps.png");
 		mapIcon.addStyleName("tabIcon");
 		mapTab.add(dock);
-//		mapTab.add(mapButton);
+		// mapTab.add(mapButton);
 		mapTab.addStyleName("tab");
 
 		// Organize Social Tab
@@ -690,41 +701,6 @@ public class BingeHopper implements EntryPoint
 		return filteredList;
 	}
 
-	// adds the Venue with id "id" to the current user's bookmarks list
-	private void addBookmark(final VenueDetails venue) {
-		ArrayList<String> symbols = new ArrayList<String>();
-
-		for (VenueDetails bookmark : listOfBookmarks) {
-			String symbol = bookmark.getSymbol();
-			symbols.add(symbol);
-		}
-		if (symbols.contains(venue.getSymbol()))
-			updatedVenueLabel.setText("You already have '"
-					+ venue.getVenueName() + "' in your Bookmarks.");
-		else {
-			venueService.addVenue(venue, new AsyncCallback<Void>() {
-
-				public void onFailure(Throwable error) {
-
-					updatedVenueLabel.setText("Failed to add '"
-							+ venue.getVenueName() + "' to Bookmarks.");
-				}
-
-				public void onSuccess(Void ignore)
-
-				{
-					listOfBookmarks.add(venue);
-					Collections.sort(listOfBookmarks);
-					bookmarksProvider.setList(listOfBookmarks);
-					bookmarksProvider.refresh();
-					updatedVenueLabel.setText("Successfully added '"
-							+ venue.getVenueName() + "' to Bookmarks.");
-				}
-
-			});
-		}
-	}
-
 	// retrieves an ArrayList of Venue id's that have been bookmarked by the
 	// current user,
 	// and uses the list to display the corresponding Venues in the
@@ -762,7 +738,45 @@ public class BingeHopper implements EntryPoint
 
 	}
 
-	// removes the Venue with "id" from the current user's bookmarks list
+	// adds the Venue with symbol (venueName+venueAdd1) to the current user's
+	// bookmarks list
+	private void addBookmark(final VenueDetails venue) {
+		ArrayList<String> symbols = new ArrayList<String>();
+
+		for (VenueDetails bookmark : listOfBookmarks) {
+			String symbol = bookmark.getSymbol();
+			symbols.add(symbol);
+		}
+		if (symbols.contains(venue.getSymbol()))
+			updatedVenueLabel.setText("You already have '"
+					+ venue.getVenueName() + "' in your Bookmarks.");
+		else {
+			venueService.addVenue(venue, new AsyncCallback<Void>() {
+
+				public void onFailure(Throwable error) {
+
+					updatedVenueLabel.setText("Failed to add '"
+							+ venue.getVenueName() + "' to Bookmarks.");
+				}
+
+				public void onSuccess(Void ignore)
+
+				{
+					listOfBookmarks.add(venue);
+					Collections.sort(listOfBookmarks);
+					bookmarksProvider.setList(listOfBookmarks);
+					bookmarksProvider.refresh();
+					plotBookmarks();
+					updatedVenueLabel.setText("Successfully added '"
+							+ venue.getVenueName() + "' to Bookmarks.");
+				}
+
+			});
+		}
+	}
+
+	// removes the Venue with symbol (venueName+venueAdd1) from the current
+	// user's bookmarks list
 	private void removeBookmark(final VenueDetails venue) {
 		venueService.removeVenue(venue, new AsyncCallback<Void>() {
 			public void onFailure(Throwable error) {
@@ -779,6 +793,7 @@ public class BingeHopper implements EntryPoint
 				}
 				bookmarksProvider.setList(listOfBookmarks);
 				bookmarksProvider.refresh();
+				plotBookmarks();
 				if (listOfBookmarks.isEmpty())
 					updatedBookmarksLabel
 							.setText("Your Bookmarks is now empty. Removed '"
@@ -790,6 +805,36 @@ public class BingeHopper implements EntryPoint
 			}
 		});
 
+	}
+
+	// removes all venues from the current user's bookmarks list
+	private void removeAllBookmarks() {
+		if (listOfBookmarks.isEmpty())
+			updatedBookmarksLabel
+					.setText("Oops. Your Bookmarks is already empty!");
+		else {
+			venueService.removeAllVenues(new AsyncCallback<Void>() {
+				public void onFailure(Throwable error) {
+					updatedBookmarksLabel
+							.setText("Failed to remove all Bookmarks");
+				}
+
+				public void onSuccess(Void ignore) {
+					int bookmarkSize = listOfBookmarks.size();
+					listOfBookmarks = new ArrayList<VenueDetails>();
+					bookmarksProvider.setList(listOfBookmarks);
+					bookmarksProvider.refresh();
+					plotBookmarks();
+					if (bookmarkSize == 1)
+						updatedBookmarksLabel.setText("Successfully removed "
+								+ bookmarkSize + (" venue."));
+					else
+						updatedBookmarksLabel.setText("Successfully removed "
+								+ bookmarkSize + (" venues."));
+
+				}
+			});
+		}
 	}
 
 	private void plotBookmarks() {
@@ -808,13 +853,13 @@ public class BingeHopper implements EntryPoint
 			}
 		};
 
-		// Plot the Points from the ArrayList
-		// replace listOfAddresses with bookmark ArrayList
+		map.clearOverlays();
 
 		for (VenueDetails venue : listOfBookmarks) {
 			Geocoder geocoder = new Geocoder();
 			geocoder.getLatLng(venue.getMapAddress(), callback);
 		}
+		//map.checkResizeAndCenter();
 	}
 
 }
