@@ -35,7 +35,7 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 		String splitBy = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 
 		List<VenueDetails> listOfVenues = new ArrayList<VenueDetails>();
-
+		List<String> listOfNames = new ArrayList<String>();
 		try {
 			// converts the DataBC url to a URL object in the java.net package
 			url = new URL(
@@ -60,19 +60,24 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 				// item in the current line, so venue[0] is the name of
 				// establishment, venue[1] is the address line 1 (refer to csv)
 				String[] venue = line.split(splitBy);
-				for (int i = 0; i< venue.length; i++) {
+				for (int i = 0; i < venue.length; i++) {
 					if (venue[i].isEmpty())
 						venue[i] = "n/a";
-					if (venue[i].charAt(0) == '"' && venue[i].charAt(venue[i].length()-1) == '"')
-						venue[i] = venue[i].substring(1, venue[i].length()-1);
+					if (venue[i].charAt(0) == '"'
+							&& venue[i].charAt(venue[i].length() - 1) == '"')
+						venue[i] = venue[i].substring(1, venue[i].length() - 1);
 				}
-				if (!venue[0].equals("n/a") && !venue[0].equals("establishment name") && !venue[0].startsWith(",")) {
+				if (!venue[0].equals("n/a")
+						&& !venue[0].equals("establishment name")
+						&& !venue[0].startsWith(",")) {
 					VenueDetails location = new VenueDetails(venue[0],
 							venue[1], venue[2], venue[3], venue[4], venue[10],
 							venue[11], venue[12]);
 
-
-					listOfVenues.add(location);
+					if (!listOfNames.contains(location.getSymbol())) {
+						listOfVenues.add(location);
+						listOfNames.add(location.getSymbol());
+					}
 				}
 			}
 			Collections.sort(listOfVenues);
@@ -91,16 +96,17 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 			e.printStackTrace();
 
 		}
-//		ArrayList<String> s = new ArrayList<String>();
-//		ArrayList<String> l = new ArrayList<String>();
-//		for (VenueDetails venue : listOfVenues) {
-//			if (venue.getVenuePostal().length()<6 || venue.getVenuePostal().length()>6){
-//				s.add(venue.getVenuePostal());
-//				l.add(venue.getVenueName());
-//			}
-//		}
-//		System.out.println(s);
-//		System.out.println(l);
+		// ArrayList<String> s = new ArrayList<String>();
+		// ArrayList<String> l = new ArrayList<String>();
+		// for (VenueDetails venue : listOfVenues) {
+		// if (venue.getVenuePostal().length()<6 ||
+		// venue.getVenuePostal().length()>6){
+		// s.add(venue.getVenuePostal());
+		// l.add(venue.getVenueName());
+		// }
+		// }
+		// System.out.println(s);
+		// System.out.println(l);
 		return listOfVenues;
 
 	}

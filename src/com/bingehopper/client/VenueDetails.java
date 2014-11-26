@@ -39,7 +39,7 @@ public class VenueDetails implements IsSerializable, Serializable, Comparable<Ve
 		this.venueType = venueType;
 		this.venueCapacity = venueCapacity;
 		this.mapAddress = venueAdd1 + ", " + venueCity + ", BC";
-		this.symbol = venueName + ", " + venueCity + ", " + venueType;
+		this.symbol = venueName + " " + venueCity;
 	}
 	
 	
