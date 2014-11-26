@@ -63,7 +63,7 @@ public class BingeHopper implements EntryPoint
 	private VerticalPanel bookmarksTab = new VerticalPanel();
 	private VerticalPanel visitedTab = new VerticalPanel();
 	private VerticalPanel mapTab = new VerticalPanel();
-	private VerticalPanel socialTab = new VerticalPanel();
+	private HorizontalPanel socialTab = new HorizontalPanel();
 	private VerticalPanel loginPanel = new VerticalPanel();
 
 	// create tables
@@ -126,6 +126,7 @@ public class BingeHopper implements EntryPoint
 	private Image visitedIcon = new Image();
 	private Image mapIcon = new Image();
 	private Image bookmarksIcon = new Image();
+	private Image socialIcon = new Image();
 
 	// social network integration elements
 	private String facebookCommentURL = "\"http://teamfantastic310.appspot.com/\"";
@@ -396,6 +397,7 @@ public class BingeHopper implements EntryPoint
 		searchTab.add(searchPanel);
 		searchTab.add(venuesTable);
 		searchTab.add(venuesPager);
+		searchTab.addStyleName("tabElement");
 
 		// Organize Bookmarks Tab
 		bookmarksIcon.setUrl("bookmarks.png");
@@ -405,33 +407,37 @@ public class BingeHopper implements EntryPoint
 		bookmarksTitle.addStyleName("title");
 		bookmarksTab.add(bookmarksTable);
 		bookmarksTab.add(bookmarksPager);
+		bookmarksTab.addStyleName("tabElement");
 
 		// Organize Visited Tab
 		visitedIcon.setUrl("visited.png");
 		visitedIcon.addStyleName("tabIcon");
 		visitedTab.add(visitedTitle);
 		visitedTitle.addStyleName("title");
+		visitedTab.addStyleName("tabElement");
 
 		// Organize Map Tab
 		mapIcon.setUrl("maps.png");
 		mapIcon.addStyleName("tabIcon");
-		Label mapTest = new Label("I solemnly swear I'm up to no good.");
-		mapTab.add(mapTest);
 		mapTab.add(dock);
 //		mapTab.add(mapButton);
+		mapTab.addStyleName("tab");
 
 		// Organize Social Tab
-		socialTab.add(socialTitle);
+		socialIcon.setUrl("social.png");
+		socialIcon.addStyleName("tabIcon");
+		socialTab.add(socialIcon);
 		socialTitle.addStyleName("title");
 		socialTab.add(facebookPanel);
 		socialTab.add(twitterPanel);
+		socialTab.addStyleName("tabElement");
 
 		// configure tabs
 		tabs.add(searchTab, searchIcon);
 		tabs.add(bookmarksTab, bookmarksIcon);
 		tabs.add(visitedTab, visitedIcon);
 		tabs.add(mapTab, mapIcon);
-		tabs.add(socialTab, "Social");
+		tabs.add(socialTab, socialIcon);
 
 		// show the 'map' tab initially
 		tabs.selectTab(0);
