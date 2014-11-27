@@ -169,10 +169,10 @@ public class BingeHopper implements EntryPoint
 	// Create Map Widget
 	private Label statusLabel;
 	private MapWidget map;
-	private double maxLat = 49.2500;
-	private double maxLon = -123.1000;
-	private double minLat = 48.2500;
-	private double minLon = -122.1000;
+	private double maxLat = 49.2851;
+	private double maxLon = -122.9080;
+	private double minLat = 49.1842;
+	private double minLon = -123.2537;
 	private LatLng northEast;
 	private LatLng southWest;
 	private LatLngBounds bound;
@@ -292,7 +292,7 @@ public class BingeHopper implements EntryPoint
 		// Initialize Map Widget
 		LatLng vancouver = LatLng.newInstance(49.2500, -123.1000);
 		statusLabel = new Label();
-		map = new MapWidget(vancouver, 10);
+		map = new MapWidget(vancouver, 9);
 		map.setSize("100%", "100%");
 //		map.addControl(new LargeMapControl());
 
