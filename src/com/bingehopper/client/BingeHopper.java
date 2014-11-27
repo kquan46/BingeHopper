@@ -170,8 +170,6 @@ public class BingeHopper implements EntryPoint
 	// Create Map Widget
 	private Label statusLabel;
 	private MapWidget map;
-	private VerticalPanel basicDetailsPanel = new VerticalPanel();
-	private HTML basicDetails;
 
 	// EntryPoint method
 	public void onModuleLoad() {
@@ -857,10 +855,13 @@ public class BingeHopper implements EntryPoint
 				map.addOverlay(marker);
 				// map.setCenter(point);
 				
-				basicDetails = new HTML(venue.getVenueName() + 
-						venue.getVenuePhone() +
-						venue.getVenueType() + 
-						venue.getVenueCapacity());
+				VerticalPanel basicDetailsPanel = new VerticalPanel();
+				HTML basicDetails = new HTML("<h3>" + venue.getVenueName() + "</h3>" + 
+						"<b>Phone Number: </b>" + venue.getVenuePhone() + "<br>" +
+						"<b>License Type: </b>" + venue.getVenueType() + "<br>" + 
+						"<b>Seat Capacity: </b>" + venue.getVenueCapacity() + 
+						"<br><p> </p>");
+				
 				basicDetailsPanel.add(basicDetails);
 				basicDetailsPanel.addStyleName("basicDetails");
 				

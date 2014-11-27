@@ -251,6 +251,5 @@ body {
 
 /* infowindow */
 .basicDetails {
-	height: 500px !important;
-	width: 500px !important;
+	padding: 5px;
 }
