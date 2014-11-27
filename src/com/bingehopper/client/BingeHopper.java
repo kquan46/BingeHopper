@@ -223,6 +223,7 @@ public class BingeHopper implements EntryPoint
 		signInLink.setHref(loginInfo.getLoginUrl());
 		loginPanel.add(welcomeText);
 		loginPanel.add(appDescription);
+		loginLabel.getElement().setId("googleLoginMessage");
 		loginPanel.add(loginLabel);
 		loginPanel.add(signInLink);
 		RootPanel.get("venueList").add(loginPanel);
