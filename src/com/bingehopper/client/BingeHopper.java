@@ -856,7 +856,8 @@ public class BingeHopper implements EntryPoint
 				// map.setCenter(point);
 				
 				VerticalPanel basicDetailsPanel = new VerticalPanel();
-				HTML basicDetails = new HTML("<h3>" + venue.getVenueName() + "</h3>" + 
+				HTML basicDetails = new HTML("<h3>" + venue.getVenueName() + "</h3>" +
+						"<b>Address: </b>" + venue.getMapAddress() + "<br>" +
 						"<b>Phone Number: </b>" + venue.getVenuePhone() + "<br>" +
 						"<b>License Type: </b>" + venue.getVenueType() + "<br>" + 
 						"<b>Seat Capacity: </b>" + venue.getVenueCapacity() + 
