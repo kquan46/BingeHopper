@@ -56,23 +56,14 @@ public class VenueServiceImpl extends RemoteServiceServlet implements
 		PersistenceManager pm = getPersistenceManager();
 
 		try {
-
-			long deleteCount = 0;
 			Query q = pm.newQuery(Venue.class, "user == u");
 			q.declareParameters("com.google.appengine.api.users.User u");
 			@SuppressWarnings("unchecked")
 			List<Venue> venues = (List<Venue>) q.execute(getUser());
 			
 			for (Venue venue : venues) {
-				if (v.getSymbol().equals(venue.getSymbol())) {
-					deleteCount++;
-				}
-			}
-			if (deleteCount != 1) {
-
-				LOG.log(Level.WARNING, "removeVenue deleted " + deleteCount
-						+ " Venues");
-
+				if (v.getSymbol().equals(venue.getSymbol())) 
+					pm.deletePersistent(venue);
 			}
 
 		}
@@ -96,7 +87,7 @@ public class VenueServiceImpl extends RemoteServiceServlet implements
 			@SuppressWarnings("unchecked")
 			List<Venue> venues = (List<Venue>) q.execute(getUser());
 			pm.deletePersistentAll(venues);
-
+			
 		}
 
 		finally {
@@ -109,30 +100,23 @@ public class VenueServiceImpl extends RemoteServiceServlet implements
 	public void setVisited(VenueDetails v) throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
-		//Boolean visited = v.getVisited();
 		try {
-			pm.currentTransaction().begin();
 			Query q = pm.newQuery(Venue.class, "user == u");
 			q.declareParameters("com.google.appengine.api.users.User u");
 			@SuppressWarnings("unchecked")
-//			Venue venue = pm.getObjectById(Venue.class, venue.getId());
 			List<Venue> venues = (List<Venue>) q.execute(getUser());
 			for (Venue venue : venues) {
 				if (v.getSymbol().equals(venue.getSymbol())) {
-					if (venue.getVisited() == true)
-						venue.setVisited(false);
-					else venue.setVisited(true);
-					
+					VenueDetails location = venue.getVenue();
+					pm.deletePersistent(venue);
+					if (location.getVisited() == true)
+						location.setVisited(false);
+					else 
+						location.setVisited(true);
+					pm.makePersistent(new Venue(getUser(), location));
 					
 				}
-				pm.makePersistent(venue);
 			}
-			//pm.makePersistentAll(venues);
-			//pm.getObjectsById(getUser(), v.getSymbol());
-			pm.currentTransaction().commit();
-		} catch (Exception ex) {
-			pm.currentTransaction().rollback();
-			throw new RuntimeException(ex);
 		}
 
 		finally {

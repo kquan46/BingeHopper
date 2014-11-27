@@ -799,16 +799,17 @@ public class BingeHopper implements EntryPoint
 		venueService.removeVenue(venue, new AsyncCallback<Void>() {
 			public void onFailure(Throwable error) {
 
-				updatedVenueLabel.setText("Failed to remove '"
+				updatedBookmarksLabel.setText("Failed to remove '"
 						+ venue.getVenueName() + ("'"));
 
 			}
 
 			public void onSuccess(Void ignore) {
-				for (VenueDetails bookmark : listOfBookmarks) {
-					if (venue.getSymbol().equals(bookmark.getSymbol()))
-						listOfBookmarks.remove(venue);
-				}
+//				for (VenueDetails bookmark : listOfBookmarks) {
+//					if (venue.getSymbol().equals(bookmark.getSymbol()))
+//						listOfBookmarks.remove(venue);
+//				}
+				listOfBookmarks.remove(venue);
 				bookmarksProvider.setList(listOfBookmarks);
 				bookmarksProvider.refresh();
 				plotBookmarks();
