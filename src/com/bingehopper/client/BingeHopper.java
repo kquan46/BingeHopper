@@ -16,6 +16,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.MouseEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -25,6 +26,8 @@ import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSe
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.maps.client.InfoWindow;
+import com.google.gwt.maps.client.InfoWindowContent;
 import com.google.gwt.maps.client.Maps;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -45,6 +48,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.control.LargeMapControl;
+import com.google.gwt.maps.client.event.MarkerClickHandler;
 import com.google.gwt.maps.client.geocode.Geocoder;
 import com.google.gwt.maps.client.geocode.LatLngCallback;
 import com.google.gwt.maps.client.geom.LatLng;
@@ -847,9 +851,18 @@ public class BingeHopper implements EntryPoint
 
 			public void onSuccess(LatLng point) {
 				statusLabel.setText("Address was Found");
-				Marker marker = new Marker(point);
+				final Marker marker = new Marker(point);
 				map.addOverlay(marker);
 				// map.setCenter(point);
+				
+				final InfoWindow infoWindow = map.getInfoWindow();
+				final InfoWindowContent content = new InfoWindowContent("hello");
+				marker.addMarkerClickHandler(new MarkerClickHandler() {
+					@Override
+					public void onClick(MarkerClickEvent event) {
+						infoWindow.open(marker, content);
+					}
+				});
 			}
 		};
 
