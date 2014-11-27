@@ -56,24 +56,14 @@ public class VenueServiceImpl extends RemoteServiceServlet implements
 		PersistenceManager pm = getPersistenceManager();
 
 		try {
-
-			long deleteCount = 0;
 			Query q = pm.newQuery(Venue.class, "user == u");
 			q.declareParameters("com.google.appengine.api.users.User u");
 			@SuppressWarnings("unchecked")
 			List<Venue> venues = (List<Venue>) q.execute(getUser());
 			
 			for (Venue venue : venues) {
-				if (v.getSymbol().equals(venue.getSymbol())) {
-					deleteCount++;
+				if (v.getSymbol().equals(venue.getSymbol())) 
 					pm.deletePersistent(venue);
-				}
-			}
-			if (deleteCount != 1) {
-
-				LOG.log(Level.WARNING, "removeVenue deleted " + deleteCount
-						+ " Venues");
-
 			}
 
 		}
@@ -97,7 +87,36 @@ public class VenueServiceImpl extends RemoteServiceServlet implements
 			@SuppressWarnings("unchecked")
 			List<Venue> venues = (List<Venue>) q.execute(getUser());
 			pm.deletePersistentAll(venues);
+			
+		}
 
+		finally {
+
+			pm.close();
+
+		}
+	}
+	
+	public void setVisited(VenueDetails v) throws NotLoggedInException {
+		checkLoggedIn();
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			Query q = pm.newQuery(Venue.class, "user == u");
+			q.declareParameters("com.google.appengine.api.users.User u");
+			@SuppressWarnings("unchecked")
+			List<Venue> venues = (List<Venue>) q.execute(getUser());
+			for (Venue venue : venues) {
+				if (v.getSymbol().equals(venue.getSymbol())) {
+					VenueDetails location = venue.getVenue();
+					pm.deletePersistent(venue);
+					if (location.getVisited() == true)
+						location.setVisited(false);
+					else 
+						location.setVisited(true);
+					pm.makePersistent(new Venue(getUser(), location));
+					
+				}
+			}
 		}
 
 		finally {

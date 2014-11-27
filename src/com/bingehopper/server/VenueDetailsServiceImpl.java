@@ -72,7 +72,7 @@ public class VenueDetailsServiceImpl extends RemoteServiceServlet implements
 						&& !venue[0].startsWith(",")) {
 					VenueDetails location = new VenueDetails(venue[0],
 							venue[1], venue[2], venue[3], venue[4], venue[10],
-							venue[11], venue[12]);
+							venue[11], venue[12], false);
 
 					if (!listOfNames.contains(location.getSymbol())) {
 						listOfVenues.add(location);

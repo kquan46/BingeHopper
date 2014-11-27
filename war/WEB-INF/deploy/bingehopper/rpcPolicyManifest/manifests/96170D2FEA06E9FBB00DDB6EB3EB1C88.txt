@@ -1,0 +1,2 @@
+serviceClass: com.bingehopper.client.VenueDetailsService
+path: 7553BF1F84ED8FE034D62F6D3F655DAC.gwt.rpc

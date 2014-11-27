@@ -70,26 +70,34 @@ public class Venue {
 		  
 	  }
 	  
-	  public void setUser (User user)
+	  public void setUser(User user)
 	  {
 		  
 		  this.user = user;
 		  
 	  }	
 	  
-	  public VenueDetails getVenue ()
+	  public VenueDetails getVenue()
 	  {
 		  
 		  return this.venue;
 		  
 	  }	 
 	  
-	  public void setVenue (VenueDetails venue)
+	  public void setVenue(VenueDetails venue)
 	  {
 		  
 		  this.venue = venue;
 		  
 	  }	 
+	  
+	  public Boolean getVisited()
+	  {
+		  return this.venue.getVisited();
+	  }
 
-
+	  public void setVisited(Boolean visited)
+	  {
+		  this.venue.setVisited(visited);
+	  }
 }

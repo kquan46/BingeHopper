@@ -1,6 +1,5 @@
 package com.bingehopper.client;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -13,6 +12,7 @@ public interface VenueService extends RemoteService {
 	  public void addVenue(VenueDetails venue) throws NotLoggedInException;
 	  public void removeVenue(VenueDetails venue) throws NotLoggedInException;
 	  public void removeAllVenues() throws NotLoggedInException;
+	  public void setVisited(VenueDetails venue) throws NotLoggedInException;
 	  public List<VenueDetails> getVenues() throws NotLoggedInException;
 	  
 }
