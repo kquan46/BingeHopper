@@ -170,6 +170,8 @@ public class BingeHopper implements EntryPoint
 	// Create Map Widget
 	private Label statusLabel;
 	private MapWidget map;
+	private VerticalPanel basicDetailsPanel = new VerticalPanel();
+	private HTML basicDetails;
 
 	// EntryPoint method
 	public void onModuleLoad() {
@@ -841,7 +843,7 @@ public class BingeHopper implements EntryPoint
 		}
 	}
 
-	private void plotBookmarks() {
+	private void plotBookmark(final VenueDetails venue, Geocoder geocoder) {
 		// Callback Method post obtaining LatLng
 		LatLngCallback callback = new LatLngCallback() {
 
@@ -855,8 +857,17 @@ public class BingeHopper implements EntryPoint
 				map.addOverlay(marker);
 				// map.setCenter(point);
 				
+				basicDetails = new HTML(venue.getVenueName() + 
+						venue.getVenuePhone() +
+						venue.getVenueType() + 
+						venue.getVenueCapacity());
+				basicDetailsPanel.add(basicDetails);
+				basicDetailsPanel.addStyleName("basicDetails");
+				
 				final InfoWindow infoWindow = map.getInfoWindow();
-				final InfoWindowContent content = new InfoWindowContent("hello");
+				final InfoWindowContent content = new InfoWindowContent(
+						basicDetailsPanel
+						);
 				marker.addMarkerClickHandler(new MarkerClickHandler() {
 					@Override
 					public void onClick(MarkerClickEvent event) {
@@ -865,14 +876,18 @@ public class BingeHopper implements EntryPoint
 				});
 			}
 		};
-
+		geocoder.getLatLng(venue.getMapAddress(), callback);
 		map.clearOverlays();
 
+		
+		//map.checkResizeAndCenter();
+	}
+	
+	private void plotBookmarks() {
 		for (VenueDetails venue : listOfBookmarks) {
 			Geocoder geocoder = new Geocoder();
-			geocoder.getLatLng(venue.getMapAddress(), callback);
+			plotBookmark(venue, geocoder);
 		}
-		//map.checkResizeAndCenter();
 	}
 
 }
