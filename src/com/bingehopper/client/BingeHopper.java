@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.bingehopper.client.social.FacebookShareButton;
+import com.bingehopper.client.social.SocialShareButton;
+import com.bingehopper.client.social.TwitterShareButton;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.FieldUpdater;
@@ -155,11 +158,13 @@ public class BingeHopper implements EntryPoint
 	private String facebookCommentURL = "\"http://teamfantastic310.appspot.com/\"";
 	private FacebookCommentBox facebookCommentBox = new FacebookCommentBox(
 			facebookCommentURL);
+	private FacebookShareButton facebookShare = new FacebookShareButton(facebookCommentURL);
 	private HorizontalPanel facebookPanel = new HorizontalPanel();
-
+	
 	private String twitterTimelineURL = "\"https://twitter.com/hashtag/teamfantastic310\"";
 	private TwitterTimeline twitterTimeline = new TwitterTimeline(
 			twitterTimelineURL);
+	private TwitterShareButton twitterShare = new TwitterShareButton(twitterTimelineURL);
 	private HorizontalPanel twitterPanel = new HorizontalPanel();
 
 	// create tab panel
@@ -326,7 +331,7 @@ public class BingeHopper implements EntryPoint
 			public void onSelection(SelectionEvent<Integer> event) {
 				int tabId = event.getSelectedItem();
 				Widget tabWidget = tabs.getWidget(tabId);
-				if (tabWidget != null && tabId == 1) {
+				if (tabWidget != null && tabId == 2) {
 					map.checkResizeAndCenter();
 					dock.setVisible(true);
 					setZoomingBound();
