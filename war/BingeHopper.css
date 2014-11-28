@@ -264,10 +264,14 @@ body {
 	width: 1400px !important;
 }
 
-.scrollpanel {
+.vscrollpanel {
 	height:375px !important;
 	overflow-y: scroll !important;
 	margin:20px;
+}
+
+.bscrollpanel {
+	overflow-y: scroll !important;
 }
 
 /* pager */

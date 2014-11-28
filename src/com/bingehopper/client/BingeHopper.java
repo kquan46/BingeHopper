@@ -443,7 +443,7 @@ public class BingeHopper implements EntryPoint
 		venuesPager.addStyleName("pager");
 		venuesListScroll.add(venuesTable);
 		venuesTable.addStyleName("celltable");
-		venuesListScroll.addStyleName("scrollpanel");
+		venuesListScroll.addStyleName("vscrollpanel");
 		searchTab.add(venuesListScroll);
 		searchTab.addStyleName("tabElement");
 
@@ -458,7 +458,7 @@ public class BingeHopper implements EntryPoint
 		bookmarksListScroll.add(bookmarksTable);
 		bookmarksTable.addStyleName("celltable");
 		bookmarksTab.add(bookmarksListScroll);
-		bookmarksListScroll.addStyleName("scrollpanel");
+		bookmarksListScroll.addStyleName("bscrollpanel");
 		bookmarksTab.add(dock);
 		bookmarksTab.addStyleName("tabElement");
 
