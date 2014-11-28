@@ -481,7 +481,7 @@ public class BingeHopper implements EntryPoint
 		// configure tabs
 		tabs.add(searchTab, searchIcon);
 		tabs.add(bookmarksTab, bookmarksIcon);
-		//tabs.add(mapTab, mapIcon);
+		tabs.add(mapTab, mapIcon);
 		tabs.add(socialTab, socialIcon);
 
 		// show the 'map' tab initially
