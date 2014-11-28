@@ -192,8 +192,9 @@ public class BingeHopper implements EntryPoint
 	private static LatLngBounds b;
 	private static LatLng center;
 	private ArrayList<LatLng> points = new ArrayList<LatLng>();
-//	private ArrayList<Marker> markers = new ArrayList<Marker>();
-	
+
+	// private ArrayList<Marker> markers = new ArrayList<Marker>();
+
 	// EntryPoint method
 	public void onModuleLoad() {
 		// Check login status using login service
@@ -312,16 +313,6 @@ public class BingeHopper implements EntryPoint
 		final DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
 		dock.addNorth(map, 500);
 		dock.setVisible(true);
-
-		// Create Button to show map
-		// Button mapButton = new Button("Click to View Map");
-		// mapButton.addClickHandler(new ClickHandler() {
-		// public void onClick(ClickEvent event) {
-		// dock.setVisible(true);
-		// map.checkResizeAndCenter();
-		// }
-		//
-		// });
 
 		tabs.addSelectionHandler(new SelectionHandler<Integer>() {
 			public void onSelection(SelectionEvent<Integer> event) {
@@ -541,8 +532,122 @@ public class BingeHopper implements EntryPoint
 	}
 
 	private void setUpColumnSort(CellTable<VenueDetails> table,
-			ListDataProvider<VenueDetails> provider) { // Add sorting for name
-														// column
+			ListDataProvider<VenueDetails> provider) {
+		// Add sorting for address column ListHandler<VenueDetails>
+		ColumnSortEvent.ListHandler<VenueDetails> addressSortHandler = new ColumnSortEvent.ListHandler<VenueDetails>(
+				provider.getList());
+		addressSortHandler.setComparator(addressColumn,
+				new Comparator<VenueDetails>() {
+					public int compare(VenueDetails venue1, VenueDetails venue2) {
+						if (venue1 == venue2) {
+							return 0;
+						}
+						if (venue1 != null) {
+							return (venue2 != null) ? venue1.getVenueAdd1()
+									.compareTo(venue2.getVenueAdd1()) : 1;
+						}
+						return -1;
+					}
+				});
+		table.addColumnSortHandler(addressSortHandler);
+		table.getColumnSortList().push(addressColumn);
+
+		// Add sorting for city column ListHandler<VenueDetails>
+		ColumnSortEvent.ListHandler<VenueDetails> citySortHandler = new ColumnSortEvent.ListHandler<VenueDetails>(
+				provider.getList());
+		citySortHandler.setComparator(cityColumn,
+				new Comparator<VenueDetails>() {
+					public int compare(VenueDetails venue1, VenueDetails venue2) {
+						if (venue1 == venue2) {
+							return 0;
+						}
+						if (venue1 != null) {
+							return (venue2 != null) ? venue1.getVenueCity()
+									.compareTo(venue2.getVenueCity()) : 1;
+						}
+						return -1;
+					}
+				});
+		table.addColumnSortHandler(citySortHandler);
+		table.getColumnSortList().push(cityColumn);
+
+		// Add sorting for city column ListHandler<VenueDetails>
+		ColumnSortEvent.ListHandler<VenueDetails> postalCodeSortHandler = new ColumnSortEvent.ListHandler<VenueDetails>(
+				provider.getList());
+		postalCodeSortHandler.setComparator(postalCodeColumn,
+				new Comparator<VenueDetails>() {
+					public int compare(VenueDetails venue1, VenueDetails venue2) {
+						if (venue1 == venue2) {
+							return 0;
+						}
+						if (venue1 != null) {
+							return (venue2 != null) ? venue1.getVenuePostal()
+									.compareTo(venue2.getVenuePostal()) : 1;
+						}
+						return -1;
+					}
+				});
+		table.addColumnSortHandler(postalCodeSortHandler);
+		table.getColumnSortList().push(postalCodeColumn);
+
+		// Add sorting for city column ListHandler<VenueDetails>
+		ColumnSortEvent.ListHandler<VenueDetails> telephoneSortHandler = new ColumnSortEvent.ListHandler<VenueDetails>(
+				provider.getList());
+		telephoneSortHandler.setComparator(telephoneColumn,
+				new Comparator<VenueDetails>() {
+					public int compare(VenueDetails venue1, VenueDetails venue2) {
+						if (venue1 == venue2) {
+							return 0;
+						}
+						if (venue1 != null) {
+							return (venue2 != null) ? venue1.getVenuePhone()
+									.compareTo(venue2.getVenuePhone()) : 1;
+						}
+						return -1;
+					}
+				});
+		table.addColumnSortHandler(telephoneSortHandler);
+		table.getColumnSortList().push(telephoneColumn);
+
+		// Add sorting for city column ListHandler<VenueDetails>
+		ColumnSortEvent.ListHandler<VenueDetails> typeSortHandler = new ColumnSortEvent.ListHandler<VenueDetails>(
+				provider.getList());
+		typeSortHandler.setComparator(typeColumn,
+				new Comparator<VenueDetails>() {
+					public int compare(VenueDetails venue1, VenueDetails venue2) {
+						if (venue1 == venue2) {
+							return 0;
+						}
+						if (venue1 != null) {
+							return (venue2 != null) ? venue1.getVenueType()
+									.compareTo(venue2.getVenueType()) : 1;
+						}
+						return -1;
+					}
+				});
+		table.addColumnSortHandler(typeSortHandler);
+		table.getColumnSortList().push(typeColumn);
+
+		// Add sorting for capacity column ListHandler<VenueDetails>
+		ColumnSortEvent.ListHandler<VenueDetails> capacitySortHandler = new ColumnSortEvent.ListHandler<VenueDetails>(
+				provider.getList());
+		capacitySortHandler.setComparator(capacityColumn,
+				new Comparator<VenueDetails>() {
+					public int compare(VenueDetails venue1, VenueDetails venue2) {
+						if (venue1 == venue2) {
+							return 0;
+						}
+						if (venue1 != null) {
+							return (venue2 != null) ? venue1.getVenueCapacity()
+									.compareTo(venue2.getVenueCapacity()) : 1;
+						}
+						return -1;
+					}
+				});
+		table.addColumnSortHandler(capacitySortHandler);
+		table.getColumnSortList().push(capacityColumn);
+
+		// Add sorting in name column
 		ColumnSortEvent.ListHandler<VenueDetails> nameSortHandler = new ColumnSortEvent.ListHandler<VenueDetails>(
 				provider.getList());
 		nameSortHandler.setComparator(nameColumn,
@@ -560,42 +665,6 @@ public class BingeHopper implements EntryPoint
 				});
 		table.addColumnSortHandler(nameSortHandler);
 		table.getColumnSortList().push(nameColumn);
-
-		// Add sorting for address column ListHandler<VenueDetails>
-		ColumnSortEvent.ListHandler<VenueDetails> addressSortHandler = new ColumnSortEvent.ListHandler<VenueDetails>(provider.getList());
-		addressSortHandler.setComparator(addressColumn,
-				new Comparator<VenueDetails>() {
-					public int compare(VenueDetails venue1, VenueDetails venue2) {
-						if (venue1 == venue2) {
-							return 0;
-						}
-						if (venue1 != null) {
-							return (venue2 != null) ? venue1.getVenueAdd1()
-									.compareTo(venue2.getVenueAdd1()) : 1;
-						}
-						return -1;
-					}
-				});
-		table.addColumnSortHandler(addressSortHandler);
-		table.getColumnSortList().push(addressColumn);
-
-		// Add sorting for capacity column ListHandler<VenueDetails>
-		ColumnSortEvent.ListHandler<VenueDetails> capacitySortHandler = new ColumnSortEvent.ListHandler<VenueDetails>(provider.getList());
-		capacitySortHandler.setComparator(capacityColumn,
-				new Comparator<VenueDetails>() {
-					public int compare(VenueDetails venue1, VenueDetails venue2) {
-						if (venue1 == venue2) {
-							return 0;
-						}
-						if (venue1 != null) {
-							return (venue2 != null) ? venue1.getVenueCapacity()
-									.compareTo(venue2.getVenueCapacity()) : 1;
-						}
-						return -1;
-					}
-				});
-		table.addColumnSortHandler(capacitySortHandler);
-		table.getColumnSortList().push(capacityColumn);
 	}
 
 	private void setUpCellTable() {
@@ -736,10 +805,6 @@ public class BingeHopper implements EntryPoint
 		bookmarksTable.addColumn(visitedColumn, "Visited");
 		bookmarksTable.addColumn(removebookmarkColumn, "Bookmark");
 
-		// Set up column sort handler
-		// venuesTable.addColumnSortHandler(addressSortHandler);
-		// venuesTable.getColumnSortList().push(addressColumn);
-
 		// Make the columns sortable
 		nameColumn.setSortable(true);
 		addressColumn.setSortable(true);
@@ -748,6 +813,10 @@ public class BingeHopper implements EntryPoint
 		telephoneColumn.setSortable(true);
 		typeColumn.setSortable(true);
 		capacityColumn.setSortable(true);
+
+		// Set up column sort handler
+		// venuesTable.addColumnSortHandler(addressSortHandler);
+		// venuesTable.getColumnSortList().push(addressColumn);
 
 		/*
 		 * // Add a selection model to handle user selection final
@@ -777,8 +846,7 @@ public class BingeHopper implements EntryPoint
 
 			public void onSuccess(List<VenueDetails> result) {
 				listOfVenues = new ArrayList<VenueDetails>(result);
-				venuesProvider = new ListDataProvider<VenueDetails>(
-						listOfVenues);
+				venuesProvider = new ListDataProvider<VenueDetails>(result);
 				venuesProvider.addDataDisplay(venuesTable);
 				venuesPager.setDisplay(venuesTable);
 				addDropDownList();
@@ -868,6 +936,7 @@ public class BingeHopper implements EntryPoint
 						bookmarkedVenues);
 				bookmarksProvider.addDataDisplay(bookmarksTable);
 				bookmarksPager.setDisplay(bookmarksTable);
+				setUpColumnSort(bookmarksTable, bookmarksProvider);
 				if (!listOfBookmarks.isEmpty())
 					plotBookmarks();
 				if (bookmarkedVenues.isEmpty())
@@ -933,10 +1002,6 @@ public class BingeHopper implements EntryPoint
 			}
 
 			public void onSuccess(Void ignore) {
-				// for (VenueDetails bookmark : listOfBookmarks) {
-				// if (venue.getSymbol().equals(bookmark.getSymbol()))
-				// listOfBookmarks.remove(venue);
-				// }
 				listOfBookmarks.remove(venue);
 				bookmarksProvider.getList().clear();
 				bookmarksProvider.getList().addAll(listOfBookmarks);
@@ -1036,7 +1101,7 @@ public class BingeHopper implements EntryPoint
 				map.addOverlay(marker);
 				points.add(point);
 			}
-		};	
+		};
 		map.clearOverlays();
 		for (VenueDetails venue : listOfBookmarks) {
 			Geocoder geocoder = new Geocoder();
@@ -1044,7 +1109,7 @@ public class BingeHopper implements EntryPoint
 		}
 		// map.checkResizeAndCenter();
 	}
-	
+
 	private void setZoomingBound() {
 		TreeSet<Double> lats = new TreeSet<Double>();
 		TreeSet<Double> lons = new TreeSet<Double>();
