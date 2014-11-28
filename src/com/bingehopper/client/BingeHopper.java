@@ -2,6 +2,7 @@ package com.bingehopper.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -22,6 +23,8 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
+import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
@@ -39,7 +42,9 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -76,6 +81,15 @@ public class BingeHopper implements EntryPoint
 	// create tables
 	private CellTable<VenueDetails> venuesTable = new CellTable<VenueDetails>();
 	private CellTable<VenueDetails> bookmarksTable = new CellTable<VenueDetails>();
+
+	// create columns for tables
+	private TextColumn<VenueDetails> nameColumn;
+	private TextColumn<VenueDetails> addressColumn;
+	private TextColumn<VenueDetails> cityColumn;
+	private TextColumn<VenueDetails> postalCodeColumn;
+	private TextColumn<VenueDetails> telephoneColumn;
+	private TextColumn<VenueDetails> typeColumn;
+	private TextColumn<VenueDetails> capacityColumn;
 
 	// create pagination
 	private SimplePager.Resources pagerResources = GWT
@@ -118,15 +132,18 @@ public class BingeHopper implements EntryPoint
 					+ "friends via Google+ integration.</p>");
 
 	// create boxes
-	private TextBox nameBox = new TextBox();
-	private TextBox addressBox = new TextBox();
+	private SuggestBox nameBox = new SuggestBox();
+	private SuggestBox addressBox = new SuggestBox();
 	private ListBox typeListBox = new ListBox();
 	private ListBox cityListBox = new ListBox();
-	// private CheckBox visitedCheckbox = new CheckBox();
 
 	// Create fields for drop down list box
 	private Set<String> listOfTypes = new TreeSet<String>();
 	private Set<String> listOfCities = new TreeSet<String>();
+	
+	// Create fields for suggest box
+	private MultiWordSuggestOracle nameOracle = new MultiWordSuggestOracle();
+	private MultiWordSuggestOracle addressOracle = new MultiWordSuggestOracle();
 
 	// create custom icons
 	private Image searchIcon = new Image();
@@ -166,7 +183,7 @@ public class BingeHopper implements EntryPoint
 	private ArrayList<VenueDetails> listOfBookmarks;
 
 	// create ListDataProvider for CellTable
-	private ListDataProvider<VenueDetails> venueProvider;
+	private ListDataProvider<VenueDetails> venuesProvider;
 	private ListDataProvider<VenueDetails> bookmarksProvider;
 
 	// Create Map Widget
@@ -181,9 +198,9 @@ public class BingeHopper implements EntryPoint
 	private LatLngBounds bound;
 	private static LatLng ne;
 	private static LatLng sw;
-	private static LatLngBounds b;	
+	private static LatLngBounds b;
 	private static LatLng center;
-
+	private ArrayList<LatLng> points = new ArrayList<LatLng>();
 
 	// EntryPoint method
 	public void onModuleLoad() {
@@ -297,22 +314,12 @@ public class BingeHopper implements EntryPoint
 		statusLabel = new Label();
 		map = new MapWidget(vancouver, 9);
 		map.setSize("100%", "100%");
-		//		map.addControl(new LargeMapControl());
+		// map.addControl(new LargeMapControl());
 
 		// Create Map Panel
 		final DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
 		dock.addNorth(map, 500);
 		dock.setVisible(true);
-
-		// Create Button to show map
-		// Button mapButton = new Button("Click to View Map");
-		// mapButton.addClickHandler(new ClickHandler() {
-		// public void onClick(ClickEvent event) {
-		// dock.setVisible(true);
-		// map.checkResizeAndCenter();
-		// }
-		//
-		// });
 
 		tabs.addSelectionHandler(new SelectionHandler<Integer>() {
 			public void onSelection(SelectionEvent<Integer> event) {
@@ -321,13 +328,14 @@ public class BingeHopper implements EntryPoint
 				if (tabWidget != null && tabId == 3) {
 					map.checkResizeAndCenter();
 					dock.setVisible(true);
+					setZoomingBound();
 					ne = northEast.newInstance(maxLat, maxLon);
 					sw = southWest.newInstance(minLat, minLon);
-					b = bound.newInstance(sw, ne);		
+					b = bound.newInstance(sw, ne);
 					center = b.getCenter();
 					map.setZoomLevel(map.getBoundsZoomLevel(b));
 					map.setCenter(center);
-				} else 
+				} else
 					dock.setVisible(false);
 			}
 		});
@@ -419,6 +427,35 @@ public class BingeHopper implements EntryPoint
 			}
 		});
 
+		/*
+		 * // Add sorting for name column
+		 * ColumnSortEvent.ListHandler<VenueDetails> nameSortHandler = new
+		 * ColumnSortEvent.ListHandler<VenueDetails>( venuesProvider.getList());
+		 * nameSortHandler.setComparator(nameColumn, new
+		 * Comparator<VenueDetails>() { public int compare(VenueDetails venue1,
+		 * VenueDetails venue2) { if (venue1 == venue2) { return 0; } if (venue1
+		 * != null) { return (venue2 != null) ? venue1.getVenueName()
+		 * .compareTo(venue2.getVenueName()) : 1; } return -1; } });
+		 * 
+		 * // Add sorting for address column
+		 * ColumnSortEvent.ListHandler<VenueDetails> addressSortHandler = new
+		 * ColumnSortEvent.ListHandler<VenueDetails>( venuesProvider.getList());
+		 * addressSortHandler.setComparator(addressColumn, new
+		 * Comparator<VenueDetails>() { public int compare(VenueDetails venue1,
+		 * VenueDetails venue2) { if (venue1 == venue2) { return 0; } if (venue1
+		 * != null) { return (venue2 != null) ? venue1.getVenueAdd1()
+		 * .compareTo(venue2.getVenueAdd1()) : 1; } return -1; } });
+		 * 
+		 * // Add sorting for capacity column
+		 * ColumnSortEvent.ListHandler<VenueDetails> capacitySortHandler = new
+		 * ColumnSortEvent.ListHandler<VenueDetails>( venuesProvider.getList());
+		 * capacitySortHandler.setComparator(capacityColumn, new
+		 * Comparator<VenueDetails>() { public int compare(VenueDetails venue1,
+		 * VenueDetails venue2) { if (venue1 == venue2) { return 0; } if (venue1
+		 * != null) { return (venue2 != null) ? venue1.getVenueCapacity()
+		 * .compareTo(venue2.getVenueCapacity()) : 1; } return -1; } });
+		 */
+
 		// ----------- TABS --------------
 
 		// Organize Search Tab
@@ -483,11 +520,16 @@ public class BingeHopper implements EntryPoint
 
 	}
 
-	private void addDropDownList() {
+	private void setUpSearch() {
 		for (VenueDetails venue : listOfVenues) {
 			listOfCities.add(venue.getVenueCity());
 			listOfTypes.add(venue.getVenueType());
+			nameOracle.add(venue.getVenueName());
+			addressOracle.add(venue.getVenueAdd1());
 		}
+		nameBox = new SuggestBox(nameOracle);
+		addressBox = new SuggestBox(addressOracle);
+		
 		cityListBox.addItem("ALL");
 		for (String venueCity : listOfCities) {
 			if (!venueCity.equals("n/a"))
@@ -501,6 +543,142 @@ public class BingeHopper implements EntryPoint
 		}
 	}
 
+	private void setUpColumnSort(CellTable<VenueDetails> table,
+			ListDataProvider<VenueDetails> provider) {
+		// Add sorting for address column ListHandler<VenueDetails>
+		ColumnSortEvent.ListHandler<VenueDetails> addressSortHandler = new ColumnSortEvent.ListHandler<VenueDetails>(
+				provider.getList());
+		addressSortHandler.setComparator(addressColumn,
+				new Comparator<VenueDetails>() {
+					public int compare(VenueDetails venue1, VenueDetails venue2) {
+						if (venue1 == venue2) {
+							return 0;
+						}
+						if (venue1 != null) {
+							return (venue2 != null) ? venue1.getVenueAdd1()
+									.compareTo(venue2.getVenueAdd1()) : 1;
+						}
+						return -1;
+					}
+				});
+		table.addColumnSortHandler(addressSortHandler);
+		table.getColumnSortList().push(addressColumn);
+
+		// Add sorting for city column ListHandler<VenueDetails>
+		ColumnSortEvent.ListHandler<VenueDetails> citySortHandler = new ColumnSortEvent.ListHandler<VenueDetails>(
+				provider.getList());
+		citySortHandler.setComparator(cityColumn,
+				new Comparator<VenueDetails>() {
+					public int compare(VenueDetails venue1, VenueDetails venue2) {
+						if (venue1 == venue2) {
+							return 0;
+						}
+						if (venue1 != null) {
+							return (venue2 != null) ? venue1.getVenueCity()
+									.compareTo(venue2.getVenueCity()) : 1;
+						}
+						return -1;
+					}
+				});
+		table.addColumnSortHandler(citySortHandler);
+		table.getColumnSortList().push(cityColumn);
+
+		// Add sorting for city column ListHandler<VenueDetails>
+		ColumnSortEvent.ListHandler<VenueDetails> postalCodeSortHandler = new ColumnSortEvent.ListHandler<VenueDetails>(
+				provider.getList());
+		postalCodeSortHandler.setComparator(postalCodeColumn,
+				new Comparator<VenueDetails>() {
+					public int compare(VenueDetails venue1, VenueDetails venue2) {
+						if (venue1 == venue2) {
+							return 0;
+						}
+						if (venue1 != null) {
+							return (venue2 != null) ? venue1.getVenuePostal()
+									.compareTo(venue2.getVenuePostal()) : 1;
+						}
+						return -1;
+					}
+				});
+		table.addColumnSortHandler(postalCodeSortHandler);
+		table.getColumnSortList().push(postalCodeColumn);
+
+		// Add sorting for city column ListHandler<VenueDetails>
+		ColumnSortEvent.ListHandler<VenueDetails> telephoneSortHandler = new ColumnSortEvent.ListHandler<VenueDetails>(
+				provider.getList());
+		telephoneSortHandler.setComparator(telephoneColumn,
+				new Comparator<VenueDetails>() {
+					public int compare(VenueDetails venue1, VenueDetails venue2) {
+						if (venue1 == venue2) {
+							return 0;
+						}
+						if (venue1 != null) {
+							return (venue2 != null) ? venue1.getVenuePhone()
+									.compareTo(venue2.getVenuePhone()) : 1;
+						}
+						return -1;
+					}
+				});
+		table.addColumnSortHandler(telephoneSortHandler);
+		table.getColumnSortList().push(telephoneColumn);
+
+		// Add sorting for city column ListHandler<VenueDetails>
+		ColumnSortEvent.ListHandler<VenueDetails> typeSortHandler = new ColumnSortEvent.ListHandler<VenueDetails>(
+				provider.getList());
+		typeSortHandler.setComparator(typeColumn,
+				new Comparator<VenueDetails>() {
+					public int compare(VenueDetails venue1, VenueDetails venue2) {
+						if (venue1 == venue2) {
+							return 0;
+						}
+						if (venue1 != null) {
+							return (venue2 != null) ? venue1.getVenueType()
+									.compareTo(venue2.getVenueType()) : 1;
+						}
+						return -1;
+					}
+				});
+		table.addColumnSortHandler(typeSortHandler);
+		table.getColumnSortList().push(typeColumn);
+
+		// Add sorting for capacity column ListHandler<VenueDetails>
+		ColumnSortEvent.ListHandler<VenueDetails> capacitySortHandler = new ColumnSortEvent.ListHandler<VenueDetails>(
+				provider.getList());
+		capacitySortHandler.setComparator(capacityColumn,
+				new Comparator<VenueDetails>() {
+					public int compare(VenueDetails venue1, VenueDetails venue2) {
+						if (venue1 == venue2) {
+							return 0;
+						}
+						if (venue1 != null) {
+							return (venue2 != null) ? venue1.getVenueCapacity()
+									.compareTo(venue2.getVenueCapacity()) : 1;
+						}
+						return -1;
+					}
+				});
+		table.addColumnSortHandler(capacitySortHandler);
+		table.getColumnSortList().push(capacityColumn);
+
+		// Add sorting in name column
+		ColumnSortEvent.ListHandler<VenueDetails> nameSortHandler = new ColumnSortEvent.ListHandler<VenueDetails>(
+				provider.getList());
+		nameSortHandler.setComparator(nameColumn,
+				new Comparator<VenueDetails>() {
+					public int compare(VenueDetails venue1, VenueDetails venue2) {
+						if (venue1 == venue2) {
+							return 0;
+						}
+						if (venue1 != null) {
+							return (venue2 != null) ? venue1.getVenueName()
+									.compareTo(venue2.getVenueName()) : 1;
+						}
+						return -1;
+					}
+				});
+		table.addColumnSortHandler(nameSortHandler);
+		table.getColumnSortList().push(nameColumn);
+	}
+
 	private void setUpCellTable() {
 		// Create a CellTable
 		venuesTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
@@ -510,7 +688,7 @@ public class BingeHopper implements EntryPoint
 		// venuesTable.setVisibleRange(0, 100);
 
 		// Text column to show the name.
-		TextColumn<VenueDetails> nameColumn = new TextColumn<VenueDetails>() {
+		nameColumn = new TextColumn<VenueDetails>() {
 			@Override
 			public String getValue(VenueDetails venue) {
 				return venue.getVenueName();
@@ -518,7 +696,7 @@ public class BingeHopper implements EntryPoint
 		};
 
 		// Text column to show the address.
-		TextColumn<VenueDetails> addressColumn = new TextColumn<VenueDetails>() {
+		addressColumn = new TextColumn<VenueDetails>() {
 			@Override
 			public String getValue(VenueDetails venue) {
 				return venue.getVenueAdd1();
@@ -526,7 +704,7 @@ public class BingeHopper implements EntryPoint
 		};
 
 		// Text column to show the city.
-		TextColumn<VenueDetails> cityColumn = new TextColumn<VenueDetails>() {
+		cityColumn = new TextColumn<VenueDetails>() {
 			@Override
 			public String getValue(VenueDetails venue) {
 				return venue.getVenueCity();
@@ -534,7 +712,7 @@ public class BingeHopper implements EntryPoint
 		};
 
 		// Text column to show the postal code.
-		TextColumn<VenueDetails> postalCodeColumn = new TextColumn<VenueDetails>() {
+		postalCodeColumn = new TextColumn<VenueDetails>() {
 			@Override
 			public String getValue(VenueDetails venue) {
 				return venue.getVenuePostal();
@@ -542,7 +720,7 @@ public class BingeHopper implements EntryPoint
 		};
 
 		// Text column to show the telephone number.
-		TextColumn<VenueDetails> telephoneColumn = new TextColumn<VenueDetails>() {
+		telephoneColumn = new TextColumn<VenueDetails>() {
 			@Override
 			public String getValue(VenueDetails venue) {
 				return venue.getVenuePhone();
@@ -550,7 +728,7 @@ public class BingeHopper implements EntryPoint
 		};
 
 		// Text column to show the establishment type.
-		TextColumn<VenueDetails> typeColumn = new TextColumn<VenueDetails>() {
+		typeColumn = new TextColumn<VenueDetails>() {
 			@Override
 			public String getValue(VenueDetails venue) {
 				return venue.getVenueType();
@@ -558,7 +736,7 @@ public class BingeHopper implements EntryPoint
 		};
 
 		// Text column to show the capacity.
-		TextColumn<VenueDetails> capacityColumn = new TextColumn<VenueDetails>() {
+		capacityColumn = new TextColumn<VenueDetails>() {
 			@Override
 			public String getValue(VenueDetails venue) {
 				return venue.getVenueCapacity();
@@ -648,6 +826,10 @@ public class BingeHopper implements EntryPoint
 		typeColumn.setSortable(true);
 		capacityColumn.setSortable(true);
 
+		// Set up column sort handler
+		// venuesTable.addColumnSortHandler(addressSortHandler);
+		// venuesTable.getColumnSortList().push(addressColumn);
+
 		/*
 		 * // Add a selection model to handle user selection final
 		 * SingleSelectionModel<VenueDetails> selectionModel = new
@@ -676,10 +858,11 @@ public class BingeHopper implements EntryPoint
 
 			public void onSuccess(List<VenueDetails> result) {
 				listOfVenues = new ArrayList<VenueDetails>(result);
-				venueProvider = new ListDataProvider<VenueDetails>(listOfVenues);
-				venueProvider.addDataDisplay(venuesTable);
+				venuesProvider = new ListDataProvider<VenueDetails>(result);
+				venuesProvider.addDataDisplay(venuesTable);
 				venuesPager.setDisplay(venuesTable);
-				addDropDownList();
+				setUpSearch();
+				setUpColumnSort(venuesTable, venuesProvider);
 			}
 
 		};
@@ -719,8 +902,9 @@ public class BingeHopper implements EntryPoint
 							selectedType);
 			}
 		}
-		venueProvider.setList(filteredVenueList);
-		venueProvider.refresh();
+		venuesProvider.getList().clear();
+		venuesProvider.getList().addAll(filteredVenueList);
+		venuesProvider.refresh();
 		venuesPager.firstPage();
 		updatedVenueLabel.setText("Last update : "
 				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
@@ -764,7 +948,9 @@ public class BingeHopper implements EntryPoint
 						bookmarkedVenues);
 				bookmarksProvider.addDataDisplay(bookmarksTable);
 				bookmarksPager.setDisplay(bookmarksTable);
-				plotBookmarks();
+				setUpColumnSort(bookmarksTable, bookmarksProvider);
+				if (!listOfBookmarks.isEmpty())
+					plotBookmarks();
 				if (bookmarkedVenues.isEmpty())
 					updatedBookmarksLabel
 					.setText("Oops. You dont have any venues in your bookmarks!!");
@@ -804,7 +990,8 @@ public class BingeHopper implements EntryPoint
 				{
 					listOfBookmarks.add(venue);
 					Collections.sort(listOfBookmarks);
-					bookmarksProvider.setList(listOfBookmarks);
+					bookmarksProvider.getList().clear();
+					bookmarksProvider.getList().addAll(listOfBookmarks);
 					bookmarksProvider.refresh();
 					plotBookmarks();
 					updatedVenueLabel.setText("Successfully added '"
@@ -827,21 +1014,19 @@ public class BingeHopper implements EntryPoint
 			}
 
 			public void onSuccess(Void ignore) {
-				//				for (VenueDetails bookmark : listOfBookmarks) {
-				//					if (venue.getSymbol().equals(bookmark.getSymbol()))
-				//						listOfBookmarks.remove(venue);
-				//				}
 				listOfBookmarks.remove(venue);
-				bookmarksProvider.setList(listOfBookmarks);
+				bookmarksProvider.getList().clear();
+				bookmarksProvider.getList().addAll(listOfBookmarks);
 				bookmarksProvider.refresh();
-				plotBookmarks();
 				if (listOfBookmarks.isEmpty())
 					updatedBookmarksLabel
-					.setText("Your Bookmarks is now empty. Removed '"
-							+ venue.getVenueName() + "'.");
-				else
+							.setText("Your Bookmarks is now empty. Removed '"
+									+ venue.getVenueName() + "'.");
+				else {
+					plotBookmarks();
 					updatedBookmarksLabel.setText("Successfully removed '"
 							+ venue.getVenueName() + ("'"));
+				}
 
 			}
 		});
@@ -862,10 +1047,10 @@ public class BingeHopper implements EntryPoint
 
 				public void onSuccess(Void ignore) {
 					int bookmarkSize = listOfBookmarks.size();
-					listOfBookmarks = new ArrayList<VenueDetails>();
-					bookmarksProvider.setList(listOfBookmarks);
+					listOfBookmarks.clear();
+					bookmarksProvider.getList().clear();
 					bookmarksProvider.refresh();
-					plotBookmarks();
+					map.clearOverlays();
 					if (bookmarkSize == 1)
 						updatedBookmarksLabel.setText("Successfully removed "
 								+ bookmarkSize + (" venue."));
@@ -893,18 +1078,22 @@ public class BingeHopper implements EntryPoint
 			public void onSuccess(Void ignore) {
 				for (VenueDetails bookmark : listOfBookmarks) {
 					if (venue.getSymbol().equals(bookmark.getSymbol()))
-						if (venue.getVisited() == true){
+						if (venue.getVisited() == true) {
 							bookmark.setVisited(false);
-							updatedBookmarksLabel.setText("Succesfully marked '"
-									+ venue.getVenueName() + "' as not visited.");
-						}
-						else {
+							updatedBookmarksLabel
+									.setText("Succesfully marked '"
+											+ venue.getVenueName()
+											+ "' as not visited.");
+						} else {
 							bookmark.setVisited(true);
-							updatedBookmarksLabel.setText("Succesfully marked '"
-									+ venue.getVenueName() + "' as visited.");
+							updatedBookmarksLabel
+									.setText("Succesfully marked '"
+											+ venue.getVenueName()
+											+ "' as visited.");
 						}
 				}
-				bookmarksProvider.setList(listOfBookmarks);
+				bookmarksProvider.getList().clear();
+				bookmarksProvider.getList().addAll(listOfBookmarks);
 				bookmarksProvider.refresh();
 			}
 		});
@@ -922,18 +1111,7 @@ public class BingeHopper implements EntryPoint
 				statusLabel.setText("Address was Found");
 				final Marker marker = new Marker(point);
 				map.addOverlay(marker);
-				double pointLat = point.getLatitude();
-				double pointLon = point.getLongitude();
-
-
-				if (pointLat > maxLat)
-					maxLat = pointLat;
-				if (pointLon > maxLon)
-					maxLon = pointLon;
-				if (pointLat < minLat)
-					minLat = pointLat;
-				if (pointLon < minLon)
-					minLon = pointLon;
+				points.add(point);
 
 				VerticalPanel basicDetailsPanel = new VerticalPanel();
 				HTML basicDetails = new HTML("<h3>" + venue.getVenueName() + "</h3>" +
@@ -958,18 +1136,31 @@ public class BingeHopper implements EntryPoint
 				});
 			}
 		};
-
-
-		map.clearOverlays();
-
 		geocoder.getLatLng(venue.getMapAddress(), callback);
 	}
 
 	private void plotBookmarks() {
+		map.clearOverlays();
 		for (VenueDetails venue : listOfBookmarks) {
 			Geocoder geocoder = new Geocoder();
 			plotBookmark(venue, geocoder);
 		}
+	}
+
+	private void setZoomingBound() {
+		TreeSet<Double> lats = new TreeSet<Double>();
+		TreeSet<Double> lons = new TreeSet<Double>();
+		for (LatLng point : points) {
+			double pointLat = point.getLatitude();
+			double pointLon = point.getLongitude();
+			lats.add(pointLat);
+			lons.add(pointLon);
+		}
+		minLat = lats.first();
+		minLon = lons.first();
+		maxLat = lats.last();
+		maxLon = lons.last();
+		points.clear();
 	}
 
 }
