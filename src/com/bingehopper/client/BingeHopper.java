@@ -191,7 +191,9 @@ public class BingeHopper implements EntryPoint
 	private static LatLng sw;
 	private static LatLngBounds b;
 	private static LatLng center;
-
+	private ArrayList<LatLng> points = new ArrayList<LatLng>();
+//	private ArrayList<Marker> markers = new ArrayList<Marker>();
+	
 	// EntryPoint method
 	public void onModuleLoad() {
 		// Check login status using login service
@@ -328,6 +330,7 @@ public class BingeHopper implements EntryPoint
 				if (tabWidget != null && tabId == 3) {
 					map.checkResizeAndCenter();
 					dock.setVisible(true);
+					setZoomingBound();
 					ne = northEast.newInstance(maxLat, maxLon);
 					sw = southWest.newInstance(minLat, minLon);
 					b = bound.newInstance(sw, ne);
@@ -865,7 +868,8 @@ public class BingeHopper implements EntryPoint
 						bookmarkedVenues);
 				bookmarksProvider.addDataDisplay(bookmarksTable);
 				bookmarksPager.setDisplay(bookmarksTable);
-				plotBookmarks();
+				if (!listOfBookmarks.isEmpty())
+					plotBookmarks();
 				if (bookmarkedVenues.isEmpty())
 					updatedBookmarksLabel
 							.setText("Oops. You dont have any venues in your bookmarks!!");
@@ -937,14 +941,15 @@ public class BingeHopper implements EntryPoint
 				bookmarksProvider.getList().clear();
 				bookmarksProvider.getList().addAll(listOfBookmarks);
 				bookmarksProvider.refresh();
-				plotBookmarks();
 				if (listOfBookmarks.isEmpty())
 					updatedBookmarksLabel
 							.setText("Your Bookmarks is now empty. Removed '"
 									+ venue.getVenueName() + "'.");
-				else
+				else {
+					plotBookmarks();
 					updatedBookmarksLabel.setText("Successfully removed '"
 							+ venue.getVenueName() + ("'"));
+				}
 
 			}
 		});
@@ -968,7 +973,7 @@ public class BingeHopper implements EntryPoint
 					listOfBookmarks.clear();
 					bookmarksProvider.getList().clear();
 					bookmarksProvider.refresh();
-					plotBookmarks();
+					map.clearOverlays();
 					if (bookmarkSize == 1)
 						updatedBookmarksLabel.setText("Successfully removed "
 								+ bookmarkSize + (" venue."));
@@ -1029,27 +1034,31 @@ public class BingeHopper implements EntryPoint
 				statusLabel.setText("Address was Found");
 				Marker marker = new Marker(point);
 				map.addOverlay(marker);
-				double pointLat = point.getLatitude();
-				double pointLon = point.getLongitude();
-				if (pointLat > maxLat)
-					maxLat = pointLat;
-				if (pointLon > maxLon)
-					maxLon = pointLon;
-				if (pointLat < minLat)
-					minLat = pointLat;
-				if (pointLon < minLon)
-					minLon = pointLon;
-				// map.setCenter(point);
+				points.add(point);
 			}
-		};
-
+		};	
 		map.clearOverlays();
-
 		for (VenueDetails venue : listOfBookmarks) {
 			Geocoder geocoder = new Geocoder();
 			geocoder.getLatLng(venue.getMapAddress(), callback);
 		}
 		// map.checkResizeAndCenter();
+	}
+	
+	private void setZoomingBound() {
+		TreeSet<Double> lats = new TreeSet<Double>();
+		TreeSet<Double> lons = new TreeSet<Double>();
+		for (LatLng point : points) {
+			double pointLat = point.getLatitude();
+			double pointLon = point.getLongitude();
+			lats.add(pointLat);
+			lons.add(pointLon);
+		}
+		minLat = lats.first();
+		minLon = lons.first();
+		maxLat = lats.last();
+		maxLon = lons.last();
+		points.clear();
 	}
 
 }
