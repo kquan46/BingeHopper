@@ -328,7 +328,7 @@ public class BingeHopper implements EntryPoint
 			public void onSelection(SelectionEvent<Integer> event) {
 				int tabId = event.getSelectedItem();
 				Widget tabWidget = tabs.getWidget(tabId);
-				if (tabWidget != null && tabId == 1) {
+				if (tabWidget != null && tabId == 2) {
 					map.checkResizeAndCenter();
 					dock.setVisible(true);
 					setZoomingBound();
@@ -448,7 +448,7 @@ public class BingeHopper implements EntryPoint
 		searchTab.addStyleName("tabElement");
 
 		// Organize Bookmarks Tab
-		bookmarksIcon.setUrl("maps.png");
+		bookmarksIcon.setUrl("bookmarks.png");
 		bookmarksIcon.addStyleName("tabIcon");
 		bookmarksTab.add(bookmarksTitle);
 		bookmarksTab.add(bookmarksUpdatePanel);
@@ -459,15 +459,14 @@ public class BingeHopper implements EntryPoint
 		bookmarksTable.addStyleName("celltable");
 		bookmarksTab.add(bookmarksListScroll);
 		bookmarksListScroll.addStyleName("bscrollpanel");
-		bookmarksTab.add(dock);
 		bookmarksTab.addStyleName("tabElement");
 
 
 		// Organize Map Tab
-		//mapIcon.setUrl("maps.png");
-		//mapIcon.addStyleName("tabIcon");
-		//mapTab.add(dock);
-		// mapTab.add(mapButton);
+		mapIcon.setUrl("maps.png");
+		mapIcon.addStyleName("tabIcon");
+		mapTab.add(dock);
+		//mapTab.add(mapButton);
 		//mapTab.addStyleName("tab");
 
 		// Organize Social Tab
