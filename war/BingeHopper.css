@@ -172,7 +172,7 @@ body {
 
 .gwt-TabPanelBottom {
 	position:fixed;
-	overflow: scroll !important;
+	overflow-y: scroll !important;
 	right:100px;
 	left:170px;
 	top:100px;
