@@ -40,7 +40,9 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -127,14 +129,18 @@ public class BingeHopper implements EntryPoint
 					+ "friends via Google+ integration.</p>");
 
 	// create boxes
-	private TextBox nameBox = new TextBox();
-	private TextBox addressBox = new TextBox();
+	private SuggestBox nameBox = new SuggestBox();
+	private SuggestBox addressBox = new SuggestBox();
 	private ListBox typeListBox = new ListBox();
 	private ListBox cityListBox = new ListBox();
 
 	// Create fields for drop down list box
 	private Set<String> listOfTypes = new TreeSet<String>();
 	private Set<String> listOfCities = new TreeSet<String>();
+	
+	// Create fields for suggest box
+	private MultiWordSuggestOracle nameOracle = new MultiWordSuggestOracle();
+	private MultiWordSuggestOracle addressOracle = new MultiWordSuggestOracle();
 
 	// create custom icons
 	private Image searchIcon = new Image();
@@ -513,11 +519,16 @@ public class BingeHopper implements EntryPoint
 
 	}
 
-	private void addDropDownList() {
+	private void setUpSearch() {
 		for (VenueDetails venue : listOfVenues) {
 			listOfCities.add(venue.getVenueCity());
 			listOfTypes.add(venue.getVenueType());
+			nameOracle.add(venue.getVenueName());
+			addressOracle.add(venue.getVenueAdd1());
 		}
+		nameBox = new SuggestBox(nameOracle);
+		addressBox = new SuggestBox(addressOracle);
+		
 		cityListBox.addItem("ALL");
 		for (String venueCity : listOfCities) {
 			if (!venueCity.equals("n/a"))
@@ -849,7 +860,7 @@ public class BingeHopper implements EntryPoint
 				venuesProvider = new ListDataProvider<VenueDetails>(result);
 				venuesProvider.addDataDisplay(venuesTable);
 				venuesPager.setDisplay(venuesTable);
-				addDropDownList();
+				setUpSearch();
 				setUpColumnSort(venuesTable, venuesProvider);
 			}
 
