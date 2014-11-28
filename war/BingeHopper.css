@@ -255,3 +255,14 @@ body {
 	margin-right: auto;
 	padding-top: 12px;
 }
+
+/* venues table */
+.venues {
+	height: 450px !important;
+	overflow-y: scroll !important;
+}
+
+/* pager */
+.pager {
+	position-right: 0px !important;
+}

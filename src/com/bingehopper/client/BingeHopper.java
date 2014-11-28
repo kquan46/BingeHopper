@@ -44,6 +44,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -76,6 +77,7 @@ public class BingeHopper implements EntryPoint
 	private VerticalPanel mapTab = new VerticalPanel();
 	private HorizontalPanel socialTab = new HorizontalPanel();
 	private VerticalPanel loginPanel = new VerticalPanel();
+	private ScrollPanel venuesListScroll = new ScrollPanel();
 
 	// create tables
 	private CellTable<VenueDetails> venuesTable = new CellTable<VenueDetails>();
@@ -324,7 +326,7 @@ public class BingeHopper implements EntryPoint
 			public void onSelection(SelectionEvent<Integer> event) {
 				int tabId = event.getSelectedItem();
 				Widget tabWidget = tabs.getWidget(tabId);
-				if (tabWidget != null && tabId == 3) {
+				if (tabWidget != null && tabId == 1) {
 					map.checkResizeAndCenter();
 					dock.setVisible(true);
 					setZoomingBound();
@@ -464,12 +466,15 @@ public class BingeHopper implements EntryPoint
 		searchTitle.addStyleName("title");
 		searchTab.add(venueUpdatePanel);
 		searchTab.add(searchPanel);
-		searchTab.add(venuesTable);
+		venuesListScroll.add(venuesTable);
+		venuesListScroll.addStyleName("venues");
+		searchTab.add(venuesListScroll);
+		venuesPager.addStyleName("pager");
 		searchTab.add(venuesPager);
 		searchTab.addStyleName("tabElement");
 
 		// Organize Bookmarks Tab
-		bookmarksIcon.setUrl("bookmarks.png");
+		bookmarksIcon.setUrl("maps.png");
 		bookmarksIcon.addStyleName("tabIcon");
 		bookmarksTab.add(bookmarksTitle);
 		bookmarksTab.add(bookmarksUpdatePanel);
@@ -498,7 +503,7 @@ public class BingeHopper implements EntryPoint
 
 		// configure tabs
 		tabs.add(searchTab, searchIcon);
-		tabs.add(bookmarksTab, mapIcon);
+		tabs.add(bookmarksTab, bookmarksIcon);
 		//tabs.add(mapTab, mapIcon);
 		tabs.add(socialTab, socialIcon);
 
