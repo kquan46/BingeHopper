@@ -135,18 +135,14 @@ public class BingeHopper implements EntryPoint
 					+ "friends via Google+ integration.</p>");
 
 	// create boxes
-	private SuggestBox nameBox = new SuggestBox();
-	private SuggestBox addressBox = new SuggestBox();
+	private TextBox nameBox = new TextBox();
+	private TextBox addressBox = new TextBox();
 	private ListBox typeListBox = new ListBox();
 	private ListBox cityListBox = new ListBox();
 
 	// Create fields for drop down list box
 	private Set<String> listOfTypes = new TreeSet<String>();
 	private Set<String> listOfCities = new TreeSet<String>();
-	
-	// Create fields for suggest box
-	private MultiWordSuggestOracle nameOracle = new MultiWordSuggestOracle();
-	private MultiWordSuggestOracle addressOracle = new MultiWordSuggestOracle();
 
 	// create custom icons
 	private Image searchIcon = new Image();
@@ -433,35 +429,6 @@ public class BingeHopper implements EntryPoint
 			}
 		});
 
-		/*
-		 * // Add sorting for name column
-		 * ColumnSortEvent.ListHandler<VenueDetails> nameSortHandler = new
-		 * ColumnSortEvent.ListHandler<VenueDetails>( venuesProvider.getList());
-		 * nameSortHandler.setComparator(nameColumn, new
-		 * Comparator<VenueDetails>() { public int compare(VenueDetails venue1,
-		 * VenueDetails venue2) { if (venue1 == venue2) { return 0; } if (venue1
-		 * != null) { return (venue2 != null) ? venue1.getVenueName()
-		 * .compareTo(venue2.getVenueName()) : 1; } return -1; } });
-		 * 
-		 * // Add sorting for address column
-		 * ColumnSortEvent.ListHandler<VenueDetails> addressSortHandler = new
-		 * ColumnSortEvent.ListHandler<VenueDetails>( venuesProvider.getList());
-		 * addressSortHandler.setComparator(addressColumn, new
-		 * Comparator<VenueDetails>() { public int compare(VenueDetails venue1,
-		 * VenueDetails venue2) { if (venue1 == venue2) { return 0; } if (venue1
-		 * != null) { return (venue2 != null) ? venue1.getVenueAdd1()
-		 * .compareTo(venue2.getVenueAdd1()) : 1; } return -1; } });
-		 * 
-		 * // Add sorting for capacity column
-		 * ColumnSortEvent.ListHandler<VenueDetails> capacitySortHandler = new
-		 * ColumnSortEvent.ListHandler<VenueDetails>( venuesProvider.getList());
-		 * capacitySortHandler.setComparator(capacityColumn, new
-		 * Comparator<VenueDetails>() { public int compare(VenueDetails venue1,
-		 * VenueDetails venue2) { if (venue1 == venue2) { return 0; } if (venue1
-		 * != null) { return (venue2 != null) ? venue1.getVenueCapacity()
-		 * .compareTo(venue2.getVenueCapacity()) : 1; } return -1; } });
-		 */
-
 		// ----------- TABS --------------
 
 		// Organize Search Tab
@@ -523,16 +490,11 @@ public class BingeHopper implements EntryPoint
 
 	}
 
-	private void setUpSearch() {
+	private void addDropDownList() {
 		for (VenueDetails venue : listOfVenues) {
 			listOfCities.add(venue.getVenueCity());
 			listOfTypes.add(venue.getVenueType());
-			nameOracle.add(venue.getVenueName());
-			addressOracle.add(venue.getVenueAdd1());
 		}
-		nameBox = new SuggestBox(nameOracle);
-		addressBox = new SuggestBox(addressOracle);
-		
 		cityListBox.addItem("ALL");
 		for (String venueCity : listOfCities) {
 			if (!venueCity.equals("n/a"))
@@ -864,7 +826,7 @@ public class BingeHopper implements EntryPoint
 				venuesProvider = new ListDataProvider<VenueDetails>(result);
 				venuesProvider.addDataDisplay(venuesTable);
 				venuesPager.setDisplay(venuesTable);
-				setUpSearch();
+				addDropDownList();
 				setUpColumnSort(venuesTable, venuesProvider);
 			}
 
@@ -928,10 +890,8 @@ public class BingeHopper implements EntryPoint
 		return filteredList;
 	}
 
-	// retrieves an ArrayList of Venue id's that have been bookmarked by the
+	// retrieves an ArrayList of Venues that have been bookmarked by the
 	// current user,
-	// and uses the list to display the corresponding Venues in the
-	// bookmarksFlexTable using the displayBookmarks method
 	private void loadBookmarks() {
 
 		updatedBookmarksLabel.setText("Loading Bookmarks...");
