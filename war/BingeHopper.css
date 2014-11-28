@@ -36,6 +36,7 @@ body {
 .fbLikePanel{ 
    border:1px solid green;
    width:300px;
+   height:610px !important;
 }
 
 #littleSocial{
@@ -216,6 +217,7 @@ body {
 .tabs {
 	padding-left: 175px;
 	padding-right: 125px;
+	max-width: 1400px !important;
 }
 
 .tabElement {
@@ -232,6 +234,7 @@ body {
 	padding: 20px;
 	transform: rotate(90deg);
 	transform-origin: 0px 0px;
+	opacity:.9;
 }
 
 .gwt-TabBarItem {
@@ -256,13 +259,21 @@ body {
 	padding-top: 12px;
 }
 
-/* venues table */
-.venues {
-	height: 450px !important;
+/* venues and bookmarks table */
+.celltable {
+	width: 1400px !important;
+}
+
+.scrollpanel {
+	height:375px !important;
 	overflow-y: scroll !important;
+	margin:20px;
 }
 
 /* pager */
 .pager {
-	position-right: 0px !important;
+	position:absolute;
+	right: 0px !important;
+	margin-right: 120px;
+	margin-bottom: 20px;
 }

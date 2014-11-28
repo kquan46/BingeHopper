@@ -81,6 +81,7 @@ public class BingeHopper implements EntryPoint
 	private HorizontalPanel socialTab = new HorizontalPanel();
 	private VerticalPanel loginPanel = new VerticalPanel();
 	private ScrollPanel venuesListScroll = new ScrollPanel();
+	private ScrollPanel bookmarksListScroll = new ScrollPanel();
 
 	// create tables
 	private CellTable<VenueDetails> venuesTable = new CellTable<VenueDetails>();
@@ -109,8 +110,8 @@ public class BingeHopper implements EntryPoint
 	private Button removeAllButton = new Button("Remove All");
 
 	// create labels
-	private Label updatedVenueLabel = new Label();
-	private Label updatedBookmarksLabel = new Label();
+	private HTML updatedVenueLabel = new HTML();
+	private HTML updatedBookmarksLabel = new HTML();
 	private Label searchTitle = new Label("Search");
 	private Label nameLabel = new Label("Name");
 	private Label addressLabel = new Label("Address");
@@ -438,11 +439,12 @@ public class BingeHopper implements EntryPoint
 		searchTitle.addStyleName("title");
 		searchTab.add(venueUpdatePanel);
 		searchTab.add(searchPanel);
-		venuesListScroll.add(venuesTable);
-		venuesListScroll.addStyleName("venues");
-		searchTab.add(venuesListScroll);
+		searchPanel.add(venuesPager);
 		venuesPager.addStyleName("pager");
-		searchTab.add(venuesPager);
+		venuesListScroll.add(venuesTable);
+		venuesTable.addStyleName("celltable");
+		venuesListScroll.addStyleName("scrollpanel");
+		searchTab.add(venuesListScroll);
 		searchTab.addStyleName("tabElement");
 
 		// Organize Bookmarks Tab
@@ -451,8 +453,12 @@ public class BingeHopper implements EntryPoint
 		bookmarksTab.add(bookmarksTitle);
 		bookmarksTab.add(bookmarksUpdatePanel);
 		bookmarksTitle.addStyleName("title");
-		bookmarksTab.add(bookmarksTable);
 		bookmarksTab.add(bookmarksPager);
+		bookmarksPager.addStyleName("pager");
+		bookmarksListScroll.add(bookmarksTable);
+		bookmarksTable.addStyleName("celltable");
+		bookmarksTab.add(bookmarksListScroll);
+		bookmarksListScroll.addStyleName("scrollpanel");
 		bookmarksTab.add(dock);
 		bookmarksTab.addStyleName("tabElement");
 
@@ -937,15 +943,17 @@ public class BingeHopper implements EntryPoint
 			symbols.add(symbol);
 		}
 		if (symbols.contains(venue.getSymbol()))
-			updatedVenueLabel.setText("You already have '"
-					+ venue.getVenueName() + "' in your Bookmarks.");
+			updatedVenueLabel.setHTML("<font color='red'>You already have '"
+					+ "<b><font color='black'>" + venue.getVenueName() 
+					+ "</font></b>' in your Bookmarks.</font>");
 		else {
 			venueService.addVenue(venue, new AsyncCallback<Void>() {
 
 				public void onFailure(Throwable error) {
 
-					updatedVenueLabel.setText("Failed to add '"
-							+ venue.getVenueName() + "' to Bookmarks.");
+					updatedVenueLabel.setHTML("<font color='red'>Failed to add '"
+							+ "<b><font color='black'>" + venue.getVenueName() 
+							+ "</font></b>' to Bookmarks.</font>");
 				}
 
 				public void onSuccess(Void ignore)
@@ -957,8 +965,9 @@ public class BingeHopper implements EntryPoint
 					bookmarksProvider.getList().addAll(listOfBookmarks);
 					bookmarksProvider.refresh();
 					plotBookmarks();
-					updatedVenueLabel.setText("Successfully added '"
-							+ venue.getVenueName() + "' to Bookmarks.");
+					updatedVenueLabel.setHTML("<font color='00a651'>Successfully added '"
+							+ "<b><font color='black'>" +
+							venue.getVenueName() + "</font></b>' to Bookmarks.</font>");
 				}
 
 			});
@@ -971,8 +980,9 @@ public class BingeHopper implements EntryPoint
 		venueService.removeVenue(venue, new AsyncCallback<Void>() {
 			public void onFailure(Throwable error) {
 
-				updatedBookmarksLabel.setText("Failed to remove '"
-						+ venue.getVenueName() + ("'"));
+				updatedBookmarksLabel.setHTML("<font color='red'>Failed to remove '"
+						+ "<b><font color='black'>" + venue.getVenueName() + 
+						"</font></b>'</font>");
 
 			}
 
@@ -983,12 +993,15 @@ public class BingeHopper implements EntryPoint
 				bookmarksProvider.refresh();
 				if (listOfBookmarks.isEmpty())
 					updatedBookmarksLabel
-							.setText("Your Bookmarks is now empty. Removed '"
-									+ venue.getVenueName() + "'.");
+					.setHTML("<font color='00a651'>Your Bookmarks is now empty. Removed '"
+							+ "<b><font color='black'>" 
+							+ venue.getVenueName() + "</font></b>'.</font>");
 				else {
 					plotBookmarks();
-					updatedBookmarksLabel.setText("Successfully removed '"
-							+ venue.getVenueName() + ("'"));
+					updatedBookmarksLabel.setHTML("<font color='00a651'>Successfully removed '"
+							+ "<b><font color='black'>"
+							+ venue.getVenueName() + "</font></b>'</font>");
+
 				}
 
 			}
@@ -1005,7 +1018,7 @@ public class BingeHopper implements EntryPoint
 			venueService.removeAllVenues(new AsyncCallback<Void>() {
 				public void onFailure(Throwable error) {
 					updatedBookmarksLabel
-					.setText("Failed to remove all Bookmarks");
+					.setHTML("<font color='red'>Failed to remove all Bookmarks</font>");
 				}
 
 				public void onSuccess(Void ignore) {
@@ -1015,11 +1028,11 @@ public class BingeHopper implements EntryPoint
 					bookmarksProvider.refresh();
 					map.clearOverlays();
 					if (bookmarkSize == 1)
-						updatedBookmarksLabel.setText("Successfully removed "
-								+ bookmarkSize + (" venue."));
+						updatedBookmarksLabel.setHTML("<font color='00a651'>Successfully removed "
+								+ bookmarkSize + (" venue.</font>"));
 					else
-						updatedBookmarksLabel.setText("Successfully removed "
-								+ bookmarkSize + (" venues."));
+						updatedBookmarksLabel.setHTML("<font color='00a651'>Successfully removed "
+								+ bookmarkSize + (" venues.</font>"));
 
 				}
 			});
