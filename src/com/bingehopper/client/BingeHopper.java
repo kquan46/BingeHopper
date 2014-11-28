@@ -73,7 +73,6 @@ public class BingeHopper implements EntryPoint
 
 	private VerticalPanel searchTab = new VerticalPanel();
 	private VerticalPanel bookmarksTab = new VerticalPanel();
-	private VerticalPanel visitedTab = new VerticalPanel();
 	private VerticalPanel mapTab = new VerticalPanel();
 	private HorizontalPanel socialTab = new HorizontalPanel();
 	private VerticalPanel loginPanel = new VerticalPanel();
@@ -114,7 +113,6 @@ public class BingeHopper implements EntryPoint
 	private Label cityLabel = new Label("City");
 	private Label socialTitle = new Label("Social");
 	private Label bookmarksTitle = new Label("Bookmarks");
-	private Label visitedTitle = new Label("Visited");
 	private Label errorMsgLabel = new Label();
 	private Label loginLabel = new Label(
 			"Please sign in to your Google Account to access the BingeHopper application.");
@@ -147,7 +145,6 @@ public class BingeHopper implements EntryPoint
 
 	// create custom icons
 	private Image searchIcon = new Image();
-	private Image visitedIcon = new Image();
 	private Image mapIcon = new Image();
 	private Image bookmarksIcon = new Image();
 	private Image socialIcon = new Image();
@@ -479,21 +476,16 @@ public class BingeHopper implements EntryPoint
 		bookmarksTitle.addStyleName("title");
 		bookmarksTab.add(bookmarksTable);
 		bookmarksTab.add(bookmarksPager);
+		bookmarksTab.add(dock);
 		bookmarksTab.addStyleName("tabElement");
 
-		// Organize Visited Tab
-		visitedIcon.setUrl("visited.png");
-		visitedIcon.addStyleName("tabIcon");
-		visitedTab.add(visitedTitle);
-		visitedTitle.addStyleName("title");
-		visitedTab.addStyleName("tabElement");
 
 		// Organize Map Tab
-		mapIcon.setUrl("maps.png");
-		mapIcon.addStyleName("tabIcon");
-		mapTab.add(dock);
+		//mapIcon.setUrl("maps.png");
+		//mapIcon.addStyleName("tabIcon");
+		//mapTab.add(dock);
 		// mapTab.add(mapButton);
-		mapTab.addStyleName("tab");
+		//mapTab.addStyleName("tab");
 
 		// Organize Social Tab
 		socialIcon.setUrl("social.png");
@@ -506,9 +498,8 @@ public class BingeHopper implements EntryPoint
 
 		// configure tabs
 		tabs.add(searchTab, searchIcon);
-		tabs.add(bookmarksTab, bookmarksIcon);
-		tabs.add(visitedTab, visitedIcon);
-		tabs.add(mapTab, mapIcon);
+		tabs.add(bookmarksTab, mapIcon);
+		//tabs.add(mapTab, mapIcon);
 		tabs.add(socialTab, socialIcon);
 
 		// show the 'map' tab initially
