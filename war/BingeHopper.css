@@ -27,21 +27,32 @@ body {
 
 /* tab titles */
 .title{
-	font-size: 18px;
-	font-weight: bold;
-	text-align: center;
-	padding: 10px;
+	font-size: 28px !important;
+	text-align: center !important;
+	font-family: Lucida Grande;
 }
 
 /* Facebook like panel */
 .fbLikePanel{ 
    border:1px solid green;
+   width:300px;
 }
 
-#facebook {
-	position:fixed;
-	right:50px;
-	top:30px;
+#littleSocial{
+	position:fixed !important;
+	left:70px;
+	top:44px;
+	display:table;
+}
+
+#littleSocial > div{
+	display:table-cell;
+	vertical-align:top;
+}
+
+#littleSocial > iframe{
+	display:table-cell;
+	vertical-align:top;
 }
 
 /* venue list header row */
@@ -77,9 +88,10 @@ body {
 	background-color: rgba(0,0,0,0.5);
 	border-radius: 20px;
 	position: relative;
-	left: 30%;
+	left: 220px;
 	color:white;
 	padding: 10px;
+	margin-top:50px;
 }
 
 /* app description */
@@ -105,38 +117,100 @@ body {
 	background-color: #ffcc00;
 	position: absolute;
 	right: 300px;
-	top: 300px;
-	left: 875px;
+	top: 325px;
+	left: 830px;
 	border-radius: 20px;
 	padding: 10px;
 	padding-bottom:20px;
 }
 
+#googleLoginMessage {
+	margin-left:350px;
+	margin-top:25px;
+}
+
+
 
 /* sign out link */
-.signOutLink {
-	position: fixed;
-	top: 25px;
-	right: 80px;
-	padding: 10px;
-	background-color: white;
+#signOutLink {
+  position: fixed;
+  top: 25px;
+  right: 80px;
+  padding: 10px;
+  background-color: white;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url("signout.png");
+  height: 24px;
+  width: 24px;
+  border-radius: 25px;
+  border: solid black 2px;
+}
+
+#signOutLink:hover{
+  background-image: url("signout.gif");
 }
 
 /* tabs */
 
-.gwt-TabPanelBottom {
+
+/* 	Styling for empty span in BingeHopper.html
+	Used for app background.
+ */
+#VenueListBackground {
 	position:fixed;
-	overflow: scroll !important;
+	background-color:white;
+	opacity:.75;
 	right:100px;
 	left:170px;
 	top:100px;
-	bottom:0px;
+	bottom:10px;
+	border-radius: 25px;
+	z-index:-1;
+	
+}
+
+.gwt-TabPanelBottom {
+	position:fixed;
+	overflow-y: scroll !important;
+	right:100px;
+	left:170px;
+	top:100px;
+	bottom:10px;
 	border: none !important;
-	background-color: white
+	background-color: none;
+	border-radius: 25px;
 }
 
 .gwt-TabPanelBottom > div{
 	height: auto !important;
+}
+
+.gwt-TabPanelBottom * {
+	background:none;
+}
+
+.gwt-Label {
+	color: #4b4a4a;
+	text-shadow: 1px 1px 0 #ddf;
+	padding-right:5px;
+	padding-left:5px;
+	font-size: 16px;
+	font-weight:500;
+}
+
+.GPBYFDEGE {
+	Border-top: 1px solid black;
+	margin-top: 20px;
+}
+
+.GPBYFDEFD{
+	padding-top:0px;
+	padding-bottom:0px;
+}
+
+.fbLikePanel{
+	background-color:white;	
 }
 
 .tabs {
@@ -145,8 +219,10 @@ body {
 }
 
 .tabElement {
-	padding: 115px;
-	padding-top: 20px;
+	display:table;
+	width:0px !important;
+	margin-right:auto;
+	margin-left:auto;
 }
 
 /* tabBar */
@@ -163,7 +239,7 @@ body {
 	transform: rotate(-90deg);
 	width: 65px;
 	height: 65px;
-	border-radius: 35px;
+	border-radius: 25px;
 }
 
 .gwt-TabBarItem-selected {

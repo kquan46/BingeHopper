@@ -176,7 +176,7 @@ public class BingeHopper implements EntryPoint
 	// setup login service
 	private LoginInfo loginInfo = null;
 	private Anchor signInLink = new Anchor("Sign In");
-	private Anchor signOutLink = new Anchor("Sign Out");
+	private Anchor signOutLink = new Anchor();
 
 	// create ArrayList of VenueDetails objects
 	private ArrayList<VenueDetails> listOfVenues;
@@ -254,6 +254,7 @@ public class BingeHopper implements EntryPoint
 		signInLink.setHref(loginInfo.getLoginUrl());
 		loginPanel.add(welcomeText);
 		loginPanel.add(appDescription);
+		loginLabel.getElement().setId("googleLoginMessage");
 		loginPanel.add(loginLabel);
 		loginPanel.add(signInLink);
 		RootPanel.get("venueList").add(loginPanel);
@@ -270,6 +271,7 @@ public class BingeHopper implements EntryPoint
 		// Set up sign out hyperlink.
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		signOutLink.addStyleName("signOutLink");
+		signOutLink.getElement().setId("signOutLink");
 
 		// fetch bookmarked venues from server
 		loadBookmarks();
