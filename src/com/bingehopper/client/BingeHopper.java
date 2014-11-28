@@ -26,6 +26,8 @@ import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSe
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.maps.client.InfoWindow;
+import com.google.gwt.maps.client.InfoWindowContent;
 import com.google.gwt.maps.client.Maps;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -46,6 +48,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.control.LargeMapControl;
+import com.google.gwt.maps.client.event.MarkerClickHandler;
 import com.google.gwt.maps.client.geocode.Geocoder;
 import com.google.gwt.maps.client.geocode.LatLngCallback;
 import com.google.gwt.maps.client.geom.Bounds;
@@ -180,7 +183,7 @@ public class BingeHopper implements EntryPoint
 	private static LatLng sw;
 	private static LatLngBounds b;	
 	private static LatLng center;
-	
+
 
 	// EntryPoint method
 	public void onModuleLoad() {
@@ -189,38 +192,38 @@ public class BingeHopper implements EntryPoint
 		loginService.login(GWT.getHostPageBaseURL(),
 				new AsyncCallback<LoginInfo>() {
 
-					public void onFailure(Throwable error) {
+			public void onFailure(Throwable error) {
 
-						errorMsgLabel.setText(error.getMessage());
-						errorMsgLabel.setVisible(true);
+				errorMsgLabel.setText(error.getMessage());
+				errorMsgLabel.setVisible(true);
 
-					}
+			}
 
-					public void onSuccess(LoginInfo result) {
+			public void onSuccess(LoginInfo result) {
 
-						loginInfo = result;
+				loginInfo = result;
 
-						if (loginInfo.isLoggedIn()) {
+				if (loginInfo.isLoggedIn()) {
 
-							Maps.loadMapsApi(
-									"AIzaSyCTk1NtYlfZeSWetnBjL6bOrLnl99A6now",
-									"2", false, new Runnable() {
-										public void run() {
-											loadBingeHopper();
-										}
-									});
+					Maps.loadMapsApi(
+							"AIzaSyCTk1NtYlfZeSWetnBjL6bOrLnl99A6now",
+							"2", false, new Runnable() {
+								public void run() {
+									loadBingeHopper();
+								}
+							});
 
-						}
+				}
 
-						else {
+				else {
 
-							loadLogin();
+					loadLogin();
 
-						}
+				}
 
-					}
+			}
 
-				});
+		});
 
 		/*
 		 * Asynchronously loads the Maps API.
@@ -294,7 +297,7 @@ public class BingeHopper implements EntryPoint
 		statusLabel = new Label();
 		map = new MapWidget(vancouver, 9);
 		map.setSize("100%", "100%");
-//		map.addControl(new LargeMapControl());
+		//		map.addControl(new LargeMapControl());
 
 		// Create Map Panel
 		final DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
@@ -362,7 +365,7 @@ public class BingeHopper implements EntryPoint
 						cityListBox.getItemText(cityListBox.getSelectedIndex()),
 						typeListBox.getItemText(typeListBox.getSelectedIndex())
 
-				);
+						);
 			}
 
 		});
@@ -376,12 +379,12 @@ public class BingeHopper implements EntryPoint
 
 					searchVenues(
 
-					nameBox.getText(), addressBox.getText(), cityListBox
+							nameBox.getText(), addressBox.getText(), cityListBox
 							.getItemText(cityListBox.getSelectedIndex()),
 							typeListBox.getItemText(typeListBox
 									.getSelectedIndex())
 
-					);
+							);
 				}
 
 			}
@@ -397,12 +400,12 @@ public class BingeHopper implements EntryPoint
 
 					searchVenues(
 
-					nameBox.getText(), addressBox.getText(), cityListBox
+							nameBox.getText(), addressBox.getText(), cityListBox
 							.getItemText(cityListBox.getSelectedIndex()),
 							typeListBox.getItemText(typeListBox
 									.getSelectedIndex())
 
-					);
+							);
 				}
 
 			}
@@ -572,13 +575,13 @@ public class BingeHopper implements EntryPoint
 			}
 		};
 		addbookmarkColumn
-				.setFieldUpdater(new FieldUpdater<VenueDetails, String>() {
-					@Override
-					public void update(int index, VenueDetails venue,
-							String value) {
-						addBookmark(venue);
-					}
-				});
+		.setFieldUpdater(new FieldUpdater<VenueDetails, String>() {
+			@Override
+			public void update(int index, VenueDetails venue,
+					String value) {
+				addBookmark(venue);
+			}
+		});
 
 		// Button column to remove venues from bookmarks.
 		ButtonCell removeBookmarkButton = new ButtonCell();
@@ -590,13 +593,13 @@ public class BingeHopper implements EntryPoint
 			}
 		};
 		removebookmarkColumn
-				.setFieldUpdater(new FieldUpdater<VenueDetails, String>() {
-					@Override
-					public void update(int index, VenueDetails venue,
-							String value) {
-						removeBookmark(venue);
-					}
-				});
+		.setFieldUpdater(new FieldUpdater<VenueDetails, String>() {
+			@Override
+			public void update(int index, VenueDetails venue,
+					String value) {
+				removeBookmark(venue);
+			}
+		});
 
 		// Checkbox column to mark venues as selected in bookmarks.
 		CheckboxCell visitedCheckbox = new CheckboxCell();
@@ -608,12 +611,12 @@ public class BingeHopper implements EntryPoint
 			}
 		};
 		visitedColumn
-				.setFieldUpdater(new FieldUpdater<VenueDetails, Boolean>() {
-					public void update(int index, VenueDetails venue,
-							Boolean visited) {
-						setVisited(venue);
-					}
-				});
+		.setFieldUpdater(new FieldUpdater<VenueDetails, Boolean>() {
+			public void update(int index, VenueDetails venue,
+					Boolean visited) {
+				setVisited(venue);
+			}
+		});
 
 		// Add Columns to venues CellTable
 		venuesTable.addColumn(nameColumn, "Name");
@@ -667,7 +670,7 @@ public class BingeHopper implements EntryPoint
 
 			public void onFailure(Throwable caught) {
 				errorMsgLabel
-						.setText("Error while fetching venues from server");
+				.setText("Error while fetching venues from server");
 				errorMsgLabel.setVisible(true);
 			}
 
@@ -730,7 +733,7 @@ public class BingeHopper implements EntryPoint
 			if (venue.getVenueName().trim().toLowerCase()
 					.contains(name.trim().toLowerCase())
 					&& venue.getVenueAdd1().trim().toLowerCase()
-							.contains(address.trim().toLowerCase())
+					.contains(address.trim().toLowerCase())
 					&& cities.contains(venue.getVenueCity())
 					&& types.contains(venue.getVenueType()))
 				filteredList.add(venue);
@@ -750,7 +753,7 @@ public class BingeHopper implements EntryPoint
 			public void onFailure(Throwable error) {
 
 				updatedBookmarksLabel
-						.setText("failed to retrieve Bookmarked venues");
+				.setText("failed to retrieve Bookmarked venues");
 			}
 
 			public void onSuccess(List<VenueDetails> bookmarkedVenues)
@@ -764,10 +767,10 @@ public class BingeHopper implements EntryPoint
 				plotBookmarks();
 				if (bookmarkedVenues.isEmpty())
 					updatedBookmarksLabel
-							.setText("Oops. You dont have any venues in your bookmarks!!");
+					.setText("Oops. You dont have any venues in your bookmarks!!");
 				else {
 					updatedBookmarksLabel
-							.setText("Bookmarked venues successfully loaded");
+					.setText("Bookmarked venues successfully loaded");
 				}
 			}
 
@@ -824,18 +827,18 @@ public class BingeHopper implements EntryPoint
 			}
 
 			public void onSuccess(Void ignore) {
-//				for (VenueDetails bookmark : listOfBookmarks) {
-//					if (venue.getSymbol().equals(bookmark.getSymbol()))
-//						listOfBookmarks.remove(venue);
-//				}
+				//				for (VenueDetails bookmark : listOfBookmarks) {
+				//					if (venue.getSymbol().equals(bookmark.getSymbol()))
+				//						listOfBookmarks.remove(venue);
+				//				}
 				listOfBookmarks.remove(venue);
 				bookmarksProvider.setList(listOfBookmarks);
 				bookmarksProvider.refresh();
 				plotBookmarks();
 				if (listOfBookmarks.isEmpty())
 					updatedBookmarksLabel
-							.setText("Your Bookmarks is now empty. Removed '"
-									+ venue.getVenueName() + "'.");
+					.setText("Your Bookmarks is now empty. Removed '"
+							+ venue.getVenueName() + "'.");
 				else
 					updatedBookmarksLabel.setText("Successfully removed '"
 							+ venue.getVenueName() + ("'"));
@@ -849,12 +852,12 @@ public class BingeHopper implements EntryPoint
 	private void removeAllBookmarks() {
 		if (listOfBookmarks.isEmpty())
 			updatedBookmarksLabel
-					.setText("Oops. Your Bookmarks is already empty!");
+			.setText("Oops. Your Bookmarks is already empty!");
 		else {
 			venueService.removeAllVenues(new AsyncCallback<Void>() {
 				public void onFailure(Throwable error) {
 					updatedBookmarksLabel
-							.setText("Failed to remove all Bookmarks");
+					.setText("Failed to remove all Bookmarks");
 				}
 
 				public void onSuccess(Void ignore) {
@@ -907,7 +910,7 @@ public class BingeHopper implements EntryPoint
 		});
 	}
 
-	private void plotBookmarks() {
+	private void plotBookmark(final VenueDetails venue, Geocoder geocoder) {
 		// Callback Method post obtaining LatLng
 		LatLngCallback callback = new LatLngCallback() {
 
@@ -917,10 +920,12 @@ public class BingeHopper implements EntryPoint
 
 			public void onSuccess(LatLng point) {
 				statusLabel.setText("Address was Found");
-				Marker marker = new Marker(point);
+				final Marker marker = new Marker(point);
 				map.addOverlay(marker);
 				double pointLat = point.getLatitude();
 				double pointLon = point.getLongitude();
+
+
 				if (pointLat > maxLat)
 					maxLat = pointLat;
 				if (pointLon > maxLon)
@@ -929,17 +934,42 @@ public class BingeHopper implements EntryPoint
 					minLat = pointLat;
 				if (pointLon < minLon)
 					minLon = pointLon;
-				// map.setCenter(point);
+
+				VerticalPanel basicDetailsPanel = new VerticalPanel();
+				HTML basicDetails = new HTML("<h3>" + venue.getVenueName() + "</h3>" +
+						"<b>Address: </b>" + venue.getMapAddress() + "<br>" +
+						"<b>Phone Number: </b>" + venue.getVenuePhone() + "<br>" +
+						"<b>License Type: </b>" + venue.getVenueType() + "<br>" + 
+						"<b>Seat Capacity: </b>" + venue.getVenueCapacity() + 
+						"<br><p> </p>");
+
+				basicDetailsPanel.add(basicDetails);
+				basicDetailsPanel.addStyleName("basicDetails");
+
+				final InfoWindow infoWindow = map.getInfoWindow();
+				final InfoWindowContent content = new InfoWindowContent(
+						basicDetailsPanel
+						);
+				marker.addMarkerClickHandler(new MarkerClickHandler() {
+					@Override
+					public void onClick(MarkerClickEvent event) {
+						infoWindow.open(marker, content);
+					}
+				});
 			}
 		};
 
+
 		map.clearOverlays();
 
+		geocoder.getLatLng(venue.getMapAddress(), callback);
+	}
+
+	private void plotBookmarks() {
 		for (VenueDetails venue : listOfBookmarks) {
 			Geocoder geocoder = new Geocoder();
-			geocoder.getLatLng(venue.getMapAddress(), callback);
+			plotBookmark(venue, geocoder);
 		}
-		// map.checkResizeAndCenter();
 	}
 
 }
