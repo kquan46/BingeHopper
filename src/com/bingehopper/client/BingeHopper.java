@@ -439,12 +439,11 @@ public class BingeHopper implements EntryPoint
 		searchTitle.addStyleName("title");
 		searchTab.add(venueUpdatePanel);
 		searchTab.add(searchPanel);
-		searchPanel.add(venuesPager);
-		venuesPager.addStyleName("pager");
-		venuesListScroll.add(venuesTable);
-		venuesTable.addStyleName("celltable");
-		venuesListScroll.addStyleName("vscrollpanel");
-		searchTab.add(venuesListScroll);
+		//venuesListScroll.add(venuesTable);
+		//venuesTable.addStyleName("celltable");
+		//venuesListScroll.addStyleName("vscrollpanel");
+		searchTab.add(venuesTable);
+		searchTab.add(venuesPager);
 		searchTab.addStyleName("tabElement");
 
 		// Organize Bookmarks Tab
@@ -453,12 +452,11 @@ public class BingeHopper implements EntryPoint
 		bookmarksTab.add(bookmarksTitle);
 		bookmarksTab.add(bookmarksUpdatePanel);
 		bookmarksTitle.addStyleName("title");
+		//bookmarksListScroll.add(bookmarksTable);
+		//bookmarksTable.addStyleName("celltable");
+		bookmarksTab.add(bookmarksTable);
+		//bookmarksListScroll.addStyleName("bscrollpanel");
 		bookmarksTab.add(bookmarksPager);
-		bookmarksPager.addStyleName("pager");
-		bookmarksListScroll.add(bookmarksTable);
-		bookmarksTable.addStyleName("celltable");
-		bookmarksTab.add(bookmarksListScroll);
-		bookmarksListScroll.addStyleName("bscrollpanel");
 		bookmarksTab.addStyleName("tabElement");
 
 
@@ -653,8 +651,8 @@ public class BingeHopper implements EntryPoint
 		// Create a CellTable
 		venuesTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 
-		// Display 100 rows in one page
-		venuesTable.setPageSize(100);
+		// Display 20 rows in one page
+		venuesTable.setPageSize(20);
 		// venuesTable.setVisibleRange(0, 100);
 
 		// Text column to show the name.
