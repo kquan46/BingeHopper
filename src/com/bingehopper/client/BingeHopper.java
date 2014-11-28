@@ -328,7 +328,7 @@ public class BingeHopper implements EntryPoint
 			public void onSelection(SelectionEvent<Integer> event) {
 				int tabId = event.getSelectedItem();
 				Widget tabWidget = tabs.getWidget(tabId);
-				if (tabWidget != null && tabId == 2) {
+				if (tabWidget != null && tabId == 1) {
 					map.checkResizeAndCenter();
 					dock.setVisible(true);
 					setZoomingBound();
@@ -897,147 +897,146 @@ public class BingeHopper implements EntryPoint
 	}
 
 	// retrieves an ArrayList of Venues that have been bookmarked by the
-	// current user,
-	private void loadBookmarks() {
+		// current user,
+		private void loadBookmarks() {
 
-		updatedBookmarksLabel.setText("Loading Bookmarks...");
-		venueService.getVenues(new AsyncCallback<List<VenueDetails>>() {
-
-			public void onFailure(Throwable error) {
-
-				updatedBookmarksLabel
-				.setText("failed to retrieve Bookmarked venues");
-			}
-
-			public void onSuccess(List<VenueDetails> bookmarkedVenues)
-
-			{
-				listOfBookmarks = new ArrayList<VenueDetails>(bookmarkedVenues);
-				bookmarksProvider = new ListDataProvider<VenueDetails>(
-						bookmarkedVenues);
-				bookmarksProvider.addDataDisplay(bookmarksTable);
-				bookmarksPager.setDisplay(bookmarksTable);
-				setUpColumnSort(bookmarksTable, bookmarksProvider);
-				if (!listOfBookmarks.isEmpty())
-					plotBookmarks();
-				if (bookmarkedVenues.isEmpty())
-					updatedBookmarksLabel
-					.setText("Oops. You dont have any venues in your bookmarks!!");
-				else {
-					updatedBookmarksLabel
-					.setText("Bookmarked venues successfully loaded");
-				}
-			}
-
-		});
-
-	}
-
-	// adds the Venue with symbol (venueName+venueAdd1) to the current user's
-	// bookmarks list
-	private void addBookmark(final VenueDetails venue) {
-		ArrayList<String> symbols = new ArrayList<String>();
-
-		for (VenueDetails bookmark : listOfBookmarks) {
-			String symbol = bookmark.getSymbol();
-			symbols.add(symbol);
-		}
-		if (symbols.contains(venue.getSymbol()))
-			updatedVenueLabel.setHTML("<font color='red'>You already have '"
-					+ "<b><font color='black'>" + venue.getVenueName() 
-					+ "</font></b>' in your Bookmarks.</font>");
-		else {
-			venueService.addVenue(venue, new AsyncCallback<Void>() {
+			updatedBookmarksLabel.setText("Loading Bookmarks...");
+			venueService.getVenues(new AsyncCallback<List<VenueDetails>>() {
 
 				public void onFailure(Throwable error) {
 
-					updatedVenueLabel.setHTML("<font color='red'>Failed to add '"
-							+ "<b><font color='black'>" + venue.getVenueName() 
-							+ "</font></b>' to Bookmarks.</font>");
+					updatedBookmarksLabel
+					.setText("failed to retrieve Bookmarked venues");
 				}
 
-				public void onSuccess(Void ignore)
+				public void onSuccess(List<VenueDetails> bookmarkedVenues)
 
 				{
-					listOfBookmarks.add(venue);
-					Collections.sort(listOfBookmarks);
-					bookmarksProvider.getList().clear();
-					bookmarksProvider.getList().addAll(listOfBookmarks);
-					bookmarksProvider.refresh();
-					plotBookmarks();
-					updatedVenueLabel.setHTML("<font color='00a651'>Successfully added '"
-							+ "<b><font color='black'>" +
-							venue.getVenueName() + "</font></b>' to Bookmarks.</font>");
+					listOfBookmarks = new ArrayList<VenueDetails>(bookmarkedVenues);
+					bookmarksProvider = new ListDataProvider<VenueDetails>(
+							bookmarkedVenues);
+					bookmarksProvider.addDataDisplay(bookmarksTable);
+					bookmarksPager.setDisplay(bookmarksTable);
+					setUpColumnSort(bookmarksTable, bookmarksProvider);
+					if (!listOfBookmarks.isEmpty())
+						plotBookmarks();
+					if (bookmarkedVenues.isEmpty())
+						updatedBookmarksLabel
+						.setText("Oops. You dont have any venues in your bookmarks!!");
+					else {
+						updatedBookmarksLabel
+						.setText("Bookmarked venues successfully loaded");
+					}
 				}
 
 			});
+
 		}
-	}
 
-	// removes the Venue with symbol (venueName+venueAdd1) from the current
-	// user's bookmarks list
-	private void removeBookmark(final VenueDetails venue) {
-		venueService.removeVenue(venue, new AsyncCallback<Void>() {
-			public void onFailure(Throwable error) {
+		// adds the Venue with symbol (venueName+venueAdd1) to the current user's
+		// bookmarks list
+		private void addBookmark(final VenueDetails venue) {
+			ArrayList<String> symbols = new ArrayList<String>();
 
-				updatedBookmarksLabel.setHTML("<font color='red'>Failed to remove '"
-						+ "<b><font color='black'>" + venue.getVenueName() + 
-						"</font></b>'</font>");
-
+			for (VenueDetails bookmark : listOfBookmarks) {
+				String symbol = bookmark.getSymbol();
+				symbols.add(symbol);
 			}
+			if (symbols.contains(venue.getSymbol()))
+				updatedVenueLabel.setHTML("<font color='red'>You already have '"
+						+ "<b><font color='black'>" + venue.getVenueName() 
+						+ "</font></b>' in your Bookmarks.</font>");
+			else {
+				venueService.addVenue(venue, new AsyncCallback<Void>() {
 
-			public void onSuccess(Void ignore) {
-				listOfBookmarks.remove(venue);
-				bookmarksProvider.getList().clear();
-				bookmarksProvider.getList().addAll(listOfBookmarks);
-				bookmarksProvider.refresh();
-				if (listOfBookmarks.isEmpty())
-					updatedBookmarksLabel
-					.setHTML("<font color='00a651'>Your Bookmarks is now empty. Removed '"
-							+ "<b><font color='black'>" 
-							+ venue.getVenueName() + "</font></b>'.</font>");
-				else {
-					plotBookmarks();
-					updatedBookmarksLabel.setHTML("<font color='00a651'>Successfully removed '"
-							+ "<b><font color='black'>"
-							+ venue.getVenueName() + "</font></b>'</font>");
+					public void onFailure(Throwable error) {
 
-				}
+						updatedVenueLabel.setHTML("<font color='red'>Failed to add '"
+								+ "<b><font color='black'>" + venue.getVenueName() 
+								+ "</font></b>' to Bookmarks.</font>");
+					}
 
+					public void onSuccess(Void ignore)
+
+					{
+						listOfBookmarks.add(venue);
+						Collections.sort(listOfBookmarks);
+						bookmarksProvider.getList().clear();
+						bookmarksProvider.getList().addAll(listOfBookmarks);
+						bookmarksProvider.refresh();
+						plotBookmarks();
+						updatedVenueLabel.setHTML("<font color='00a651'>Successfully added '"
+								+ "<b><font color='black'>" +
+								venue.getVenueName() + "</font></b>' to Bookmarks.</font>");
+					}
+
+				});
 			}
-		});
+		}
 
-	}
-
-	// removes all venues from the current user's bookmarks list
-	private void removeAllBookmarks() {
-		if (listOfBookmarks.isEmpty())
-			updatedBookmarksLabel
-			.setText("Oops. Your Bookmarks is already empty!");
-		else {
-			venueService.removeAllVenues(new AsyncCallback<Void>() {
+		// removes the Venue with symbol (venueName+venueAdd1) from the current
+		// user's bookmarks list
+		private void removeBookmark(final VenueDetails venue) {
+			venueService.removeVenue(venue, new AsyncCallback<Void>() {
 				public void onFailure(Throwable error) {
-					updatedBookmarksLabel
-					.setHTML("<font color='red'>Failed to remove all Bookmarks</font>");
+
+					updatedBookmarksLabel.setHTML("<font color='red'>Failed to remove '"
+							+ "<b><font color='black'>" + venue.getVenueName() + 
+							"</font></b>'</font>");
+
 				}
 
 				public void onSuccess(Void ignore) {
-					int bookmarkSize = listOfBookmarks.size();
-					listOfBookmarks.clear();
+					listOfBookmarks.remove(venue);
 					bookmarksProvider.getList().clear();
+					bookmarksProvider.getList().addAll(listOfBookmarks);
 					bookmarksProvider.refresh();
-					map.clearOverlays();
-					if (bookmarkSize == 1)
-						updatedBookmarksLabel.setHTML("<font color='00a651'>Successfully removed "
-								+ bookmarkSize + (" venue.</font>"));
-					else
-						updatedBookmarksLabel.setHTML("<font color='00a651'>Successfully removed "
-								+ bookmarkSize + (" venues.</font>"));
+					if (listOfBookmarks.isEmpty())
+						updatedBookmarksLabel
+								.setHTML("<font color='00a651'>Your Bookmarks is now empty. Removed '"
+										+ "<b><font color='black'>" 
+										+ venue.getVenueName() + "</font></b>'.</font>");
+					else {
+						plotBookmarks();
+						updatedBookmarksLabel.setHTML("<font color='00a651'>Successfully removed '"
+								+ "<b><font color='black'>"
+								+ venue.getVenueName() + "</font></b>'</font>");
+					}
 
 				}
 			});
+
 		}
-	}
+
+		// removes all venues from the current user's bookmarks list
+		private void removeAllBookmarks() {
+			if (listOfBookmarks.isEmpty())
+				updatedBookmarksLabel
+				.setHTML("<font color='red'>Oops. Your Bookmarks is already empty!</font>");
+			else {
+				venueService.removeAllVenues(new AsyncCallback<Void>() {
+					public void onFailure(Throwable error) {
+						updatedBookmarksLabel
+						.setHTML("<font color='red'>Failed to remove all Bookmarks</font>");
+					}
+
+					public void onSuccess(Void ignore) {
+						int bookmarkSize = listOfBookmarks.size();
+						listOfBookmarks.clear();
+						bookmarksProvider.getList().clear();
+						bookmarksProvider.refresh();
+						map.clearOverlays();
+						if (bookmarkSize == 1)
+							updatedBookmarksLabel.setHTML("<font color='00a651'>Successfully removed "
+									+ bookmarkSize + (" venue.</font>"));
+						else
+							updatedBookmarksLabel.setHTML("<font color='00a651'>Successfully removed "
+									+ bookmarkSize + (" venues.</font>"));
+
+					}
+				});
+			}
+		}
 
 	// sets venues as visited and not visited in bookmarks
 	private void setVisited(final VenueDetails venue) {
