@@ -5,25 +5,23 @@ import com.google.gwt.user.client.ui.HTML;
 
 public class FacebookWidget extends HTML {
 
-	public FacebookWidget(String aString)
-	{
-	    super(aString);
+	public FacebookWidget(String aString) {
+		super(aString);
 	}
 
 	@Override
 	protected void onLoad() {
-	    try {
-	            parseFBXML();
+		try {
+			parseFBXML();
 
-	    } catch (JavaScriptException e) {
-	        System.err.println(e);
-	    }
+		} catch (JavaScriptException e) {
+			System.err.println(e);
+		}
 	}
 
 	protected native void parseFBXML()
 	/*-{
-	    $wnd.FB.XFBML.parse();
+		$wnd.FB.XFBML.parse();
 	}-*/;
 
 }
-

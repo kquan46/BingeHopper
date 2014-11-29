@@ -11,8 +11,6 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -26,8 +24,6 @@ public class VenueServiceImpl extends RemoteServiceServlet implements
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static final Logger LOG = Logger.getLogger(VenueServiceImpl.class
-			.getName());
 	private static final PersistenceManagerFactory PMF = JDOHelper
 			.getPersistenceManagerFactory("transactions-optional");
 
@@ -60,9 +56,9 @@ public class VenueServiceImpl extends RemoteServiceServlet implements
 			q.declareParameters("com.google.appengine.api.users.User u");
 			@SuppressWarnings("unchecked")
 			List<Venue> venues = (List<Venue>) q.execute(getUser());
-			
+
 			for (Venue venue : venues) {
-				if (v.getSymbol().equals(venue.getSymbol())) 
+				if (v.getSymbol().equals(venue.getSymbol()))
 					pm.deletePersistent(venue);
 			}
 
@@ -79,7 +75,7 @@ public class VenueServiceImpl extends RemoteServiceServlet implements
 	public void removeAllVenues() throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
-		
+
 		try {
 
 			Query q = pm.newQuery(Venue.class, "user == u");
@@ -87,7 +83,7 @@ public class VenueServiceImpl extends RemoteServiceServlet implements
 			@SuppressWarnings("unchecked")
 			List<Venue> venues = (List<Venue>) q.execute(getUser());
 			pm.deletePersistentAll(venues);
-			
+
 		}
 
 		finally {
@@ -96,7 +92,7 @@ public class VenueServiceImpl extends RemoteServiceServlet implements
 
 		}
 	}
-	
+
 	public void setVisited(VenueDetails v) throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
@@ -111,10 +107,10 @@ public class VenueServiceImpl extends RemoteServiceServlet implements
 					pm.deletePersistent(venue);
 					if (location.getVisited() == true)
 						location.setVisited(false);
-					else 
+					else
 						location.setVisited(true);
 					pm.makePersistent(new Venue(getUser(), location));
-					
+
 				}
 			}
 		}
@@ -125,7 +121,7 @@ public class VenueServiceImpl extends RemoteServiceServlet implements
 
 		}
 	}
-	
+
 	public List<VenueDetails> getVenues() throws NotLoggedInException {
 
 		checkLoggedIn();

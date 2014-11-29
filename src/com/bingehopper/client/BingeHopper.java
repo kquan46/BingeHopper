@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.bingehopper.client.social.FacebookShareButton;
-import com.bingehopper.client.social.SocialShareButton;
-import com.bingehopper.client.social.TwitterShareButton;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.FieldUpdater;
@@ -27,7 +24,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
-import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
@@ -38,17 +34,13 @@ import com.google.gwt.maps.client.Maps;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -56,11 +48,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.maps.client.MapWidget;
-import com.google.gwt.maps.client.control.LargeMapControl;
 import com.google.gwt.maps.client.event.MarkerClickHandler;
 import com.google.gwt.maps.client.geocode.Geocoder;
 import com.google.gwt.maps.client.geocode.LatLngCallback;
-import com.google.gwt.maps.client.geom.Bounds;
 import com.google.gwt.maps.client.geom.LatLng;
 import com.google.gwt.maps.client.geom.LatLngBounds;
 import com.google.gwt.maps.client.overlay.Marker;
@@ -80,8 +70,6 @@ public class BingeHopper implements EntryPoint
 	private VerticalPanel mapTab = new VerticalPanel();
 	private HorizontalPanel socialTab = new HorizontalPanel();
 	private VerticalPanel loginPanel = new VerticalPanel();
-	private ScrollPanel venuesListScroll = new ScrollPanel();
-	private ScrollPanel bookmarksListScroll = new ScrollPanel();
 
 	// create tables
 	private CellTable<VenueDetails> venuesTable = new CellTable<VenueDetails>();
@@ -155,13 +143,11 @@ public class BingeHopper implements EntryPoint
 	private String facebookCommentURL = "\"http://teamfantastic310.appspot.com/\"";
 	private FacebookCommentBox facebookCommentBox = new FacebookCommentBox(
 			facebookCommentURL);
-	private FacebookShareButton facebookShare = new FacebookShareButton(facebookCommentURL);
 	private HorizontalPanel facebookPanel = new HorizontalPanel();
-	
+
 	private String twitterTimelineURL = "\"https://twitter.com/hashtag/teamfantastic310\"";
 	private TwitterTimeline twitterTimeline = new TwitterTimeline(
 			twitterTimelineURL);
-	private TwitterShareButton twitterShare = new TwitterShareButton(twitterTimelineURL);
 	private HorizontalPanel twitterPanel = new HorizontalPanel();
 
 	// create tab panel
@@ -210,38 +196,38 @@ public class BingeHopper implements EntryPoint
 		loginService.login(GWT.getHostPageBaseURL(),
 				new AsyncCallback<LoginInfo>() {
 
-			public void onFailure(Throwable error) {
+					public void onFailure(Throwable error) {
 
-				errorMsgLabel.setText(error.getMessage());
-				errorMsgLabel.setVisible(true);
+						errorMsgLabel.setText(error.getMessage());
+						errorMsgLabel.setVisible(true);
 
-			}
+					}
 
-			public void onSuccess(LoginInfo result) {
+					public void onSuccess(LoginInfo result) {
 
-				loginInfo = result;
+						loginInfo = result;
 
-				if (loginInfo.isLoggedIn()) {
+						if (loginInfo.isLoggedIn()) {
 
-					Maps.loadMapsApi(
-							"AIzaSyCTk1NtYlfZeSWetnBjL6bOrLnl99A6now",
-							"2", false, new Runnable() {
-								public void run() {
-									loadBingeHopper();
-								}
-							});
+							Maps.loadMapsApi(
+									"AIzaSyCTk1NtYlfZeSWetnBjL6bOrLnl99A6now",
+									"2", false, new Runnable() {
+										public void run() {
+											loadBingeHopper();
+										}
+									});
 
-				}
+						}
 
-				else {
+						else {
 
-					loadLogin();
+							loadLogin();
 
-				}
+						}
 
-			}
+					}
 
-		});
+				});
 
 		/*
 		 * Asynchronously loads the Maps API.
@@ -376,7 +362,7 @@ public class BingeHopper implements EntryPoint
 						cityListBox.getItemText(cityListBox.getSelectedIndex()),
 						typeListBox.getItemText(typeListBox.getSelectedIndex())
 
-						);
+				);
 			}
 
 		});
@@ -390,12 +376,12 @@ public class BingeHopper implements EntryPoint
 
 					searchVenues(
 
-							nameBox.getText(), addressBox.getText(), cityListBox
+					nameBox.getText(), addressBox.getText(), cityListBox
 							.getItemText(cityListBox.getSelectedIndex()),
 							typeListBox.getItemText(typeListBox
 									.getSelectedIndex())
 
-							);
+					);
 				}
 
 			}
@@ -411,12 +397,12 @@ public class BingeHopper implements EntryPoint
 
 					searchVenues(
 
-							nameBox.getText(), addressBox.getText(), cityListBox
+					nameBox.getText(), addressBox.getText(), cityListBox
 							.getItemText(cityListBox.getSelectedIndex()),
 							typeListBox.getItemText(typeListBox
 									.getSelectedIndex())
 
-							);
+					);
 				}
 
 			}
@@ -439,9 +425,9 @@ public class BingeHopper implements EntryPoint
 		searchTitle.addStyleName("title");
 		searchTab.add(venueUpdatePanel);
 		searchTab.add(searchPanel);
-		//venuesListScroll.add(venuesTable);
-		//venuesTable.addStyleName("celltable");
-		//venuesListScroll.addStyleName("vscrollpanel");
+		// venuesListScroll.add(venuesTable);
+		// venuesTable.addStyleName("celltable");
+		// venuesListScroll.addStyleName("vscrollpanel");
 		searchTab.add(venuesTable);
 		searchTab.add(venuesPager);
 		searchTab.addStyleName("tabElement");
@@ -452,20 +438,19 @@ public class BingeHopper implements EntryPoint
 		bookmarksTab.add(bookmarksTitle);
 		bookmarksTab.add(bookmarksUpdatePanel);
 		bookmarksTitle.addStyleName("title");
-		//bookmarksListScroll.add(bookmarksTable);
-		//bookmarksTable.addStyleName("celltable");
+		// bookmarksListScroll.add(bookmarksTable);
+		// bookmarksTable.addStyleName("celltable");
 		bookmarksTab.add(bookmarksTable);
-		//bookmarksListScroll.addStyleName("bscrollpanel");
+		// bookmarksListScroll.addStyleName("bscrollpanel");
 		bookmarksTab.add(bookmarksPager);
 		bookmarksTab.addStyleName("tabElement");
-
 
 		// Organize Map Tab
 		mapIcon.setUrl("maps.png");
 		mapIcon.addStyleName("tabIcon");
 		mapTab.add(dock);
-		//mapTab.add(mapButton);
-		//mapTab.addStyleName("tab");
+		// mapTab.add(mapButton);
+		// mapTab.addStyleName("tab");
 
 		// Organize Social Tab
 		socialIcon.setUrl("social.png");
@@ -721,13 +706,13 @@ public class BingeHopper implements EntryPoint
 			}
 		};
 		addbookmarkColumn
-		.setFieldUpdater(new FieldUpdater<VenueDetails, String>() {
-			@Override
-			public void update(int index, VenueDetails venue,
-					String value) {
-				addBookmark(venue);
-			}
-		});
+				.setFieldUpdater(new FieldUpdater<VenueDetails, String>() {
+					@Override
+					public void update(int index, VenueDetails venue,
+							String value) {
+						addBookmark(venue);
+					}
+				});
 
 		// Button column to remove venues from bookmarks.
 		ButtonCell removeBookmarkButton = new ButtonCell();
@@ -739,13 +724,13 @@ public class BingeHopper implements EntryPoint
 			}
 		};
 		removebookmarkColumn
-		.setFieldUpdater(new FieldUpdater<VenueDetails, String>() {
-			@Override
-			public void update(int index, VenueDetails venue,
-					String value) {
-				removeBookmark(venue);
-			}
-		});
+				.setFieldUpdater(new FieldUpdater<VenueDetails, String>() {
+					@Override
+					public void update(int index, VenueDetails venue,
+							String value) {
+						removeBookmark(venue);
+					}
+				});
 
 		// Checkbox column to mark venues as selected in bookmarks.
 		CheckboxCell visitedCheckbox = new CheckboxCell();
@@ -757,12 +742,12 @@ public class BingeHopper implements EntryPoint
 			}
 		};
 		visitedColumn
-		.setFieldUpdater(new FieldUpdater<VenueDetails, Boolean>() {
-			public void update(int index, VenueDetails venue,
-					Boolean visited) {
-				setVisited(venue);
-			}
-		});
+				.setFieldUpdater(new FieldUpdater<VenueDetails, Boolean>() {
+					public void update(int index, VenueDetails venue,
+							Boolean visited) {
+						setVisited(venue);
+					}
+				});
 
 		// Add Columns to venues CellTable
 		venuesTable.addColumn(nameColumn, "Name");
@@ -820,7 +805,7 @@ public class BingeHopper implements EntryPoint
 
 			public void onFailure(Throwable caught) {
 				errorMsgLabel
-				.setText("Error while fetching venues from server");
+						.setText("Error while fetching venues from server");
 				errorMsgLabel.setVisible(true);
 			}
 
@@ -885,7 +870,7 @@ public class BingeHopper implements EntryPoint
 			if (venue.getVenueName().trim().toLowerCase()
 					.contains(name.trim().toLowerCase())
 					&& venue.getVenueAdd1().trim().toLowerCase()
-					.contains(address.trim().toLowerCase())
+							.contains(address.trim().toLowerCase())
 					&& cities.contains(venue.getVenueCity())
 					&& types.contains(venue.getVenueType()))
 				filteredList.add(venue);
@@ -894,146 +879,156 @@ public class BingeHopper implements EntryPoint
 	}
 
 	// retrieves an ArrayList of Venues that have been bookmarked by the
-		// current user,
-		private void loadBookmarks() {
+	// current user,
+	private void loadBookmarks() {
 
-			updatedBookmarksLabel.setText("Loading Bookmarks...");
-			venueService.getVenues(new AsyncCallback<List<VenueDetails>>() {
+		updatedBookmarksLabel.setText("Loading Bookmarks...");
+		venueService.getVenues(new AsyncCallback<List<VenueDetails>>() {
+
+			public void onFailure(Throwable error) {
+
+				updatedBookmarksLabel
+						.setText("failed to retrieve Bookmarked venues");
+			}
+
+			public void onSuccess(List<VenueDetails> bookmarkedVenues)
+
+			{
+				listOfBookmarks = new ArrayList<VenueDetails>(bookmarkedVenues);
+				bookmarksProvider = new ListDataProvider<VenueDetails>(
+						bookmarkedVenues);
+				bookmarksProvider.addDataDisplay(bookmarksTable);
+				bookmarksPager.setDisplay(bookmarksTable);
+				setUpColumnSort(bookmarksTable, bookmarksProvider);
+				if (!listOfBookmarks.isEmpty())
+					plotBookmarks();
+				if (bookmarkedVenues.isEmpty())
+					updatedBookmarksLabel
+							.setText("Oops. You dont have any venues in your bookmarks!!");
+				else {
+					updatedBookmarksLabel
+							.setText("Bookmarked venues successfully loaded");
+				}
+			}
+
+		});
+
+	}
+
+	// adds the Venue with symbol (venueName+venueAdd1) to the current user's
+	// bookmarks list
+	private void addBookmark(final VenueDetails venue) {
+		ArrayList<String> symbols = new ArrayList<String>();
+
+		for (VenueDetails bookmark : listOfBookmarks) {
+			String symbol = bookmark.getSymbol();
+			symbols.add(symbol);
+		}
+		if (symbols.contains(venue.getSymbol()))
+			updatedVenueLabel.setHTML("<font color='red'>You already have '"
+					+ "<b><font color='black'>" + venue.getVenueName()
+					+ "</font></b>' in your Bookmarks.</font>");
+		else {
+			venueService.addVenue(venue, new AsyncCallback<Void>() {
 
 				public void onFailure(Throwable error) {
 
-					updatedBookmarksLabel
-					.setText("failed to retrieve Bookmarked venues");
+					updatedVenueLabel
+							.setHTML("<font color='red'>Failed to add '"
+									+ "<b><font color='black'>"
+									+ venue.getVenueName()
+									+ "</font></b>' to Bookmarks.</font>");
 				}
 
-				public void onSuccess(List<VenueDetails> bookmarkedVenues)
+				public void onSuccess(Void ignore)
 
 				{
-					listOfBookmarks = new ArrayList<VenueDetails>(bookmarkedVenues);
-					bookmarksProvider = new ListDataProvider<VenueDetails>(
-							bookmarkedVenues);
-					bookmarksProvider.addDataDisplay(bookmarksTable);
-					bookmarksPager.setDisplay(bookmarksTable);
-					setUpColumnSort(bookmarksTable, bookmarksProvider);
-					if (!listOfBookmarks.isEmpty())
-						plotBookmarks();
-					if (bookmarkedVenues.isEmpty())
-						updatedBookmarksLabel
-						.setText("Oops. You dont have any venues in your bookmarks!!");
-					else {
-						updatedBookmarksLabel
-						.setText("Bookmarked venues successfully loaded");
-					}
-				}
-
-			});
-
-		}
-
-		// adds the Venue with symbol (venueName+venueAdd1) to the current user's
-		// bookmarks list
-		private void addBookmark(final VenueDetails venue) {
-			ArrayList<String> symbols = new ArrayList<String>();
-
-			for (VenueDetails bookmark : listOfBookmarks) {
-				String symbol = bookmark.getSymbol();
-				symbols.add(symbol);
-			}
-			if (symbols.contains(venue.getSymbol()))
-				updatedVenueLabel.setHTML("<font color='red'>You already have '"
-						+ "<b><font color='black'>" + venue.getVenueName() 
-						+ "</font></b>' in your Bookmarks.</font>");
-			else {
-				venueService.addVenue(venue, new AsyncCallback<Void>() {
-
-					public void onFailure(Throwable error) {
-
-						updatedVenueLabel.setHTML("<font color='red'>Failed to add '"
-								+ "<b><font color='black'>" + venue.getVenueName() 
-								+ "</font></b>' to Bookmarks.</font>");
-					}
-
-					public void onSuccess(Void ignore)
-
-					{
-						listOfBookmarks.add(venue);
-						Collections.sort(listOfBookmarks);
-						bookmarksProvider.getList().clear();
-						bookmarksProvider.getList().addAll(listOfBookmarks);
-						bookmarksProvider.refresh();
-						plotBookmarks();
-						updatedVenueLabel.setHTML("<font color='00a651'>Successfully added '"
-								+ "<b><font color='black'>" +
-								venue.getVenueName() + "</font></b>' to Bookmarks.</font>");
-					}
-
-				});
-			}
-		}
-
-		// removes the Venue with symbol (venueName+venueAdd1) from the current
-		// user's bookmarks list
-		private void removeBookmark(final VenueDetails venue) {
-			venueService.removeVenue(venue, new AsyncCallback<Void>() {
-				public void onFailure(Throwable error) {
-
-					updatedBookmarksLabel.setHTML("<font color='red'>Failed to remove '"
-							+ "<b><font color='black'>" + venue.getVenueName() + 
-							"</font></b>'</font>");
-
-				}
-
-				public void onSuccess(Void ignore) {
-					listOfBookmarks.remove(venue);
+					listOfBookmarks.add(venue);
+					Collections.sort(listOfBookmarks);
 					bookmarksProvider.getList().clear();
 					bookmarksProvider.getList().addAll(listOfBookmarks);
 					bookmarksProvider.refresh();
-					if (listOfBookmarks.isEmpty())
-						updatedBookmarksLabel
-								.setHTML("<font color='00a651'>Your Bookmarks is now empty. Removed '"
-										+ "<b><font color='black'>" 
-										+ venue.getVenueName() + "</font></b>'.</font>");
-					else {
-						plotBookmarks();
-						updatedBookmarksLabel.setHTML("<font color='00a651'>Successfully removed '"
+					plotBookmarks();
+					updatedVenueLabel
+							.setHTML("<font color='00a651'>Successfully added '"
+									+ "<b><font color='black'>"
+									+ venue.getVenueName()
+									+ "</font></b>' to Bookmarks.</font>");
+				}
+
+			});
+		}
+	}
+
+	// removes the Venue with symbol (venueName+venueAdd1) from the current
+	// user's bookmarks list
+	private void removeBookmark(final VenueDetails venue) {
+		venueService.removeVenue(venue, new AsyncCallback<Void>() {
+			public void onFailure(Throwable error) {
+
+				updatedBookmarksLabel
+						.setHTML("<font color='red'>Failed to remove '"
 								+ "<b><font color='black'>"
 								+ venue.getVenueName() + "</font></b>'</font>");
-					}
+
+			}
+
+			public void onSuccess(Void ignore) {
+				listOfBookmarks.remove(venue);
+				bookmarksProvider.getList().clear();
+				bookmarksProvider.getList().addAll(listOfBookmarks);
+				bookmarksProvider.refresh();
+				if (listOfBookmarks.isEmpty())
+					updatedBookmarksLabel
+							.setHTML("<font color='00a651'>Your Bookmarks is now empty. Removed '"
+									+ "<b><font color='black'>"
+									+ venue.getVenueName()
+									+ "</font></b>'.</font>");
+				else {
+					plotBookmarks();
+					updatedBookmarksLabel
+							.setHTML("<font color='00a651'>Successfully removed '"
+									+ "<b><font color='black'>"
+									+ venue.getVenueName()
+									+ "</font></b>'</font>");
+				}
+
+			}
+		});
+
+	}
+
+	// removes all venues from the current user's bookmarks list
+	private void removeAllBookmarks() {
+		if (listOfBookmarks.isEmpty())
+			updatedBookmarksLabel
+					.setHTML("<font color='red'>Oops. Your Bookmarks is already empty!</font>");
+		else {
+			venueService.removeAllVenues(new AsyncCallback<Void>() {
+				public void onFailure(Throwable error) {
+					updatedBookmarksLabel
+							.setHTML("<font color='red'>Failed to remove all Bookmarks</font>");
+				}
+
+				public void onSuccess(Void ignore) {
+					int bookmarkSize = listOfBookmarks.size();
+					listOfBookmarks.clear();
+					bookmarksProvider.getList().clear();
+					bookmarksProvider.refresh();
+					map.clearOverlays();
+					if (bookmarkSize == 1)
+						updatedBookmarksLabel
+								.setHTML("<font color='00a651'>Successfully removed "
+										+ bookmarkSize + (" venue.</font>"));
+					else
+						updatedBookmarksLabel
+								.setHTML("<font color='00a651'>Successfully removed "
+										+ bookmarkSize + (" venues.</font>"));
 
 				}
 			});
-
 		}
-
-		// removes all venues from the current user's bookmarks list
-		private void removeAllBookmarks() {
-			if (listOfBookmarks.isEmpty())
-				updatedBookmarksLabel
-				.setHTML("<font color='red'>Oops. Your Bookmarks is already empty!</font>");
-			else {
-				venueService.removeAllVenues(new AsyncCallback<Void>() {
-					public void onFailure(Throwable error) {
-						updatedBookmarksLabel
-						.setHTML("<font color='red'>Failed to remove all Bookmarks</font>");
-					}
-
-					public void onSuccess(Void ignore) {
-						int bookmarkSize = listOfBookmarks.size();
-						listOfBookmarks.clear();
-						bookmarksProvider.getList().clear();
-						bookmarksProvider.refresh();
-						map.clearOverlays();
-						if (bookmarkSize == 1)
-							updatedBookmarksLabel.setHTML("<font color='00a651'>Successfully removed "
-									+ bookmarkSize + (" venue.</font>"));
-						else
-							updatedBookmarksLabel.setHTML("<font color='00a651'>Successfully removed "
-									+ bookmarkSize + (" venues.</font>"));
-
-					}
-				});
-			}
-		}
+	}
 
 	// sets venues as visited and not visited in bookmarks
 	private void setVisited(final VenueDetails venue) {
@@ -1086,20 +1081,20 @@ public class BingeHopper implements EntryPoint
 				points.add(point);
 
 				VerticalPanel basicDetailsPanel = new VerticalPanel();
-				HTML basicDetails = new HTML("<h3>" + venue.getVenueName() + "</h3>" +
-						"<b>Address: </b>" + venue.getMapAddress() + "<br>" +
-						"<b>Phone Number: </b>" + venue.getVenuePhone() + "<br>" +
-						"<b>License Type: </b>" + venue.getVenueType() + "<br>" + 
-						"<b>Seat Capacity: </b>" + venue.getVenueCapacity() + 
-						"<br><p> </p>");
+				HTML basicDetails = new HTML("<h3>" + venue.getVenueName()
+						+ "</h3>" + "<b>Address: </b>" + venue.getMapAddress()
+						+ "<br>" + "<b>Phone Number: </b>"
+						+ venue.getVenuePhone() + "<br>"
+						+ "<b>License Type: </b>" + venue.getVenueType()
+						+ "<br>" + "<b>Seat Capacity: </b>"
+						+ venue.getVenueCapacity() + "<br><p> </p>");
 
 				basicDetailsPanel.add(basicDetails);
 				basicDetailsPanel.addStyleName("basicDetails");
 
 				final InfoWindow infoWindow = map.getInfoWindow();
 				final InfoWindowContent content = new InfoWindowContent(
-						basicDetailsPanel
-						);
+						basicDetailsPanel);
 				marker.addMarkerClickHandler(new MarkerClickHandler() {
 					@Override
 					public void onClick(MarkerClickEvent event) {

@@ -7,8 +7,8 @@ public class FacebookShareButton extends FacebookWidget {
 	}
 
 	private static String getCode(String url) {
-		return "<div class=\"fb-share-button\" data-href=" + url + " data-layout=\"button_count\"></div>";
+		return "<div class=\"fb-share-button\" data-href=" + url
+				+ " data-layout=\"button_count\"></div>";
 
 	}
 }
-
