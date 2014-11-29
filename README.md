@@ -1,5 +1,4 @@
-TeamFantastic's Ambitious Project
-http://teamfantastic310.appspot.com/
+<a href="http://teamfantastic310.appspot.com/">TeamFantastic's Ambitious Project</a>
 =============
 
 
