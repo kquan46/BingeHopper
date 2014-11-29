@@ -7,11 +7,11 @@ About: Our app aims to provide a flexible, personalizable list for thirsty custo
 <br>List of liquor venues are provided by DataBC.
 
 Contributing Members:
-Kunal
-Nicole
-Kevin
-Daniel
-Wayne
+<br>Kunal
+<br>Nicole
+<br>Kevin
+<br>Daniel
+<br>Wayne
 
 2014 Nov 28
 
